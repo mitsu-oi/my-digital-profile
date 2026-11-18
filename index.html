@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ОсьЯ — мій цифровий профіль</title>
+    <meta name="description" content="Зберіть портфоліо у вигляді цифрового посвідчення за 10 хвилин: шаблон, палітра, блоки й живий перегляд. Без реєстрації.">
+    <link rel="canonical" href="https://my-digital-profile.vercel.app/">
+    <meta name="theme-color" content="#f6f3ec">
+    <!-- Тема ставиться до першого малювання сторінки, щоб не було миготіння: збережений вибір або налаштування системи -->
+    <script>
+      (function () {
+        var saved = null;
+        try { saved = localStorage.getItem('osya-theme'); } catch (error) {}
+        var dark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (dark) document.documentElement.classList.add('dark');
+      })();
+    </script>
+    <link rel="preload" href="assets/fonts/golos-text-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="assets/fonts/lora-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="css/site.css">
+    <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+    <script src="assets/js/site.js" defer></script>
+  </head>
+  <body class="flex min-h-screen flex-col bg-paper font-sans text-ink antialiased dark:bg-night dark:text-cream">
+    <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded-md focus:bg-ink focus:px-4 focus:py-3 focus:text-cream">Перейти до основного вмісту</a>
+    <header class="sticky top-0 z-40 border-b border-line bg-paper/95 backdrop-blur-sm dark:border-night-line dark:bg-night/95">
+      <div class="mx-auto flex h-20 w-full max-w-6xl items-center justify-between gap-4 px-5 md:px-8">
+        <a href="index.html" class="inline-flex min-h-12 flex-col justify-center rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink dark:focus-visible:outline-cream">
+          <span class="font-serif text-2xl leading-none font-bold text-ink dark:text-cream">Ось<span class="holo-text">Я</span></span>
+          <span class="mt-1 font-mono text-[11px] leading-none tracking-wide whitespace-nowrap text-ink-soft dark:text-cream-soft">мій цифровий профіль</span>
+        </a>
+
+        <nav aria-label="Головна навігація" class="hidden lg:block">
+          <ul class="flex items-center gap-7">
+            <li><a href="builder.html" class="inline-flex min-h-12 items-center border-b-2 border-transparent px-1 text-[15px] font-medium text-ink-soft transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink aria-[current=page]:border-stamp aria-[current=page]:text-ink dark:text-cream-soft dark:hover:text-cream dark:focus-visible:outline-cream dark:aria-[current=page]:border-stamp-light dark:aria-[current=page]:text-cream">Конструктор</a></li>
+            <li><a href="templates.html" class="inline-flex min-h-12 items-center border-b-2 border-transparent px-1 text-[15px] font-medium text-ink-soft transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink aria-[current=page]:border-stamp aria-[current=page]:text-ink dark:text-cream-soft dark:hover:text-cream dark:focus-visible:outline-cream dark:aria-[current=page]:border-stamp-light dark:aria-[current=page]:text-cream">Шаблони</a></li>
+            <li><a href="examples.html" class="inline-flex min-h-12 items-center border-b-2 border-transparent px-1 text-[15px] font-medium text-ink-soft transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink aria-[current=page]:border-stamp aria-[current=page]:text-ink dark:text-cream-soft dark:hover:text-cream dark:focus-visible:outline-cream dark:aria-[current=page]:border-stamp-light dark:aria-[current=page]:text-cream">Приклади</a></li>
+            <li><a href="about.html" class="inline-flex min-h-12 items-center border-b-2 border-transparent px-1 text-[15px] font-medium text-ink-soft transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink aria-[current=page]:border-stamp aria-[current=page]:text-ink dark:text-cream-soft dark:hover:text-cream dark:focus-visible:outline-cream dark:aria-[current=page]:border-stamp-light dark:aria-[current=page]:text-cream">Про сервіс</a></li>
+            <li><a href="contact.html" class="inline-flex min-h-12 items-center border-b-2 border-transparent px-1 text-[15px] font-medium text-ink-soft transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink aria-[current=page]:border-stamp aria-[current=page]:text-ink dark:text-cream-soft dark:hover:text-cream dark:focus-visible:outline-cream dark:aria-[current=page]:border-stamp-light dark:aria-[current=page]:text-cream">Контакти</a></li>
+          </ul>
+        </nav>
+
+        <div class="flex items-center gap-2">
+          <button type="button" data-theme-toggle aria-pressed="false" class="inline-flex size-12 items-center justify-center rounded-md border border-line text-ink transition-colors hover:bg-sheet focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:border-night-line dark:text-cream dark:hover:bg-night-sheet dark:focus-visible:outline-cream">
+            <span class="sr-only" data-theme-label>Увімкнути темну тему</span>
+            <span class="dark:hidden"><svg class="size-5" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#moon"></use></svg></span>
+            <span class="hidden dark:inline"><svg class="size-5" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#sun"></use></svg></span>
+          </button>
+          <a href="builder.html" class="btn-primary min-h-12 items-center justify-center gap-2 rounded-md px-6 text-base font-semibold text-cream transition-transform duration-150 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink active:translate-y-0 dark:focus-visible:outline-cream hidden sm:inline-flex">Оформити профіль</a>
+          <button type="button" data-menu-toggle aria-expanded="false" aria-controls="mobile-menu" class="inline-flex size-12 items-center justify-center rounded-md border border-line text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink lg:hidden dark:border-night-line dark:text-cream dark:focus-visible:outline-cream">
+            <span class="sr-only">Меню</span>
+            <svg class="size-5" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#menu"></use></svg>
+          </button>
+        </div>
+      </div>
+
+      <nav id="mobile-menu" aria-label="Мобільна навігація" hidden class="border-t border-line bg-paper px-5 pb-5 lg:hidden dark:border-night-line dark:bg-night">
+        <ul>
+          <li><a href="builder.html" class="flex min-h-12 items-center border-b border-line px-1 text-base font-medium text-ink aria-[current=page]:text-stamp dark:border-night-line dark:text-cream dark:aria-[current=page]:text-stamp-light">Конструктор</a></li>
+          <li><a href="templates.html" class="flex min-h-12 items-center border-b border-line px-1 text-base font-medium text-ink aria-[current=page]:text-stamp dark:border-night-line dark:text-cream dark:aria-[current=page]:text-stamp-light">Шаблони</a></li>
+          <li><a href="examples.html" class="flex min-h-12 items-center border-b border-line px-1 text-base font-medium text-ink aria-[current=page]:text-stamp dark:border-night-line dark:text-cream dark:aria-[current=page]:text-stamp-light">Приклади</a></li>
+          <li><a href="about.html" class="flex min-h-12 items-center border-b border-line px-1 text-base font-medium text-ink aria-[current=page]:text-stamp dark:border-night-line dark:text-cream dark:aria-[current=page]:text-stamp-light">Про сервіс</a></li>
+          <li><a href="contact.html" class="flex min-h-12 items-center border-b border-line px-1 text-base font-medium text-ink aria-[current=page]:text-stamp dark:border-night-line dark:text-cream dark:aria-[current=page]:text-stamp-light">Контакти</a></li>
+        </ul>
+        <a href="builder.html" class="btn-primary min-h-12 items-center justify-center gap-2 rounded-md px-6 text-base font-semibold text-cream transition-transform duration-150 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink active:translate-y-0 dark:focus-visible:outline-cream mt-5 flex w-full">Оформити профіль</a>
+      </nav>
+    </header>
+
+    <main id="main" tabindex="-1" class="flex-1">
+      <!-- Перший екран: заклик і картка-посвідчення -->
+      <section aria-labelledby="hero-title" class="border-b border-line dark:border-night-line">
+        <div class="mx-auto grid w-full max-w-6xl items-center gap-12 px-5 py-14 md:px-8 md:py-20 lg:grid-cols-[1.05fr_1fr]">
+          <div>
+            <p class="font-mono text-sm tracking-wide text-stamp dark:text-stamp-light">Форма П-1 · портфоліо</p>
+            <h1 id="hero-title" class="mt-4 font-serif text-4xl leading-tight font-bold sm:text-5xl lg:text-[3.5rem]">
+              Ваше портфоліо як&nbsp;офіційний документ
+            </h1>
+            <p class="mt-5 max-w-xl text-lg leading-relaxed text-ink-soft dark:text-cream-soft">
+              Оберіть шаблон і палітру, додайте проєкти та навички й одразу побачте результат. Без реєстрації: усе, що ви вводите, лишається у вашому браузері.
+            </p>
+            <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+              <a href="builder.html" class="btn-primary inline-flex min-h-12 items-center justify-center gap-2 rounded-md px-6 text-base font-semibold text-cream transition-transform duration-150 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink active:translate-y-0 dark:focus-visible:outline-cream">
+                Оформити профіль
+                <svg class="size-5" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow"></use></svg>
+              </a>
+              <a href="templates.html" class="inline-flex min-h-12 items-center justify-center rounded-md border-2 border-ink px-6 text-base font-semibold text-ink transition-colors hover:bg-ink hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:border-cream dark:text-cream dark:hover:bg-cream dark:hover:text-night dark:focus-visible:outline-cream">
+                Переглянути шаблони
+              </a>
+            </div>
+            <ul class="mt-8 flex flex-wrap gap-x-6 gap-y-2 font-mono text-[13px] text-ink-soft dark:text-cream-soft">
+              <li>· безкоштовно</li>
+              <li>· без реєстрації</li>
+              <li>· PDF та HTML-файл</li>
+            </ul>
+          </div>
+
+          <!-- Картка-посвідчення: декоративний приклад результату -->
+          <figure class="relative mx-auto w-full max-w-md">
+            <div class="relative rounded-lg border border-line bg-sheet p-5 shadow-[0_18px_40px_-24px_rgba(20,33,61,0.45)] sm:p-6 dark:border-night-line dark:bg-night-sheet dark:shadow-none">
+              <div class="flex items-center justify-between border-b border-line pb-3 font-mono text-[11px] tracking-wide text-ink-soft uppercase dark:border-night-line dark:text-cream-soft">
+                <span>Цифровий профіль</span>
+                <span>ОсьЯ № 000 247</span>
+              </div>
+
+              <div class="mt-5 flex gap-4 sm:gap-5">
+                <div class="flex h-28 w-24 shrink-0 items-end justify-center overflow-hidden rounded-sm border border-line bg-paper text-ink-soft dark:border-night-line dark:bg-night dark:text-cream-soft">
+                  <svg class="size-20" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#user"></use></svg>
+                </div>
+                <dl class="min-w-0 flex-1 space-y-3">
+                  <div>
+                    <dt class="font-mono text-[10px] tracking-wide text-ink-soft uppercase dark:text-cream-soft">Ім’я та прізвище</dt>
+                    <dd class="font-serif text-xl leading-snug font-bold">Олена Коваль</dd>
+                  </div>
+                  <div>
+                    <dt class="font-mono text-[10px] tracking-wide text-ink-soft uppercase dark:text-cream-soft">Фах</dt>
+                    <dd class="text-[15px] font-medium">UX-дизайнерка</dd>
+                  </div>
+                  <div>
+                    <dt class="font-mono text-[10px] tracking-wide text-ink-soft uppercase dark:text-cream-soft">Місто</dt>
+                    <dd class="text-[15px] font-medium">Львів</dd>
+                  </div>
+                </dl>
+              </div>
+
+              <div class="mt-5">
+                <p class="font-mono text-[10px] tracking-wide text-ink-soft uppercase dark:text-cream-soft">Навички</p>
+                <ul class="mt-2 flex flex-wrap gap-2 text-[13px]">
+                  <li class="rounded-sm border border-line px-2 py-1 dark:border-night-line">Figma</li>
+                  <li class="rounded-sm border border-line px-2 py-1 dark:border-night-line">Дослідження</li>
+                  <li class="rounded-sm border border-line px-2 py-1 dark:border-night-line">Прототипи</li>
+                </ul>
+              </div>
+
+              <p class="mt-5 overflow-hidden border-t border-line pt-3 font-mono text-[11px] tracking-widest whitespace-nowrap text-ink-soft dark:border-night-line dark:text-cream-soft" aria-hidden="true">
+                OSYA&lt;&lt;KOVAL&lt;&lt;OLENA&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;
+              </p>
+
+              <!-- голографічна наліпка -->
+              <div class="holo absolute top-16 right-5 flex size-16 items-center justify-center rounded-full opacity-90 sm:right-6 sm:size-20" aria-hidden="true">
+                <span class="font-serif text-2xl font-bold text-white/90 sm:text-3xl">Я</span>
+              </div>
+              <!-- печатка -->
+              <div class="absolute right-4 bottom-12 -rotate-12 rounded-sm border-2 border-stamp px-3 py-1 font-mono text-xs font-medium tracking-widest text-stamp uppercase opacity-85 dark:border-stamp-light dark:text-stamp-light" aria-hidden="true">
+                Перевірено
+              </div>
+            </div>
+            <figcaption class="mt-3 text-center font-mono text-xs text-ink-soft dark:text-cream-soft">Приклад профілю в шаблоні «Посвідчення»</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <!-- 01 Як це працює -->
+      <section aria-labelledby="steps-title" class="border-b border-line dark:border-night-line">
+        <div class="mx-auto w-full max-w-6xl px-5 py-16 md:px-8 md:py-20">
+          <p class="font-mono text-sm text-stamp dark:text-stamp-light">01 — Порядок оформлення</p>
+          <h2 id="steps-title" class="mt-3 font-serif text-3xl font-bold sm:text-4xl">Три кроки до готового профілю</h2>
+          <ol class="mt-10 grid gap-6 md:grid-cols-3">
+            <li class="rounded-lg border border-line bg-sheet p-6 dark:border-night-line dark:bg-night-sheet">
+              <p class="font-mono text-sm text-ink-soft dark:text-cream-soft">Крок 1</p>
+              <h3 class="mt-2 font-serif text-xl font-bold">Оберіть вигляд</h3>
+              <p class="mt-3 leading-relaxed text-ink-soft dark:text-cream-soft">Чотири шаблони й шість палітр. Змінити їх можна будь-коли, введене не зникне.</p>
+            </li>
+            <li class="rounded-lg border border-line bg-sheet p-6 dark:border-night-line dark:bg-night-sheet">
+              <p class="font-mono text-sm text-ink-soft dark:text-cream-soft">Крок 2</p>
+              <h3 class="mt-2 font-serif text-xl font-bold">Заповніть блоки</h3>
+              <p class="mt-3 leading-relaxed text-ink-soft dark:text-cream-soft">Про себе, навички, проєкти, досвід. Перегляд поруч оновлюється одразу, поки ви пишете.</p>
+            </li>
+            <li class="rounded-lg border border-line bg-sheet p-6 dark:border-night-line dark:bg-night-sheet">
+              <p class="font-mono text-sm text-ink-soft dark:text-cream-soft">Крок 3</p>
+              <h3 class="mt-2 font-serif text-xl font-bold">Збережіть файл</h3>
+              <p class="mt-3 leading-relaxed text-ink-soft dark:text-cream-soft">PDF для відгуку на вакансію або HTML-файл, який відкривається в будь-якому браузері.</p>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- 02 Переваги -->
+      <section aria-labelledby="why-title" class="border-b border-line dark:border-night-line">
+        <div class="mx-auto w-full max-w-6xl px-5 py-16 md:px-8 md:py-20">
+          <p class="font-mono text-sm text-stamp dark:text-stamp-light">02 — Гарантії</p>
+          <h2 id="why-title" class="mt-3 font-serif text-3xl font-bold sm:text-4xl">Чому саме ОсьЯ</h2>
+          <ul class="mt-10 grid gap-x-10 gap-y-8 sm:grid-cols-2">
+            <li class="flex gap-4">
+              <span class="flex size-12 shrink-0 items-center justify-center rounded-md border border-line text-ink dark:border-night-line dark:text-cream"><svg class="size-6" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#lock"></use></svg></span>
+              <div>
+                <h3 class="font-serif text-xl font-bold">Дані лишаються у вас</h3>
+                <p class="mt-2 leading-relaxed text-ink-soft dark:text-cream-soft">Сервіс працює у вашому браузері. Ми не просимо пошту й нічого не зберігаємо на сервері.</p>
+              </div>
+            </li>
+            <li class="flex gap-4">
+              <span class="flex size-12 shrink-0 items-center justify-center rounded-md border border-line text-ink dark:border-night-line dark:text-cream"><svg class="size-6" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#file"></use></svg></span>
+              <div>
+                <h3 class="font-serif text-xl font-bold">Файл можна відкрити знову</h3>
+                <p class="mt-2 leading-relaxed text-ink-soft dark:text-cream-soft">Завантажте збережений HTML-файл у конструктор і допишіть новий проєкт, не починаючи спочатку.</p>
+              </div>
+            </li>
+            <li class="flex gap-4">
+              <span class="flex size-12 shrink-0 items-center justify-center rounded-md border border-line text-ink dark:border-night-line dark:text-cream"><svg class="size-6" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#hint"></use></svg></span>
+              <div>
+                <h3 class="font-serif text-xl font-bold">Підказки, що дописати</h3>
+                <p class="mt-2 leading-relaxed text-ink-soft dark:text-cream-soft">Лічильник заповненості показує, чого бракує. Коли все готово, профіль отримує печатку.</p>
+              </div>
+            </li>
+            <li class="flex gap-4">
+              <span class="flex size-12 shrink-0 items-center justify-center rounded-md border border-line text-ink dark:border-night-line dark:text-cream"><svg class="size-6" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#people"></use></svg></span>
+              <div>
+                <h3 class="font-serif text-xl font-bold">Для будь-якого фаху</h3>
+                <p class="mt-2 leading-relaxed text-ink-soft dark:text-cream-soft">Студентка, дизайнер, розробниця чи репетитор: блоки додаються й прибираються під вашу історію.</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- 03 Шаблони -->
+      <section aria-labelledby="templates-title" class="border-b border-line dark:border-night-line">
+        <div class="mx-auto w-full max-w-6xl px-5 py-16 md:px-8 md:py-20">
+          <div class="flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <p class="font-mono text-sm text-stamp dark:text-stamp-light">03 — Бланки</p>
+              <h2 id="templates-title" class="mt-3 font-serif text-3xl font-bold sm:text-4xl">Чотири шаблони</h2>
+            </div>
+            <a href="templates.html" class="inline-flex min-h-12 items-center gap-2 font-semibold text-ink underline decoration-stamp decoration-2 underline-offset-4 hover:text-stamp focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-cream dark:decoration-stamp-light dark:hover:text-stamp-light dark:focus-visible:outline-cream">
+              Усі шаблони
+              <svg class="size-5" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow"></use></svg>
+            </a>
+          </div>
+          <ul class="mt-10 grid grid-cols-2 gap-5 lg:grid-cols-4">
+            <li>
+              <article>
+                <div class="flex aspect-[4/5] flex-col gap-2 rounded-lg border border-line bg-sheet p-4 dark:border-night-line dark:bg-night-sheet" aria-hidden="true">
+                  <div class="h-1.5 w-full rounded-full bg-ink dark:bg-cream"></div>
+                  <div class="mt-1 flex gap-2">
+                    <div class="h-12 w-10 rounded-sm bg-line dark:bg-night-line"></div>
+                    <div class="flex flex-1 flex-col gap-1.5 pt-1"><div class="h-2 w-4/5 rounded-full bg-ink dark:bg-cream"></div><div class="h-1.5 w-3/5 rounded-full bg-line dark:bg-night-line"></div><div class="h-1.5 w-2/5 rounded-full bg-line dark:bg-night-line"></div></div>
+                  </div>
+                  <div class="mt-auto h-1.5 w-full rounded-full bg-line dark:bg-night-line"></div>
+                  <div class="holo size-5 self-end rounded-full"></div>
+                </div>
+                <h3 class="mt-3 font-serif text-lg font-bold">Посвідчення</h3>
+                <p class="mt-1 text-sm text-ink-soft dark:text-cream-soft">Компактна картка з головним.</p>
+              </article>
+            </li>
+            <li>
+              <article>
+                <div class="flex aspect-[4/5] flex-col gap-2 rounded-lg border border-line bg-sheet p-4 dark:border-night-line dark:bg-night-sheet" aria-hidden="true">
+                  <div class="h-2.5 w-3/5 rounded-full bg-ink dark:bg-cream"></div>
+                  <div class="h-1.5 w-2/5 rounded-full bg-line dark:bg-night-line"></div>
+                  <div class="mt-2 h-px w-full bg-line dark:bg-night-line"></div>
+                  <div class="h-1.5 w-full rounded-full bg-line dark:bg-night-line"></div>
+                  <div class="h-1.5 w-11/12 rounded-full bg-line dark:bg-night-line"></div>
+                  <div class="h-1.5 w-4/5 rounded-full bg-line dark:bg-night-line"></div>
+                  <div class="mt-2 h-px w-full bg-line dark:bg-night-line"></div>
+                  <div class="h-1.5 w-full rounded-full bg-line dark:bg-night-line"></div>
+                  <div class="h-1.5 w-3/4 rounded-full bg-line dark:bg-night-line"></div>
+                </div>
+                <h3 class="mt-3 font-serif text-lg font-bold">Резюме</h3>
+                <p class="mt-1 text-sm text-ink-soft dark:text-cream-soft">Одна колонка для друку на А4.</p>
+              </article>
+            </li>
+            <li>
+              <article>
+                <div class="flex aspect-[4/5] gap-3 rounded-lg border border-line bg-sheet p-4 dark:border-night-line dark:bg-night-sheet" aria-hidden="true">
+                  <div class="flex w-1/3 flex-col gap-2 border-r border-line pr-3 dark:border-night-line">
+                    <div class="aspect-square w-full rounded-sm bg-line dark:bg-night-line"></div>
+                    <div class="h-1.5 w-full rounded-full bg-line dark:bg-night-line"></div>
+                    <div class="h-1.5 w-3/4 rounded-full bg-line dark:bg-night-line"></div>
+                  </div>
+                  <div class="flex flex-1 flex-col gap-2">
+                    <div class="h-2.5 w-4/5 rounded-full bg-ink dark:bg-cream"></div>
+                    <div class="h-1.5 w-full rounded-full bg-line dark:bg-night-line"></div>
+                    <div class="h-1.5 w-11/12 rounded-full bg-line dark:bg-night-line"></div>
+                    <div class="mt-2 h-2 w-1/2 rounded-full bg-stamp dark:bg-stamp-light"></div>
+                    <div class="h-1.5 w-full rounded-full bg-line dark:bg-night-line"></div>
+                    <div class="h-1.5 w-2/3 rounded-full bg-line dark:bg-night-line"></div>
+                  </div>
+                </div>
+                <h3 class="mt-3 font-serif text-lg font-bold">Досьє</h3>
+                <p class="mt-1 text-sm text-ink-soft dark:text-cream-soft">Дві колонки для багатьох проєктів.</p>
+              </article>
+            </li>
+            <li>
+              <article>
+                <div class="flex aspect-[4/5] flex-col items-center justify-center gap-2 rounded-lg border border-line bg-sheet p-4 dark:border-night-line dark:bg-night-sheet" aria-hidden="true">
+                  <div class="size-12 rounded-full bg-line dark:bg-night-line"></div>
+                  <div class="h-2.5 w-3/5 rounded-full bg-ink dark:bg-cream"></div>
+                  <div class="h-1.5 w-2/5 rounded-full bg-line dark:bg-night-line"></div>
+                  <div class="mt-2 flex gap-2"><div class="size-4 rounded-sm bg-line dark:bg-night-line"></div><div class="size-4 rounded-sm bg-line dark:bg-night-line"></div><div class="size-4 rounded-sm bg-line dark:bg-night-line"></div></div>
+                </div>
+                <h3 class="mt-3 font-serif text-lg font-bold">Візитка</h3>
+                <p class="mt-1 text-sm text-ink-soft dark:text-cream-soft">Ім’я, фах і контакти.</p>
+              </article>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Фінальний заклик -->
+      <section aria-labelledby="cta-title">
+        <div class="mx-auto w-full max-w-6xl px-5 py-16 md:px-8 md:py-20">
+          <div class="relative overflow-hidden rounded-lg border border-line bg-sheet px-6 py-12 text-center sm:px-12 dark:border-night-line dark:bg-night-sheet">
+            <div class="holo absolute inset-x-0 top-0 h-1.5" aria-hidden="true"></div>
+            <h2 id="cta-title" class="font-serif text-3xl font-bold sm:text-4xl">Оформіть свій профіль сьогодні</h2>
+            <p class="mx-auto mt-4 max-w-xl text-lg leading-relaxed text-ink-soft dark:text-cream-soft">
+              Знадобиться близько десяти хвилин. Чернетка зберігається у браузері, тож можна зупинитися й повернутися пізніше.
+            </p>
+            <a href="builder.html" class="btn-primary mt-8 inline-flex min-h-12 items-center justify-center gap-2 rounded-md px-8 text-base font-semibold text-cream transition-transform duration-150 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink active:translate-y-0 dark:focus-visible:outline-cream">
+              Оформити профіль
+              <svg class="size-5" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow"></use></svg>
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="border-t border-line dark:border-night-line">
+      <div class="mx-auto grid w-full max-w-6xl gap-8 px-5 py-12 md:grid-cols-[1.4fr_1fr_1fr] md:px-8">
+        <div>
+          <a href="index.html" class="inline-flex min-h-12 flex-col justify-center rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink dark:focus-visible:outline-cream">
+          <span class="font-serif text-2xl leading-none font-bold text-ink dark:text-cream">Ось<span class="holo-text">Я</span></span>
+          <span class="mt-1 font-mono text-[11px] leading-none tracking-wide whitespace-nowrap text-ink-soft dark:text-cream-soft">мій цифровий профіль</span>
+        </a>
+          <p class="mt-4 max-w-sm text-sm leading-relaxed text-ink-soft dark:text-cream-soft">
+            Портфоліо у вигляді цифрового посвідчення. Без реєстрації: усе, що ви вводите, лишається у вашому браузері.
+          </p>
+        </div>
+        <nav aria-label="Сторінки сайту">
+          <h2 class="font-mono text-xs tracking-wide text-ink-soft uppercase dark:text-cream-soft">Розділи</h2>
+          <ul class="mt-2">
+            <li><a href="builder.html" class="inline-flex min-h-12 items-center text-ink-soft transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-cream-soft dark:hover:text-cream dark:focus-visible:outline-cream">Конструктор</a></li>
+            <li><a href="templates.html" class="inline-flex min-h-12 items-center text-ink-soft transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-cream-soft dark:hover:text-cream dark:focus-visible:outline-cream">Шаблони</a></li>
+            <li><a href="examples.html" class="inline-flex min-h-12 items-center text-ink-soft transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-cream-soft dark:hover:text-cream dark:focus-visible:outline-cream">Приклади</a></li>
+            <li><a href="about.html" class="inline-flex min-h-12 items-center text-ink-soft transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-cream-soft dark:hover:text-cream dark:focus-visible:outline-cream">Про сервіс</a></li>
+            <li><a href="contact.html" class="inline-flex min-h-12 items-center text-ink-soft transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-cream-soft dark:hover:text-cream dark:focus-visible:outline-cream">Контакти</a></li>
+          </ul>
+        </nav>
+        <div>
+          <h2 class="font-mono text-xs tracking-wide text-ink-soft uppercase dark:text-cream-soft">Документ</h2>
+          <p class="mt-4 font-mono text-sm text-ink dark:text-cream">ОсьЯ № 000 247</p>
+          <p class="mt-2 text-sm leading-relaxed text-ink-soft dark:text-cream-soft">Навчальний проєкт. НУ «Львівська політехніка», 2026.</p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
