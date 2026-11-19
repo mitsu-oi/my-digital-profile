@@ -94,6 +94,45 @@
   html {
     scroll-behavior: smooth;
     scroll-padding-top: 6rem; /* липка шапка не закриває елемент, до якого прокрутили чи перейшли клавішею Tab */
+    /* Базовий розмір шрифту у відсотках (зважає на налаштування браузера користувача).
+       Усі rem-розміри Tailwind (текст, відступи) ростуть разом із ним: 16 px на телефоні, 17 на планшеті, 18 на великому екрані. */
+    font-size: 100%;
+    scrollbar-color: var(--color-line) transparent;
+    caret-color: var(--color-stamp);
+  }
+  @media (min-width: 48rem) {
+    html {
+      font-size: 106.25%;
+    }
+  }
+  @media (min-width: 90rem) {
+    html {
+      font-size: 112.5%;
+    }
+  }
+  html.dark {
+    scrollbar-color: var(--color-night-line) transparent;
+    caret-color: var(--color-stamp-light);
+  }
+  /* виділений текст — у кольорах сайту, а не системний синій */
+  ::selection {
+    background: var(--color-ink);
+    color: var(--color-cream);
+  }
+  .dark ::selection {
+    background: var(--color-cream);
+    color: var(--color-night);
+  }
+  /* заголовки без «висячих» слів, абзаци без самотнього останнього слова */
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  p,
+  li,
+  dd {
+    text-wrap: pretty;
   }
   @media (prefers-reduced-motion: reduce) {
     html {
