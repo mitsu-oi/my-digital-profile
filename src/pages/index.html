@@ -1,244 +1,219 @@
-      <!-- Перший екран: заклик і картка-посвідчення -->
-      <section aria-labelledby="hero-title" class="border-b border-line dark:border-night-line">
-        <div class="mx-auto grid w-full max-w-6xl items-center gap-12 px-5 py-14 md:px-8 md:py-20 lg:grid-cols-[1.05fr_1fr]">
+      <!-- Фільтр «чорнило»: трохи нерівний край штампів, як від справжньої печатки. Використовується всіма SVG-штампами сторінки. -->
+      <svg class="absolute size-0" aria-hidden="true" focusable="false">
+        <filter id="ink">
+          <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="7" result="noise" />
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale="2.2" />
+        </filter>
+      </svg>
+
+      <!-- Перший екран: заголовок і розгорнутий «паспорт» із прикладом профілю -->
+      <section aria-labelledby="hero-title" class="relative isolate overflow-hidden border-b border-line dark:border-night-line">
+        <span class="guilloche text-ink/[0.05] dark:text-cream/[0.05]" aria-hidden="true"></span>
+        <div class="mx-auto grid w-full max-w-6xl items-center gap-12 px-5 py-14 md:px-8 md:py-20 lg:grid-cols-[0.85fr_1.15fr] lg:gap-10">
           <div>
-            <p class="font-mono text-sm tracking-wide text-stamp dark:text-stamp-light">Форма П-1 · портфоліо</p>
-            <h1 id="hero-title" class="mt-4 font-serif text-4xl leading-tight font-bold sm:text-5xl lg:text-[3.5rem]">
-              Ваше портфоліо як&nbsp;офіційний документ
+            <h1 id="hero-title" class="font-serif text-[2.6rem] leading-[1.08] font-bold tracking-tight text-balance sm:text-6xl">
+              Портфоліо, оформлене як&nbsp;документ
             </h1>
-            <p class="mt-5 max-w-xl text-lg leading-relaxed text-ink-soft dark:text-cream-soft">
-              Оберіть шаблон і палітру, додайте проєкти та навички й одразу побачте результат. Без реєстрації: усе, що ви вводите, лишається у вашому браузері.
+            <p class="mt-6 max-w-lg text-lg leading-relaxed text-ink-soft dark:text-cream-soft">
+              Впишіть, що ви вмієте і що вже зробили. ОсьЯ складе з цього охайний профіль у одному з чотирьох бланків, а ви заберете його файлом PDF або HTML.
             </p>
-            <div class="mt-8 flex flex-col gap-3 sm:flex-row">
-              <a href="builder.html" class="btn-primary inline-flex min-h-12 items-center justify-center gap-2 rounded-md px-6 text-base font-semibold text-cream transition-transform duration-150 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink active:translate-y-0 dark:focus-visible:outline-cream">
-                Оформити профіль
-                <svg class="size-5" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow"></use></svg>
-              </a>
-              <a href="templates.html" class="inline-flex min-h-12 items-center justify-center rounded-md border-2 border-ink px-6 text-base font-semibold text-ink transition-colors hover:bg-ink hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:border-cream dark:text-cream dark:hover:bg-cream dark:hover:text-night dark:focus-visible:outline-cream">
-                Переглянути шаблони
-              </a>
+            <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+              <a href="builder.html" class="btn-primary inline-flex min-h-12 items-center justify-center rounded-md px-7 text-base font-semibold whitespace-nowrap text-cream transition-transform duration-150 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink active:translate-y-0 dark:focus-visible:outline-cream">Оформити профіль</a>
+              <a href="examples.html" class="inline-flex min-h-12 items-center justify-center rounded-md border-2 border-ink px-7 text-base font-semibold text-ink transition-colors hover:bg-ink hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:border-cream dark:text-cream dark:hover:bg-cream dark:hover:text-night dark:focus-visible:outline-cream">Подивитися приклади</a>
             </div>
-            <ul class="mt-8 flex flex-wrap gap-x-6 gap-y-2 font-mono text-[13px] text-ink-soft dark:text-cream-soft">
-              <li>· безкоштовно</li>
-              <li>· без реєстрації</li>
-              <li>· PDF та HTML-файл</li>
-            </ul>
+            <p class="mt-6 max-w-md text-sm leading-relaxed text-ink-soft dark:text-cream-soft">Без реєстрації й безкоштовно. Усе, що ви вводите, лишається у вашому браузері.</p>
           </div>
 
-          <!-- Картка-посвідчення: декоративний приклад результату -->
-          <figure class="relative mx-auto w-full max-w-md">
-            <div class="relative rounded-lg border border-line bg-sheet p-5 shadow-[0_18px_40px_-24px_rgba(20,33,61,0.45)] sm:p-6 dark:border-night-line dark:bg-night-sheet dark:shadow-none">
-              <div class="flex items-center justify-between border-b border-line pb-3 font-mono text-[11px] tracking-wide text-ink-soft uppercase dark:border-night-line dark:text-cream-soft">
-                <span>Цифровий профіль</span>
-                <span>ОсьЯ № 000 247</span>
-              </div>
-
-              <div class="mt-5 flex gap-4 sm:gap-5">
-                <div class="flex h-28 w-24 shrink-0 items-end justify-center overflow-hidden rounded-sm border border-line bg-paper text-ink-soft dark:border-night-line dark:bg-night dark:text-cream-soft">
-                  <svg class="size-20" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#user"></use></svg>
+          <!-- «Паспорт»: декоративний приклад результату. Сторінки завжди паперові, навіть у темній темі: це предмет на столі. -->
+          <figure class="relative mx-auto w-full max-w-xl lg:max-w-none" aria-label="Приклад профілю: Олена Коваль, UX-дизайнерка, Львів">
+            <div class="grid rounded-md bg-sheet text-ink shadow-[0_30px_60px_-30px_rgba(14,22,40,0.55)] ring-1 ring-line sm:grid-cols-2 lg:-rotate-[1.5deg]">
+              <!-- ліва сторінка: дані -->
+              <div class="relative isolate overflow-hidden p-5 sm:border-r sm:border-dashed sm:border-line sm:p-6">
+                <span class="guilloche text-ink/[0.07]" aria-hidden="true"></span>
+                <div class="flex items-baseline justify-between gap-3 font-mono text-[11px] text-ink-soft">
+                  <span>Цифровий профіль</span>
+                  <span>№ 000 247</span>
                 </div>
-                <dl class="min-w-0 flex-1 space-y-3">
-                  <div>
-                    <dt class="font-mono text-[10px] tracking-wide text-ink-soft uppercase dark:text-cream-soft">Ім’я та прізвище</dt>
-                    <dd class="font-serif text-xl leading-snug font-bold">Олена Коваль</dd>
+                <div class="mt-4 flex gap-4">
+                  <div class="relative shrink-0">
+                    <img src="assets/images/portrait.svg" alt="" width="200" height="250" class="h-32 w-[6.4rem] rounded-sm ring-1 ring-line">
+                    <span class="holo absolute -bottom-3 -left-3 flex size-11 items-center justify-center rounded-full font-serif text-lg font-bold text-white ring-2 ring-sheet" aria-hidden="true">Я</span>
                   </div>
-                  <div>
-                    <dt class="font-mono text-[10px] tracking-wide text-ink-soft uppercase dark:text-cream-soft">Фах</dt>
-                    <dd class="text-[15px] font-medium">UX-дизайнерка</dd>
-                  </div>
-                  <div>
-                    <dt class="font-mono text-[10px] tracking-wide text-ink-soft uppercase dark:text-cream-soft">Місто</dt>
-                    <dd class="text-[15px] font-medium">Львів</dd>
-                  </div>
-                </dl>
+                  <dl class="min-w-0 space-y-2 text-sm">
+                    <div><dt class="font-mono text-[10px] text-ink-soft">Прізвище</dt><dd class="font-serif text-lg leading-tight font-bold">Коваль</dd></div>
+                    <div><dt class="font-mono text-[10px] text-ink-soft">Ім’я</dt><dd class="font-serif text-lg leading-tight font-bold">Олена</dd></div>
+                    <div><dt class="font-mono text-[10px] text-ink-soft">Фах</dt><dd class="font-medium">UX-дизайнерка</dd></div>
+                    <div><dt class="font-mono text-[10px] text-ink-soft">Місто</dt><dd class="font-medium">Львів</dd></div>
+                  </dl>
+                </div>
+                <div class="mt-5">
+                  <p class="font-mono text-[10px] text-ink-soft">Навички</p>
+                  <ul class="mt-1.5 flex flex-wrap gap-1.5 text-[13px]">
+                    <li class="rounded-sm border border-line bg-sheet/80 px-2 py-0.5">Figma</li>
+                    <li class="rounded-sm border border-line bg-sheet/80 px-2 py-0.5">Дослідження</li>
+                    <li class="rounded-sm border border-line bg-sheet/80 px-2 py-0.5">Прототипи</li>
+                  </ul>
+                </div>
+                <!-- машинозчитуваний рядок, як унизу сторінки паспорта -->
+                <p class="mt-5 overflow-hidden border-t border-line pt-3 font-mono text-[11px] leading-snug tracking-[0.18em] whitespace-nowrap text-ink-soft" aria-hidden="true">
+                  P&lt;UKRKOVAL&lt;&lt;OLENA&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>0002476UKR&lt;&lt;UX&lt;DESIGN&lt;&lt;LVIV&lt;&lt;&lt;&lt;
+                </p>
               </div>
 
-              <div class="mt-5">
-                <p class="font-mono text-[10px] tracking-wide text-ink-soft uppercase dark:text-cream-soft">Навички</p>
-                <ul class="mt-2 flex flex-wrap gap-2 text-[13px]">
-                  <li class="rounded-sm border border-line px-2 py-1 dark:border-night-line">Figma</li>
-                  <li class="rounded-sm border border-line px-2 py-1 dark:border-night-line">Дослідження</li>
-                  <li class="rounded-sm border border-line px-2 py-1 dark:border-night-line">Прототипи</li>
-                </ul>
-              </div>
+              <!-- права сторінка: «візові» штампи — проєкти й досягнення -->
+              <div class="relative isolate hidden min-h-80 overflow-hidden p-6 sm:block" aria-hidden="true">
+                <span class="rosette top-1/2 left-1/2 w-72 -translate-x-1/2 -translate-y-1/2 text-ink/[0.08]"></span>
+                <p class="font-mono text-[11px] text-ink-soft">Відмітки</p>
 
-              <p class="mt-5 overflow-hidden border-t border-line pt-3 font-mono text-[11px] tracking-widest whitespace-nowrap text-ink-soft dark:border-night-line dark:text-cream-soft" aria-hidden="true">
-                OSYA&lt;&lt;KOVAL&lt;&lt;OLENA&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;
-              </p>
+                <svg viewBox="0 0 140 140" class="absolute top-10 left-5 w-32 -rotate-[8deg] text-[#2b4c9b]" filter="url(#ink)">
+                  <defs><path id="ring-top" d="M70 70m-52 0a52 52 0 1 1 104 0a52 52 0 1 1-104 0" /></defs>
+                  <g fill="none" stroke="currentColor"><circle cx="70" cy="70" r="66" stroke-width="3" /><circle cx="70" cy="70" r="40" stroke-width="1.5" /></g>
+                  <text class="font-mono" font-size="11" letter-spacing="2" fill="currentColor"><textPath href="#ring-top">НАВИЧКУ ПІДТВЕРДЖЕНО · 2026 ·</textPath></text>
+                  <text x="70" y="76" text-anchor="middle" class="font-serif" font-size="17" font-weight="700" fill="currentColor">Figma</text>
+                </svg>
 
-              <!-- голографічна наліпка -->
-              <div class="holo absolute top-16 right-5 flex size-16 items-center justify-center rounded-full opacity-90 sm:right-6 sm:size-20" aria-hidden="true">
-                <span class="font-serif text-2xl font-bold text-white/90 sm:text-3xl">Я</span>
-              </div>
-              <!-- печатка -->
-              <div class="absolute right-4 bottom-12 -rotate-12 rounded-sm border-2 border-stamp px-3 py-1 font-mono text-xs font-medium tracking-widest text-stamp uppercase dark:border-stamp-light dark:text-stamp-light" aria-hidden="true">
-                Перевірено
+                <svg viewBox="0 0 170 92" class="absolute top-36 right-4 w-40 rotate-[6deg] text-[#2f6b4f]" filter="url(#ink)">
+                  <g fill="none" stroke="currentColor"><rect x="2" y="2" width="166" height="88" rx="6" stroke-width="3" /><rect x="9" y="9" width="152" height="74" rx="3" stroke-width="1.2" /></g>
+                  <text x="85" y="32" text-anchor="middle" class="font-mono" font-size="11" letter-spacing="3" fill="currentColor">ПРОЄКТ ЗДАНО</text>
+                  <text x="85" y="58" text-anchor="middle" class="font-serif" font-size="19" font-weight="700" fill="currentColor">«Кошик»</text>
+                  <text x="85" y="75" text-anchor="middle" class="font-mono" font-size="10" fill="currentColor">03.2026</text>
+                </svg>
+
+                <svg viewBox="0 0 120 60" class="absolute right-6 bottom-6 w-28 rotate-[4deg] text-[#2b4c9b]" filter="url(#ink)">
+                  <rect x="2" y="2" width="116" height="56" fill="none" stroke="currentColor" stroke-width="2.5" stroke-dasharray="7 3" />
+                  <text x="60" y="27" text-anchor="middle" class="font-mono" font-size="10" letter-spacing="2" fill="currentColor">СТАЖУВАННЯ</text>
+                  <text x="60" y="45" text-anchor="middle" class="font-serif" font-size="14" font-weight="700" fill="currentColor">Львів</text>
+                </svg>
               </div>
             </div>
-            <figcaption class="mt-3 text-center font-mono text-xs text-ink-soft dark:text-cream-soft">Приклад профілю в шаблоні «Посвідчення»</figcaption>
+
+            <!-- головний штамп: з’являється один раз після завантаження -->
+            <svg viewBox="0 0 190 80" class="stamp-land absolute -bottom-6 left-[38%] w-40 text-stamp [--stamp-turn:-11deg] sm:bottom-12 sm:left-[36%] sm:w-48" style="transform: rotate(-11deg)" filter="url(#ink)" aria-hidden="true">
+              <g fill="none" stroke="currentColor"><rect x="3" y="3" width="184" height="74" rx="37" stroke-width="3.5" /><rect x="10" y="10" width="170" height="60" rx="30" stroke-width="1.3" /></g>
+              <text x="95" y="49" text-anchor="middle" class="font-mono" font-size="20" font-weight="500" letter-spacing="4" fill="currentColor">ПЕРЕВІРЕНО</text>
+            </svg>
           </figure>
         </div>
       </section>
 
-      <!-- 01 Як це працює -->
+      <!-- Порядок оформлення: справжня послідовність, тому кроки пронумеровано -->
       <section aria-labelledby="steps-title" class="border-b border-line dark:border-night-line">
-        <div class="mx-auto w-full max-w-6xl px-5 py-16 md:px-8 md:py-20">
-          <p class="font-mono text-sm text-stamp dark:text-stamp-light">01 — Порядок оформлення</p>
-          <h2 id="steps-title" class="mt-3 font-serif text-3xl font-bold sm:text-4xl">Три кроки до готового профілю</h2>
-          <ol class="mt-10 grid gap-6 md:grid-cols-3">
-            <li class="rounded-lg border border-line bg-sheet p-6 dark:border-night-line dark:bg-night-sheet">
-              <p class="font-mono text-sm text-ink-soft dark:text-cream-soft">Крок 1</p>
-              <h3 class="mt-2 font-serif text-xl font-bold">Оберіть вигляд</h3>
-              <p class="mt-3 leading-relaxed text-ink-soft dark:text-cream-soft">Чотири шаблони й шість палітр. Змінити їх можна будь-коли, введене не зникне.</p>
+        <div class="mx-auto w-full max-w-6xl px-5 py-16 md:px-8 md:py-24">
+          <h2 id="steps-title" class="max-w-xl font-serif text-3xl leading-tight font-bold sm:text-4xl">Як оформити профіль</h2>
+          <ol class="mt-12 grid gap-12 md:grid-cols-3 md:gap-0 md:divide-x md:divide-line dark:md:divide-night-line">
+            <li class="md:pr-8">
+              <div class="flex items-end gap-4">
+                <span class="font-serif text-7xl leading-none font-bold text-ink/15 dark:text-cream/20" aria-hidden="true">1</span>
+                <!-- мініатюри бланків -->
+                <div class="relative mb-1 h-16 w-28" aria-hidden="true">
+                  <span class="absolute left-0 top-2 h-14 w-11 -rotate-6 rounded-sm border border-line bg-[#f7faf7] shadow-sm"><span class="m-1.5 block h-1 w-6 rounded-full bg-[#0f6b54]"></span></span>
+                  <span class="absolute left-8 top-0 h-14 w-11 rounded-sm border border-line bg-sheet shadow-sm"><span class="m-1.5 block h-1 w-6 rounded-full bg-ink"></span><span class="mx-1.5 block h-3 w-3 rounded-sm bg-line"></span></span>
+                  <span class="absolute left-16 top-2 h-14 w-11 rotate-6 rounded-sm border border-line bg-[#fbf8fc] shadow-sm"><span class="m-1.5 block h-1 w-6 rounded-full bg-[#7a2d8f]"></span></span>
+                </div>
+              </div>
+              <h3 class="mt-5 font-serif text-xl font-bold">Оберіть бланк і кольори</h3>
+              <p class="mt-2 leading-relaxed text-ink-soft dark:text-cream-soft">Чотири бланки й шість палітр. Поміняти їх можна будь-коли, введене не зникне.</p>
             </li>
-            <li class="rounded-lg border border-line bg-sheet p-6 dark:border-night-line dark:bg-night-sheet">
-              <p class="font-mono text-sm text-ink-soft dark:text-cream-soft">Крок 2</p>
-              <h3 class="mt-2 font-serif text-xl font-bold">Заповніть блоки</h3>
-              <p class="mt-3 leading-relaxed text-ink-soft dark:text-cream-soft">Про себе, навички, проєкти, досвід. Перегляд поруч оновлюється одразу, поки ви пишете.</p>
+            <li class="md:px-8">
+              <div class="flex items-end gap-4">
+                <span class="font-serif text-7xl leading-none font-bold text-ink/15 dark:text-cream/20" aria-hidden="true">2</span>
+                <!-- поле, яке заповнюють -->
+                <div class="mb-1 w-44 rounded-md border border-line bg-sheet px-3 py-2 text-ink dark:border-night-line" aria-hidden="true">
+                  <span class="block font-mono text-[10px] text-ink-soft">Фах</span>
+                  <span class="block text-sm font-medium">UX-дизайнер<span class="ml-px inline-block h-4 w-px translate-y-0.5 bg-ink"></span></span>
+                </div>
+              </div>
+              <h3 class="mt-5 font-serif text-xl font-bold">Заповніть графи</h3>
+              <p class="mt-2 leading-relaxed text-ink-soft dark:text-cream-soft">Про себе, навички, проєкти, досвід. Профіль поруч оновлюється, поки ви пишете, а підказки кажуть, чого бракує.</p>
             </li>
-            <li class="rounded-lg border border-line bg-sheet p-6 dark:border-night-line dark:bg-night-sheet">
-              <p class="font-mono text-sm text-ink-soft dark:text-cream-soft">Крок 3</p>
-              <h3 class="mt-2 font-serif text-xl font-bold">Збережіть файл</h3>
-              <p class="mt-3 leading-relaxed text-ink-soft dark:text-cream-soft">PDF для відгуку на вакансію або HTML-файл, який відкривається в будь-якому браузері.</p>
+            <li class="md:pl-8">
+              <div class="flex items-end gap-4">
+                <span class="font-serif text-7xl leading-none font-bold text-ink/15 dark:text-cream/20" aria-hidden="true">3</span>
+                <!-- готові файли -->
+                <ul class="mb-1 space-y-1.5 font-mono text-[11px]" aria-hidden="true">
+                  <li class="flex items-center gap-2 rounded-sm border border-line bg-sheet px-2 py-1 text-ink dark:border-night-line"><svg class="size-4" aria-hidden="true"><use href="assets/icons/sprite.svg#file"></use></svg>olena-koval.pdf</li>
+                  <li class="flex items-center gap-2 rounded-sm border border-line bg-sheet px-2 py-1 text-ink dark:border-night-line"><svg class="size-4" aria-hidden="true"><use href="assets/icons/sprite.svg#file"></use></svg>olena-koval.html</li>
+                </ul>
+              </div>
+              <h3 class="mt-5 font-serif text-xl font-bold">Заберіть файл</h3>
+              <p class="mt-2 leading-relaxed text-ink-soft dark:text-cream-soft">PDF для відгуку на вакансію або HTML-файл, що відкривається в будь-якому браузері й повертається в конструктор для правок.</p>
             </li>
           </ol>
         </div>
       </section>
 
-      <!-- 02 Переваги -->
-      <section aria-labelledby="why-title" class="border-b border-line dark:border-night-line">
-        <div class="mx-auto w-full max-w-6xl px-5 py-16 md:px-8 md:py-20">
-          <p class="font-mono text-sm text-stamp dark:text-stamp-light">02 — Гарантії</p>
-          <h2 id="why-title" class="mt-3 font-serif text-3xl font-bold sm:text-4xl">Чому саме ОсьЯ</h2>
-          <ul class="mt-10 grid gap-x-10 gap-y-8 sm:grid-cols-2">
-            <li class="flex gap-4">
-              <span class="flex size-12 shrink-0 items-center justify-center rounded-md border border-line text-ink dark:border-night-line dark:text-cream"><svg class="size-6" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#lock"></use></svg></span>
-              <div>
-                <h3 class="font-serif text-xl font-bold">Дані лишаються у вас</h3>
-                <p class="mt-2 leading-relaxed text-ink-soft dark:text-cream-soft">Сервіс працює у вашому браузері. Ми не просимо пошту й нічого не зберігаємо на сервері.</p>
-              </div>
-            </li>
-            <li class="flex gap-4">
-              <span class="flex size-12 shrink-0 items-center justify-center rounded-md border border-line text-ink dark:border-night-line dark:text-cream"><svg class="size-6" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#file"></use></svg></span>
-              <div>
-                <h3 class="font-serif text-xl font-bold">Файл можна відкрити знову</h3>
-                <p class="mt-2 leading-relaxed text-ink-soft dark:text-cream-soft">Завантажте збережений HTML-файл у конструктор і допишіть новий проєкт, не починаючи спочатку.</p>
-              </div>
-            </li>
-            <li class="flex gap-4">
-              <span class="flex size-12 shrink-0 items-center justify-center rounded-md border border-line text-ink dark:border-night-line dark:text-cream"><svg class="size-6" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#hint"></use></svg></span>
-              <div>
-                <h3 class="font-serif text-xl font-bold">Підказки, що дописати</h3>
-                <p class="mt-2 leading-relaxed text-ink-soft dark:text-cream-soft">Лічильник заповненості показує, чого бракує. Коли все готово, профіль отримує печатку.</p>
-              </div>
-            </li>
-            <li class="flex gap-4">
-              <span class="flex size-12 shrink-0 items-center justify-center rounded-md border border-line text-ink dark:border-night-line dark:text-cream"><svg class="size-6" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#people"></use></svg></span>
-              <div>
-                <h3 class="font-serif text-xl font-bold">Для будь-якого фаху</h3>
-                <p class="mt-2 leading-relaxed text-ink-soft dark:text-cream-soft">Студентка, дизайнер, розробниця чи репетитор: блоки додаються й прибираються під вашу історію.</p>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <!-- 03 Шаблони -->
-      <section aria-labelledby="templates-title" class="border-b border-line dark:border-night-line">
-        <div class="mx-auto w-full max-w-6xl px-5 py-16 md:px-8 md:py-20">
-          <div class="flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <p class="font-mono text-sm text-stamp dark:text-stamp-light">03 — Бланки</p>
-              <h2 id="templates-title" class="mt-3 font-serif text-3xl font-bold sm:text-4xl">Чотири шаблони</h2>
+      <!-- «Особливі відмітки»: як графа в документі, рядки «назва — значення» замість карток -->
+      <section aria-labelledby="marks-title" class="border-b border-line dark:border-night-line">
+        <div class="mx-auto grid w-full max-w-6xl gap-10 px-5 py-16 md:px-8 md:py-24 lg:grid-cols-[1fr_1.6fr]">
+          <div>
+            <h2 id="marks-title" class="font-serif text-3xl leading-tight font-bold sm:text-4xl">Особливі відмітки</h2>
+            <p class="mt-4 max-w-sm leading-relaxed text-ink-soft dark:text-cream-soft">Коротко про те, на яких умовах працює сервіс. Ці умови однакові для всіх і не зміняться після реєстрації, бо реєстрації немає.</p>
+          </div>
+          <dl class="border-t-[3px] border-double border-ink dark:border-cream">
+            <div class="grid gap-1 border-b border-line py-4 sm:grid-cols-[13rem_1fr] sm:gap-6 dark:border-night-line">
+              <dt class="text-ink-soft dark:text-cream-soft">Реєстрація</dt>
+              <dd class="font-serif text-xl font-bold">Не потрібна</dd>
             </div>
-            <a href="templates.html" class="inline-flex min-h-12 items-center gap-2 font-semibold text-ink underline decoration-stamp decoration-2 underline-offset-4 hover:text-stamp focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-cream dark:decoration-stamp-light dark:hover:text-stamp-light dark:focus-visible:outline-cream">
-              Усі шаблони
-              <svg class="size-5" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow"></use></svg>
-            </a>
+            <div class="grid gap-1 border-b border-line py-4 sm:grid-cols-[13rem_1fr] sm:gap-6 dark:border-night-line">
+              <dt class="text-ink-soft dark:text-cream-soft">Де зберігаються дані</dt>
+              <dd><span class="font-serif text-xl font-bold">Лише у вашому браузері</span><span class="mt-1 block text-ink-soft dark:text-cream-soft">Сервера, який приймав би профіль, немає.</span></dd>
+            </div>
+            <div class="grid gap-1 border-b border-line py-4 sm:grid-cols-[13rem_1fr] sm:gap-6 dark:border-night-line">
+              <dt class="text-ink-soft dark:text-cream-soft">Вартість</dt>
+              <dd class="font-serif text-xl font-bold">0 ₴</dd>
+            </div>
+            <div class="grid gap-1 border-b border-line py-4 sm:grid-cols-[13rem_1fr] sm:gap-6 dark:border-night-line">
+              <dt class="text-ink-soft dark:text-cream-soft">Реклама у файлі</dt>
+              <dd class="font-serif text-xl font-bold">Відсутня</dd>
+            </div>
+            <div class="grid gap-1 border-b border-line py-4 sm:grid-cols-[13rem_1fr] sm:gap-6 dark:border-night-line">
+              <dt class="text-ink-soft dark:text-cream-soft">Формати</dt>
+              <dd><span class="font-serif text-xl font-bold">PDF і HTML</span><span class="mt-1 block text-ink-soft dark:text-cream-soft">HTML-файл можна знову відкрити в конструкторі й дописати.</span></dd>
+            </div>
+            <div class="grid gap-1 border-b border-line py-4 sm:grid-cols-[13rem_1fr] sm:gap-6 dark:border-night-line">
+              <dt class="text-ink-soft dark:text-cream-soft">Підходить для</dt>
+              <dd class="font-serif text-xl font-bold">Будь-якого фаху, від студента до репетитора</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      <!-- Бланки: справжні зменшені профілі, розкладені віялом (малює assets/js/home.js) -->
+      <section aria-labelledby="blanks-title" class="overflow-hidden border-b border-line dark:border-night-line">
+        <div class="mx-auto w-full max-w-6xl px-5 py-16 md:px-8 md:py-24">
+          <div class="flex flex-wrap items-end justify-between gap-4">
+            <h2 id="blanks-title" class="max-w-xl font-serif text-3xl leading-tight font-bold sm:text-4xl">Чотири бланки, один ваш профіль</h2>
+            <a href="templates.html" class="inline-flex min-h-12 items-center font-semibold text-ink underline decoration-stamp decoration-2 underline-offset-4 hover:text-stamp focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-cream dark:decoration-stamp-light dark:hover:text-stamp-light dark:focus-visible:outline-cream">Порівняти всі бланки</a>
           </div>
-          <ul class="mt-10 grid grid-cols-2 gap-5 lg:grid-cols-4">
-            <li>
-              <article>
-                <div class="flex aspect-[4/5] flex-col gap-2 rounded-lg border border-line bg-sheet p-4 dark:border-night-line dark:bg-night-sheet" aria-hidden="true">
-                  <div class="h-1.5 w-full rounded-full bg-ink dark:bg-cream"></div>
-                  <div class="mt-1 flex gap-2">
-                    <div class="h-12 w-10 rounded-sm bg-line dark:bg-night-line"></div>
-                    <div class="flex flex-1 flex-col gap-1.5 pt-1"><div class="h-2 w-4/5 rounded-full bg-ink dark:bg-cream"></div><div class="h-1.5 w-3/5 rounded-full bg-line dark:bg-night-line"></div><div class="h-1.5 w-2/5 rounded-full bg-line dark:bg-night-line"></div></div>
-                  </div>
-                  <div class="mt-auto h-1.5 w-full rounded-full bg-line dark:bg-night-line"></div>
-                  <div class="holo size-5 self-end rounded-full"></div>
-                </div>
-                <h3 class="mt-3 font-serif text-lg font-bold">Посвідчення</h3>
-                <p class="mt-1 text-sm text-ink-soft dark:text-cream-soft">Компактна картка з головним.</p>
-              </article>
+          <p class="mt-4 max-w-xl leading-relaxed text-ink-soft dark:text-cream-soft">Ті самі дані Олени в кожному бланку. Обирайте за тим, кому надсилатимете: роботодавцю, клієнту чи друзям.</p>
+
+          <ul data-fan class="mt-12 grid grid-cols-2 gap-x-4 gap-y-8 lg:flex lg:justify-center lg:gap-0 lg:pt-6">
+            <li class="transition-transform duration-200 lg:-mr-8 lg:-rotate-6 lg:hover:-translate-y-3 lg:hover:rotate-0">
+              <div data-fan-frame="card" data-palette="ink" class="aspect-[4/5] overflow-hidden rounded-md bg-sheet shadow-[0_18px_40px_-24px_rgba(14,22,40,0.6)] ring-1 ring-line lg:w-60"></div>
+              <p class="relative z-10 mt-3 font-serif text-lg font-bold lg:mx-auto lg:w-fit lg:rounded-sm lg:bg-paper lg:px-3 lg:dark:bg-night">Посвідчення</p>
             </li>
-            <li>
-              <article>
-                <div class="flex aspect-[4/5] flex-col gap-2 rounded-lg border border-line bg-sheet p-4 dark:border-night-line dark:bg-night-sheet" aria-hidden="true">
-                  <div class="h-2.5 w-3/5 rounded-full bg-ink dark:bg-cream"></div>
-                  <div class="h-1.5 w-2/5 rounded-full bg-line dark:bg-night-line"></div>
-                  <div class="mt-2 h-px w-full bg-line dark:bg-night-line"></div>
-                  <div class="h-1.5 w-full rounded-full bg-line dark:bg-night-line"></div>
-                  <div class="h-1.5 w-11/12 rounded-full bg-line dark:bg-night-line"></div>
-                  <div class="h-1.5 w-4/5 rounded-full bg-line dark:bg-night-line"></div>
-                  <div class="mt-2 h-px w-full bg-line dark:bg-night-line"></div>
-                  <div class="h-1.5 w-full rounded-full bg-line dark:bg-night-line"></div>
-                  <div class="h-1.5 w-3/4 rounded-full bg-line dark:bg-night-line"></div>
-                </div>
-                <h3 class="mt-3 font-serif text-lg font-bold">Резюме</h3>
-                <p class="mt-1 text-sm text-ink-soft dark:text-cream-soft">Одна колонка для друку на А4.</p>
-              </article>
+            <li class="transition-transform duration-200 lg:-mr-8 lg:mt-6 lg:-rotate-2 lg:hover:-translate-y-3 lg:hover:rotate-0">
+              <div data-fan-frame="resume" data-palette="graphite" class="aspect-[4/5] overflow-hidden rounded-md bg-sheet shadow-[0_18px_40px_-24px_rgba(14,22,40,0.6)] ring-1 ring-line lg:w-60"></div>
+              <p class="relative z-10 mt-3 font-serif text-lg font-bold lg:mx-auto lg:w-fit lg:rounded-sm lg:bg-paper lg:px-3 lg:dark:bg-night">Резюме</p>
             </li>
-            <li>
-              <article>
-                <div class="flex aspect-[4/5] gap-3 rounded-lg border border-line bg-sheet p-4 dark:border-night-line dark:bg-night-sheet" aria-hidden="true">
-                  <div class="flex w-1/3 flex-col gap-2 border-r border-line pr-3 dark:border-night-line">
-                    <div class="aspect-square w-full rounded-sm bg-line dark:bg-night-line"></div>
-                    <div class="h-1.5 w-full rounded-full bg-line dark:bg-night-line"></div>
-                    <div class="h-1.5 w-3/4 rounded-full bg-line dark:bg-night-line"></div>
-                  </div>
-                  <div class="flex flex-1 flex-col gap-2">
-                    <div class="h-2.5 w-4/5 rounded-full bg-ink dark:bg-cream"></div>
-                    <div class="h-1.5 w-full rounded-full bg-line dark:bg-night-line"></div>
-                    <div class="h-1.5 w-11/12 rounded-full bg-line dark:bg-night-line"></div>
-                    <div class="mt-2 h-2 w-1/2 rounded-full bg-stamp dark:bg-stamp-light"></div>
-                    <div class="h-1.5 w-full rounded-full bg-line dark:bg-night-line"></div>
-                    <div class="h-1.5 w-2/3 rounded-full bg-line dark:bg-night-line"></div>
-                  </div>
-                </div>
-                <h3 class="mt-3 font-serif text-lg font-bold">Досьє</h3>
-                <p class="mt-1 text-sm text-ink-soft dark:text-cream-soft">Дві колонки для багатьох проєктів.</p>
-              </article>
+            <li class="transition-transform duration-200 lg:-mr-8 lg:mt-6 lg:rotate-2 lg:hover:-translate-y-3 lg:hover:rotate-0">
+              <div data-fan-frame="dossier" data-palette="emerald" class="aspect-[4/5] overflow-hidden rounded-md bg-sheet shadow-[0_18px_40px_-24px_rgba(14,22,40,0.6)] ring-1 ring-line lg:w-60"></div>
+              <p class="relative z-10 mt-3 font-serif text-lg font-bold lg:mx-auto lg:w-fit lg:rounded-sm lg:bg-paper lg:px-3 lg:dark:bg-night">Досьє</p>
             </li>
-            <li>
-              <article>
-                <div class="flex aspect-[4/5] flex-col items-center justify-center gap-2 rounded-lg border border-line bg-sheet p-4 dark:border-night-line dark:bg-night-sheet" aria-hidden="true">
-                  <div class="size-12 rounded-full bg-line dark:bg-night-line"></div>
-                  <div class="h-2.5 w-3/5 rounded-full bg-ink dark:bg-cream"></div>
-                  <div class="h-1.5 w-2/5 rounded-full bg-line dark:bg-night-line"></div>
-                  <div class="mt-2 flex gap-2"><div class="size-4 rounded-sm bg-line dark:bg-night-line"></div><div class="size-4 rounded-sm bg-line dark:bg-night-line"></div><div class="size-4 rounded-sm bg-line dark:bg-night-line"></div></div>
-                </div>
-                <h3 class="mt-3 font-serif text-lg font-bold">Візитка</h3>
-                <p class="mt-1 text-sm text-ink-soft dark:text-cream-soft">Ім’я, фах і контакти.</p>
-              </article>
+            <li class="transition-transform duration-200 lg:rotate-6 lg:hover:-translate-y-3 lg:hover:rotate-0">
+              <div data-fan-frame="visit" data-palette="night" class="aspect-[4/5] overflow-hidden rounded-md bg-sheet shadow-[0_18px_40px_-24px_rgba(14,22,40,0.6)] ring-1 ring-line lg:w-60"></div>
+              <p class="relative z-10 mt-3 font-serif text-lg font-bold lg:mx-auto lg:w-fit lg:rounded-sm lg:bg-paper lg:px-3 lg:dark:bg-night">Візитка</p>
             </li>
           </ul>
         </div>
       </section>
 
-      <!-- Фінальний заклик -->
-      <section aria-labelledby="cta-title">
-        <div class="mx-auto w-full max-w-6xl px-5 py-16 md:px-8 md:py-20">
-          <div class="relative overflow-hidden rounded-lg border border-line bg-sheet px-6 py-12 text-center sm:px-12 dark:border-night-line dark:bg-night-sheet">
-            <div class="holo absolute inset-x-0 top-0 h-1.5" aria-hidden="true"></div>
-            <h2 id="cta-title" class="font-serif text-3xl font-bold sm:text-4xl">Оформіть свій профіль сьогодні</h2>
-            <p class="mx-auto mt-4 max-w-xl text-lg leading-relaxed text-ink-soft dark:text-cream-soft">
-              Знадобиться близько десяти хвилин. Чернетка зберігається у браузері, тож можна зупинитися й повернутися пізніше.
-            </p>
-            <a href="builder.html" class="btn-primary mt-8 inline-flex min-h-12 items-center justify-center gap-2 rounded-md px-8 text-base font-semibold text-cream transition-transform duration-150 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink active:translate-y-0 dark:focus-visible:outline-cream">
-              Оформити профіль
-              <svg class="size-5" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow"></use></svg>
-            </a>
-          </div>
+      <!-- Фінальний заклик: єдина темна смуга на сторінці -->
+      <section aria-labelledby="cta-title" class="relative isolate overflow-hidden bg-ink text-cream dark:bg-night-sheet">
+        <span class="rosette -top-24 -right-24 w-[34rem] text-cream/10" aria-hidden="true"></span>
+        <div class="mx-auto w-full max-w-6xl px-5 py-20 md:px-8 md:py-28">
+          <h2 id="cta-title" class="max-w-2xl font-serif text-4xl leading-tight font-bold text-balance sm:text-5xl">Перший варіант профілю займає десять хвилин</h2>
+          <p class="mt-5 max-w-xl text-lg leading-relaxed text-cream-soft">Чернетка зберігається в браузері після кожної зміни, тож можна зупинитися й повернутися завтра.</p>
+          <a href="builder.html" class="btn-primary-light mt-9 inline-flex min-h-12 items-center justify-center rounded-md px-8 text-base font-semibold text-ink transition-transform duration-150 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cream active:translate-y-0">Оформити профіль</a>
         </div>
       </section>

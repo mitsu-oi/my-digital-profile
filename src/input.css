@@ -91,6 +91,7 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: 6rem; /* липка шапка не закриває елемент, до якого прокрутили чи перейшли клавішею Tab */
   }
   @media (prefers-reduced-motion: reduce) {
     html {
@@ -134,8 +135,62 @@
       var(--holo-x, 0%) var(--holo-y, 50%);
     animation: holo-ring 9s ease-in-out infinite alternate;
   }
+  /* та сама кнопка на темній смузі: світла заливка, голографічна рамка */
+  .btn-primary-light {
+    border: 2px solid transparent;
+    background:
+      linear-gradient(var(--color-cream), var(--color-cream)) padding-box,
+      linear-gradient(115deg, #2dd4bf, #a78bfa, #f472b6, #fb923c, #2dd4bf) border-box;
+    background-size:
+      auto,
+      300% 300%;
+    background-position:
+      0 0,
+      var(--holo-x, 0%) var(--holo-y, 50%);
+    animation: holo-ring 9s ease-in-out infinite alternate;
+  }
+
+  /* ---------- Мотиви документа ----------
+     Гільйош (захисний візерунок паспорта) — SVG-файл як маска, тому колір задає звичайна властивість color.
+     Елемент лежить під вмістом: батьку потрібні relative і isolate. */
+  .guilloche,
+  .rosette {
+    position: absolute;
+    z-index: -1;
+    pointer-events: none;
+    background-color: currentColor;
+    mask-repeat: repeat;
+  }
+  .guilloche {
+    inset: 0;
+    mask-image: url("../assets/images/guilloche-waves.svg");
+    mask-size: 240px 48px;
+  }
+  .rosette {
+    mask-image: url("../assets/images/guilloche-rosette.svg");
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    aspect-ratio: 1;
+  }
+
+  /* Штамп «падає» на сторінку один раз після завантаження — єдина «подія» першого екрана */
+  .stamp-land {
+    animation: stamp-land 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.2) 0.9s both;
+  }
+  @keyframes stamp-land {
+    from {
+      opacity: 0;
+      transform: scale(1.6) rotate(var(--stamp-turn, -12deg));
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) rotate(var(--stamp-turn, -12deg));
+    }
+  }
+
   .holo-live .holo,
   .holo-live .holo-text,
+  .holo-live .btn-primary-light,
   .holo-live .btn-primary {
     animation: none; /* коли користувач рухає мишею, позицію задає він */
   }
@@ -154,7 +209,9 @@
   @media (prefers-reduced-motion: reduce) {
     .holo,
     .holo-text,
-    .btn-primary {
+    .btn-primary,
+    .btn-primary-light,
+    .stamp-land {
       animation: none;
     }
   }

@@ -6,9 +6,10 @@
   "scripts": {
     "build:pages": "node scripts/build-pages.js",
     "build:css": "tailwindcss -i ./src/input.css -o ./css/site.css --minify",
-    "build": "npm run build:pages && npm run build:css",
+    "build": "npm run build:art && npm run build:pages && npm run build:css",
     "watch:css": "tailwindcss -i ./src/input.css -o ./css/site.css --watch",
-    "serve": "node scripts/serve.js"
+    "serve": "node scripts/serve.js",
+    "build:art": "node scripts/make-art.js"
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.3.3",
