@@ -47,7 +47,7 @@ function drawList() {
     const card = el('li');
     const article = el('article');
 
-    const frame = el('div', 'h-72 overflow-hidden rounded-lg border border-line dark:border-night-line');
+    const frame = el('div', 'doc h-72 overflow-hidden rounded-lg border border-line dark:border-night-line');
     frame.inert = true; // ілюстрація: не для клавіатури й читача екрана
     const preview = renderProfile(profile, paletteOf(profile), { level: 3 });
     preview.classList.add('min-h-full', '[zoom:0.6]');

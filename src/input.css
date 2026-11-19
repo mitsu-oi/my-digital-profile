@@ -87,7 +87,7 @@
   --color-night-line: #2f3b5c; /* лінії та рамки */
   --color-cream: #f1ede3; /* текст */
   --color-cream-soft: #a9b2c7; /* приглушений текст */
-  --color-stamp-light: #ff8f76; /* печатка на темному */
+  --color-stamp-light: #ef8a62; /* печатка на темному */
 }
 
 @layer base {
@@ -176,6 +176,19 @@
       var(--holo-x, 0%) var(--holo-y, 50%);
     animation: holo-ring 9s ease-in-out infinite alternate;
   }
+  /* у темній темі чорнильна заливка зливалась би з нічним фоном, тому кнопка стає світлою (текст — dark:text-night у розмітці) */
+  .dark .btn-primary {
+    background-image:
+      linear-gradient(var(--color-cream), var(--color-cream)),
+      linear-gradient(115deg, #2dd4bf, #a78bfa, #f472b6, #fb923c, #2dd4bf);
+  }
+
+  /* «Документи»-предмети (паспорт, бланки, заява) лишаються паперовими й у темній темі,
+     але трохи приглушені, як папір під вечірнім світлом, щоб не сліпили на нічному фоні */
+  .dark .doc {
+    filter: brightness(0.86) saturate(0.92);
+  }
+
   /* та сама кнопка на темній смузі: світла заливка, голографічна рамка */
   .btn-primary-light {
     border: 2px solid transparent;

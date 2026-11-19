@@ -50,7 +50,7 @@ function drawList() {
     const article = el('article', 'flex flex-1 flex-col');
 
     // зменшений перегляд; inert прибирає його з клавіатури й читача екрана, бо це ілюстрація
-    const frame = el('div', 'h-80 overflow-hidden rounded-lg border border-line dark:border-night-line');
+    const frame = el('div', 'doc h-80 overflow-hidden rounded-lg border border-line dark:border-night-line');
     frame.inert = true;
     const preview = renderProfile(sample, palette, { template: template.id, level: 3 });
     preview.classList.add('min-h-full', '[zoom:0.6]');
