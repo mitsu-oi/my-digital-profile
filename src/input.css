@@ -72,6 +72,15 @@
   --font-mono: "JetBrains Mono", Consolas, monospace; /* «службові» підписи документа */
 
   /* світла тема: папір і чорнило */
+  /* Токени руху за шкалою transitions.dev (скіл transitions-polish): тривалість за призначенням, а не «на око» */
+  --duration-quick: 150ms; /* закриття вікна/меню, натискання */
+  --duration-fast: 250ms; /* відкриття вікна/меню, наведення */
+  --duration-very-slow: 500ms; /* урочистий момент: штамп */
+  --ease-smooth-out: cubic-bezier(0.22, 1, 0.36, 1); /* відкриття, закриття, зсуви */
+  --ease-bounce: cubic-bezier(0.34, 1.36, 0.64, 1); /* поява «з поштовхом»: лише штамп */
+  --scale-large: 0.96; /* вікно з’являється з цього масштабу */
+  --distance-base: 8px; /* зсув меню під час появи */
+
   --container-page: 90rem; /* ширина вмісту: 1440 px, щоб на широких екранах не було порожніх смуг */
 
   --color-paper: #f6f3ec; /* фон сторінки */
@@ -155,14 +164,15 @@
 
 @layer components {
   /* ---------- Голограма: єдиний яскравий елемент сайту ----------
-     Градієнт більший за елемент; його позицію зсуває або повільна анімація, або рух миші
-     (site.js записує --holo-x / --holo-y і додає клас .holo-live на <html>). */
+     Градієнт більший за елемент; його позицію зсуває рух миші (site.js записує --holo-x / --holo-y).
+     Без нескінченної анімації: за аудитом руху (скіли design-motion-principles і transitions-polish)
+     петлі на кількох елементах одночасно відволікають, а WCAG 2.2.2 вимагає паузу для руху довше 5 с.
+     Голограма «оживає» лише у відповідь на дію людини, як справжня наліпка, коли її нахиляєш. */
   .holo,
   .holo-text {
     background-image: linear-gradient(115deg, #0d9488, #6d28d9, #db2777, #c2410c, #0d9488);
     background-size: 300% 300%;
     background-position: var(--holo-x, 0%) var(--holo-y, 50%);
-    animation: holo-drift 9s ease-in-out infinite alternate;
   }
   .dark .holo,
   .dark .holo-text {
@@ -186,7 +196,6 @@
     background-position:
       0 0,
       var(--holo-x, 0%) var(--holo-y, 50%);
-    animation: holo-ring 9s ease-in-out infinite alternate;
   }
   /* у темній темі кнопка — піднесена темна поверхня (night-raised) з голографічною рамкою:
      помітна, але не сліпить; текст лишається кремовим (text-cream у розмітці) */
@@ -215,7 +224,6 @@
     background-position:
       0 0,
       var(--holo-x, 0%) var(--holo-y, 50%);
-    animation: holo-ring 9s ease-in-out infinite alternate;
   }
 
   /* ---------- Мотиви документа ----------
@@ -243,7 +251,7 @@
 
   /* Штамп «падає» на сторінку один раз після завантаження — єдина «подія» першого екрана */
   .stamp-land {
-    animation: stamp-land 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.2) 0.9s both;
+    animation: stamp-land var(--duration-very-slow) var(--ease-bounce) 0.9s both;
   }
   @keyframes stamp-land {
     from {
@@ -256,31 +264,59 @@
     }
   }
 
-  .holo-live .holo,
-  .holo-live .holo-text,
-  .holo-live .btn-primary-light,
-  .holo-live .btn-primary {
-    animation: none; /* коли користувач рухає мишею, позицію задає він */
+  /* <dialog> з’являється зі зменшення 0.96 і прозорості; @starting-style задає стан «до появи» */
+  dialog {
+    opacity: 0;
+    scale: var(--scale-large);
+    transition:
+      opacity var(--duration-quick) var(--ease-smooth-out),
+      scale var(--duration-quick) var(--ease-smooth-out),
+      overlay var(--duration-quick) allow-discrete,
+      display var(--duration-quick) allow-discrete;
   }
-  @keyframes holo-drift {
-    to {
-      background-position: 100% 50%;
+  dialog[open] {
+    opacity: 1;
+    scale: 1;
+    transition-duration: var(--duration-fast);
+    @starting-style {
+      opacity: 0;
+      scale: var(--scale-large);
     }
   }
-  @keyframes holo-ring {
-    to {
-      background-position:
-        0 0,
-        100% 50%;
+  dialog::backdrop {
+    opacity: 0;
+    transition:
+      opacity var(--duration-quick) var(--ease-smooth-out),
+      overlay var(--duration-quick) allow-discrete,
+      display var(--duration-quick) allow-discrete;
+  }
+  dialog[open]::backdrop {
+    opacity: 1;
+    transition-duration: var(--duration-fast);
+    @starting-style {
+      opacity: 0;
     }
   }
+  /* мобільне меню виїжджає на 8 px і проявляється; ховається миттєво (атрибут hidden) */
+  #mobile-menu:not([hidden]) {
+    transition:
+      opacity var(--duration-fast) var(--ease-smooth-out),
+      translate var(--duration-fast) var(--ease-smooth-out);
+    @starting-style {
+      opacity: 0;
+      translate: 0 calc(var(--distance-base) * -1);
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .holo,
-    .holo-text,
-    .btn-primary,
-    .btn-primary-light,
     .stamp-land {
       animation: none;
+    }
+    dialog,
+    dialog[open],
+    dialog::backdrop,
+    #mobile-menu:not([hidden]) {
+      transition: none;
     }
   }
 }

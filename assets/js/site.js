@@ -61,7 +61,6 @@
         if (event.pointerType !== 'mouse' || frame) return;
         frame = requestAnimationFrame(() => {
           frame = 0;
-          root.classList.add('holo-live');
           root.style.setProperty('--holo-x', `${Math.round((event.clientX / window.innerWidth) * 100)}%`);
           root.style.setProperty('--holo-y', `${Math.round((event.clientY / window.innerHeight) * 100)}%`);
         });
