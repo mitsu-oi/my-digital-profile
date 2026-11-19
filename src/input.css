@@ -114,6 +114,16 @@
     scrollbar-color: var(--color-night-line) transparent;
     caret-color: var(--color-stamp-light);
   }
+  /* Tailwind v4 лишає кнопкам звичайну стрілку; на сайті все, що натискається, показує руку */
+  button:not(:disabled),
+  [role="button"],
+  summary,
+  label[for],
+  input[type="checkbox"],
+  input[type="radio"],
+  select {
+    cursor: pointer;
+  }
   /* виділений текст — у кольорах сайту, а не системний синій */
   ::selection {
     background: var(--color-ink);

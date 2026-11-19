@@ -17,15 +17,29 @@
             <p class="mt-6 max-w-lg text-lg leading-relaxed xl:text-xl text-ink-soft dark:text-cream-soft">
               Впишіть, що ви вмієте і що вже зробили. ОсьЯ складе з цього охайний профіль у одному з чотирьох бланків, а ви заберете його файлом PDF або HTML.
             </p>
-            <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              <a href="builder.html" class="btn-primary inline-flex min-h-12 items-center justify-center rounded-md px-7 text-base font-semibold whitespace-nowrap text-cream dark:text-night transition-transform duration-150 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink active:translate-y-0 active:scale-[0.97] dark:focus-visible:outline-cream">Оформити профіль</a>
+            <!-- Жива демонстрація: поля одразу змінюють «паспорт» поруч (assets/js/home.js).
+                 Без JavaScript форма все одно працює: відправка відкриває конструктор із цими даними в адресі. -->
+            <form id="demo-form-target" action="builder.html" method="get" data-demo class="mt-8 max-w-xl">
+              <div class="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label for="demo-name" class="text-sm font-semibold">Ім’я та прізвище</label>
+                  <input id="demo-name" name="name" type="text" maxlength="60" autocomplete="name" placeholder="Олена Коваль" data-demo-in="name" class="mt-1.5 block min-h-12 w-full rounded-md border border-line bg-sheet px-4 text-base text-ink placeholder:text-ink-soft/70 focus-visible:border-ink focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ink dark:border-night-line dark:bg-night-sheet dark:text-cream dark:placeholder:text-cream-soft/70 dark:focus-visible:border-cream dark:focus-visible:outline-cream">
+                </div>
+                <div>
+                  <label for="demo-role" class="text-sm font-semibold">Фах</label>
+                  <input id="demo-role" name="role" type="text" maxlength="60" autocomplete="organization-title" placeholder="UX-дизайнерка" data-demo-in="role" class="mt-1.5 block min-h-12 w-full rounded-md border border-line bg-sheet px-4 text-base text-ink placeholder:text-ink-soft/70 focus-visible:border-ink focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ink dark:border-night-line dark:bg-night-sheet dark:text-cream dark:placeholder:text-cream-soft/70 dark:focus-visible:border-cream dark:focus-visible:outline-cream">
+                </div>
+              </div>
+            </form>
+            <div class="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+              <button type="submit" form="demo-form-target" class="btn-primary inline-flex min-h-12 items-center justify-center rounded-md px-7 text-base font-semibold whitespace-nowrap text-cream dark:text-night transition-transform duration-150 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink active:translate-y-0 active:scale-[0.97] dark:focus-visible:outline-cream">Оформити профіль</button>
               <a href="examples.html" class="inline-flex min-h-12 items-center justify-center rounded-md border-2 border-ink px-7 text-base font-semibold text-ink transition-colors hover:bg-ink hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:border-cream dark:text-cream dark:hover:bg-cream dark:hover:text-night dark:focus-visible:outline-cream">Подивитися приклади</a>
             </div>
-            <p class="mt-6 max-w-md text-sm leading-relaxed text-ink-soft dark:text-cream-soft">Без реєстрації й безкоштовно. Усе, що ви вводите, лишається у вашому браузері.</p>
+            <p class="mt-6 max-w-md text-sm leading-relaxed text-ink-soft dark:text-cream-soft">Спробуйте: «паспорт» поруч зміниться, поки ви пишете. Без реєстрації й безкоштовно, усе лишається у вашому браузері.</p>
           </div>
 
           <!-- «Паспорт»: декоративний приклад результату. Сторінки завжди паперові, навіть у темній темі: це предмет на столі. -->
-          <figure class="doc relative mx-auto w-full max-w-xl lg:max-w-none" aria-label="Приклад профілю: Олена Коваль, UX-дизайнерка, Львів">
+          <figure class="doc relative mx-auto w-full max-w-xl lg:max-w-none" aria-label="Приклад профілю: Олена Коваль, UX-дизайнерка, Львів" data-demo-label>
             <div class="grid rounded-md bg-sheet text-ink shadow-[0_30px_60px_-30px_rgba(14,22,40,0.55)] ring-1 ring-line sm:grid-cols-2 lg:-rotate-[1.5deg]">
               <!-- ліва сторінка: дані -->
               <div class="relative isolate overflow-hidden p-5 sm:border-r sm:border-dashed sm:border-line sm:p-6">
@@ -40,9 +54,9 @@
                     <span class="holo absolute -bottom-3 -left-3 flex size-11 items-center justify-center rounded-full font-serif text-lg font-bold text-white ring-2 ring-sheet" aria-hidden="true">Я</span>
                   </div>
                   <dl class="min-w-0 space-y-2 text-sm">
-                    <div><dt class="font-mono text-[10px] text-ink-soft">Прізвище</dt><dd class="font-serif text-lg leading-tight font-bold">Коваль</dd></div>
-                    <div><dt class="font-mono text-[10px] text-ink-soft">Ім’я</dt><dd class="font-serif text-lg leading-tight font-bold">Олена</dd></div>
-                    <div><dt class="font-mono text-[10px] text-ink-soft">Фах</dt><dd class="font-medium">UX-дизайнерка</dd></div>
+                    <div><dt class="font-mono text-[10px] text-ink-soft">Прізвище</dt><dd class="font-serif text-lg leading-tight font-bold break-words" data-demo-out="surname">Коваль</dd></div>
+                    <div><dt class="font-mono text-[10px] text-ink-soft">Ім’я</dt><dd class="font-serif text-lg leading-tight font-bold break-words" data-demo-out="given">Олена</dd></div>
+                    <div><dt class="font-mono text-[10px] text-ink-soft">Фах</dt><dd class="font-medium break-words" data-demo-out="role">UX-дизайнерка</dd></div>
                     <div><dt class="font-mono text-[10px] text-ink-soft">Місто</dt><dd class="font-medium">Львів</dd></div>
                   </dl>
                 </div>
@@ -56,7 +70,7 @@
                 </div>
                 <!-- машинозчитуваний рядок, як унизу сторінки паспорта -->
                 <p class="mt-5 overflow-hidden border-t border-line pt-3 font-mono text-[11px] leading-snug tracking-[0.18em] whitespace-nowrap text-ink-soft" aria-hidden="true">
-                  P&lt;UKRKOVAL&lt;&lt;OLENA&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>0002476UKR&lt;&lt;UX&lt;DESIGN&lt;&lt;LVIV&lt;&lt;&lt;&lt;
+                  <span data-demo-out="mrz">P&lt;UKRKOVAL&lt;&lt;OLENA&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;</span><br>0002476UKR&lt;&lt;UX&lt;DESIGN&lt;&lt;LVIV&lt;&lt;&lt;&lt;
                 </p>
               </div>
 
