@@ -53,7 +53,7 @@ function drawList() {
     preview.classList.add('min-h-full', '[zoom:0.6]');
     frame.append(preview);
 
-    const open = el('button', 'mt-3 inline-flex min-h-12 items-center rounded-md border-2 border-ink px-5 font-semibold text-ink transition-colors hover:bg-ink hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:border-cream dark:text-cream dark:hover:bg-cream dark:hover:text-night dark:focus-visible:outline-cream', 'Переглянути');
+    const open = el('button', 'mt-3 inline-flex min-h-12 items-center rounded-md border-2 border-ink px-5 font-semibold text-ink transition-colors hover:bg-ink hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:border-cream dark:text-cream dark:hover:bg-night-raised dark:hover:text-cream dark:focus-visible:outline-cream', 'Переглянути');
     open.type = 'button';
     open.setAttribute('aria-label', `Переглянути профіль: ${profile.person.name}`);
     open.addEventListener('click', () => openExample(example, open));

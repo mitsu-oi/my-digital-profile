@@ -27,7 +27,7 @@ const logo = `<a href="index.html" class="inline-flex min-h-12 flex-col justify-
 const navLink = (page, current, classes) => `<a href="${page.file}"${page.file === current ? ' aria-current="page"' : ''} class="${classes}">${page.nav}</a>`;
 const NAV_DESKTOP = 'inline-flex min-h-12 items-center border-b-2 border-transparent px-1 text-[15px] font-medium text-ink-soft transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink aria-[current=page]:border-stamp aria-[current=page]:text-ink dark:text-cream-soft dark:hover:text-cream dark:focus-visible:outline-cream dark:aria-[current=page]:border-stamp-light dark:aria-[current=page]:text-cream';
 const NAV_MOBILE = 'flex min-h-12 items-center border-b border-line px-1 text-base font-medium text-ink aria-[current=page]:text-stamp dark:border-night-line dark:text-cream dark:aria-[current=page]:text-stamp-light';
-const BTN_PRIMARY = 'btn-primary min-h-12 items-center justify-center gap-2 rounded-md px-6 text-base font-semibold text-cream dark:text-night transition-transform duration-150 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink active:translate-y-0 active:scale-[0.97] dark:focus-visible:outline-cream';
+const BTN_PRIMARY = 'btn-primary min-h-12 items-center justify-center gap-2 rounded-md px-6 text-base font-semibold text-cream transition-transform duration-150 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink active:translate-y-0 active:scale-[0.97] dark:focus-visible:outline-cream';
 
 const head = (page) => `<!doctype html>
 <html lang="uk">

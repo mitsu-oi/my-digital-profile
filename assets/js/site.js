@@ -13,7 +13,7 @@
     const dark = root.classList.contains('dark');
     if (themeButton) themeButton.setAttribute('aria-pressed', String(dark));
     if (themeLabel) themeLabel.textContent = dark ? 'Увімкнути світлу тему' : 'Увімкнути темну тему';
-    if (themeColor) themeColor.setAttribute('content', dark ? '#0e1628' : '#f6f3ec'); // колір панелі браузера на телефоні
+    if (themeColor) themeColor.setAttribute('content', dark ? '#13161d' : '#f6f3ec'); // колір панелі браузера на телефоні
   }
 
   if (themeButton) {

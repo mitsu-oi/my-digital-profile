@@ -26,7 +26,7 @@ export function showLoadError(container, retry) {
     el('p', 'font-serif text-xl font-bold', 'Не вдалося завантажити дані'),
     el('p', 'mt-2 text-ink-soft dark:text-cream-soft', 'Перевірте з’єднання з інтернетом і спробуйте ще раз.'),
   );
-  const button = el('button', 'mt-4 inline-flex min-h-12 items-center rounded-md border-2 border-ink px-5 font-semibold text-ink hover:bg-ink hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:border-cream dark:text-cream dark:hover:bg-cream dark:hover:text-night dark:focus-visible:outline-cream', 'Спробувати ще');
+  const button = el('button', 'mt-4 inline-flex min-h-12 items-center rounded-md border-2 border-ink px-5 font-semibold text-ink hover:bg-ink hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:border-cream dark:text-cream dark:hover:bg-night-raised dark:hover:text-cream dark:focus-visible:outline-cream', 'Спробувати ще');
   button.type = 'button';
   button.addEventListener('click', retry);
   box.append(button);
@@ -35,7 +35,7 @@ export function showLoadError(container, retry) {
 
 // Кнопка-перемикач для фільтрів і палітр. Натиснута позначається aria-pressed="true".
 export function chip(text, pressed, onClick) {
-  const button = el('button', 'inline-flex min-h-12 items-center gap-2 rounded-md border border-line bg-sheet px-4 text-[15px] font-medium text-ink transition-colors hover:border-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink aria-pressed:border-ink aria-pressed:bg-ink aria-pressed:text-cream dark:border-night-line dark:bg-night-sheet dark:text-cream dark:hover:border-cream dark:focus-visible:outline-cream dark:aria-pressed:border-cream dark:aria-pressed:bg-cream dark:aria-pressed:text-night', text);
+  const button = el('button', 'inline-flex min-h-12 items-center gap-2 rounded-md border border-line bg-sheet px-4 text-[15px] font-medium text-ink transition-colors hover:border-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink aria-pressed:border-ink aria-pressed:bg-ink aria-pressed:text-cream dark:border-night-line dark:bg-night-sheet dark:text-cream dark:hover:border-cream dark:focus-visible:outline-cream dark:aria-pressed:border-stamp-light dark:aria-pressed:bg-night-raised dark:aria-pressed:text-cream', text);
   button.type = 'button';
   button.setAttribute('aria-pressed', String(pressed));
   button.addEventListener('click', onClick);

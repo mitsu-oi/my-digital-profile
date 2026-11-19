@@ -77,17 +77,19 @@
   --color-paper: #f6f3ec; /* фон сторінки */
   --color-sheet: #fffdf8; /* картки, поля */
   --color-ink: #14213d; /* текст, головні кнопки */
-  --color-ink-soft: #55607a; /* приглушений текст */
+  --color-ink-soft: #58606f; /* приглушений текст */
   --color-line: #cfc8b8; /* лінії та рамки */
   --color-stamp: #b63a22; /* печатка, акцент, помилки */
 
-  /* темна тема: нічне чорнило */
-  --color-night: #0e1628; /* фон сторінки */
-  --color-night-sheet: #162037; /* картки, поля */
-  --color-night-line: #2f3b5c; /* лінії та рамки */
-  --color-cream: #f1ede3; /* текст */
-  --color-cream-soft: #a9b2c7; /* приглушений текст */
-  --color-stamp-light: #ef8a62; /* печатка на темному */
+  /* темна тема: «чорнило вночі». Нейтральний темний із ледь синім відтінком (без насиченого синього),
+     теплий кремовий текст і приглушена печатка — ті самі кольори, що й у світлій темі, лише тональні варіанти */
+  --color-night: #13161d; /* фон сторінки */
+  --color-night-sheet: #1b1f28; /* картки, поля */
+  --color-night-raised: #252a35; /* піднесені елементи: головна кнопка */
+  --color-night-line: #2f3441; /* лінії та рамки */
+  --color-cream: #ebe6dc; /* текст */
+  --color-cream-soft: #a9a497; /* приглушений текст (теплий сірий, як і основний текст) */
+  --color-stamp-light: #e08a70; /* печатка на темному */
 }
 
 @layer base {
@@ -164,7 +166,7 @@
   }
   .dark .holo,
   .dark .holo-text {
-    background-image: linear-gradient(115deg, #5eead4, #a78bfa, #f9a8d4, #fdba74, #5eead4);
+    background-image: linear-gradient(115deg, #2bb3a3, #8b5cf6, #db5a9b, #d9773f, #2bb3a3);
   }
   /* текст, зафарбований голограмою (літера «Я» в логотипі) */
   .holo-text {
@@ -186,17 +188,19 @@
       var(--holo-x, 0%) var(--holo-y, 50%);
     animation: holo-ring 9s ease-in-out infinite alternate;
   }
-  /* у темній темі чорнильна заливка зливалась би з нічним фоном, тому кнопка стає світлою (текст — dark:text-night у розмітці) */
-  .dark .btn-primary {
+  /* у темній темі кнопка — піднесена темна поверхня (night-raised) з голографічною рамкою:
+     помітна, але не сліпить; текст лишається кремовим (text-cream у розмітці) */
+  .dark .btn-primary,
+  .dark .btn-primary-light {
     background-image:
-      linear-gradient(var(--color-cream), var(--color-cream)),
-      linear-gradient(115deg, #2dd4bf, #a78bfa, #f472b6, #fb923c, #2dd4bf);
+      linear-gradient(var(--color-night-raised), var(--color-night-raised)),
+      linear-gradient(115deg, #2bb3a3, #8b5cf6, #db5a9b, #d9773f, #2bb3a3);
   }
 
   /* «Документи»-предмети (паспорт, бланки, заява) лишаються паперовими й у темній темі,
      але трохи приглушені, як папір під вечірнім світлом, щоб не сліпили на нічному фоні */
   .dark .doc {
-    filter: brightness(0.86) saturate(0.92);
+    filter: brightness(0.8) saturate(0.85);
   }
 
   /* та сама кнопка на темній смузі: світла заливка, голографічна рамка */
