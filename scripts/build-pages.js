@@ -59,7 +59,7 @@ ${page.module ? `    <script type="module" src="assets/js/${page.module}"></scri
 `;
 
 const header = (page) => `    <header class="sticky top-0 z-40 border-b border-line bg-paper/95 backdrop-blur-sm dark:border-night-line dark:bg-night/95">
-      <div class="mx-auto flex h-20 w-full max-w-6xl items-center justify-between gap-4 px-5 md:px-8">
+      <div class="mx-auto flex h-20 w-full max-w-page items-center justify-between gap-4 px-5 md:px-8 xl:px-12">
         ${logo}
 
         <nav aria-label="Головна навігація" class="hidden lg:block">
@@ -93,7 +93,7 @@ ${pages.filter((p) => p.nav).map((p) => `          <li>${navLink(p, page.file, N
 
 const FOOT_LINK = 'inline-flex min-h-12 items-center text-ink-soft transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-cream-soft dark:hover:text-cream dark:focus-visible:outline-cream';
 const footer = () => `    <footer class="border-t border-line dark:border-night-line">
-      <div class="mx-auto grid w-full max-w-6xl gap-8 px-5 py-12 md:grid-cols-[1.4fr_1fr_1fr] md:px-8">
+      <div class="mx-auto grid w-full max-w-page gap-8 px-5 py-12 md:grid-cols-[1.4fr_1fr_1fr] md:px-8 xl:px-12">
         <div>
           ${logo}
           <p class="mt-4 max-w-sm text-sm leading-relaxed text-ink-soft dark:text-cream-soft">
@@ -118,7 +118,7 @@ ${pages.filter((p) => p.nav).map((p) => `            <li><a href="${p.file}" cla
 `;
 
 // ---------- збірка ----------
-const stub = (page) => `      <div class="mx-auto w-full max-w-6xl px-5 py-24 md:px-8">
+const stub = (page) => `      <div class="mx-auto w-full max-w-page px-5 py-24 md:px-8 xl:px-12">
         <p class="font-mono text-sm text-stamp dark:text-stamp-light">Сторінка в роботі</p>
         <h1 class="mt-3 font-serif text-4xl font-bold">${page.nav}</h1>
         <p class="mt-4 max-w-xl text-lg text-ink-soft dark:text-cream-soft">Цей розділ з’явиться на наступному етапі.</p>

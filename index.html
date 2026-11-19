@@ -26,7 +26,7 @@
   <body class="flex min-h-screen flex-col bg-paper font-sans text-ink antialiased dark:bg-night dark:text-cream">
     <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded-md focus:bg-ink focus:px-4 focus:py-3 focus:text-cream">Перейти до основного вмісту</a>
     <header class="sticky top-0 z-40 border-b border-line bg-paper/95 backdrop-blur-sm dark:border-night-line dark:bg-night/95">
-      <div class="mx-auto flex h-20 w-full max-w-6xl items-center justify-between gap-4 px-5 md:px-8">
+      <div class="mx-auto flex h-20 w-full max-w-page items-center justify-between gap-4 px-5 md:px-8 xl:px-12">
         <a href="index.html" class="inline-flex min-h-12 flex-col justify-center rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink dark:focus-visible:outline-cream">
           <span class="font-serif text-2xl leading-none font-bold text-ink dark:text-cream">Ось<span class="holo-text">Я</span></span>
           <span class="mt-1 font-mono text-[11px] leading-none tracking-wide whitespace-nowrap text-ink-soft dark:text-cream-soft">мій цифровий профіль</span>
@@ -80,12 +80,12 @@
       <!-- Перший екран: заголовок і розгорнутий «паспорт» із прикладом профілю -->
       <section aria-labelledby="hero-title" class="relative isolate overflow-hidden border-b border-line dark:border-night-line">
         <span class="guilloche text-ink/[0.05] dark:text-cream/[0.05]" aria-hidden="true"></span>
-        <div class="mx-auto grid w-full max-w-6xl items-center gap-12 px-5 py-14 md:px-8 md:py-20 lg:grid-cols-[0.85fr_1.15fr] lg:gap-10">
+        <div class="mx-auto grid w-full max-w-page items-center gap-12 px-5 py-14 md:px-8 xl:px-12 md:py-20 lg:grid-cols-[0.85fr_1.15fr] lg:gap-10 xl:gap-16 xl:py-24">
           <div>
-            <h1 id="hero-title" class="font-serif text-[2.6rem] leading-[1.08] font-bold tracking-tight text-balance sm:text-6xl">
+            <h1 id="hero-title" class="font-serif text-[2.6rem] leading-[1.05] font-bold tracking-tight text-balance sm:text-6xl xl:text-7xl">
               Портфоліо, оформлене як&nbsp;документ
             </h1>
-            <p class="mt-6 max-w-lg text-lg leading-relaxed text-ink-soft dark:text-cream-soft">
+            <p class="mt-6 max-w-lg text-lg leading-relaxed xl:text-xl text-ink-soft dark:text-cream-soft">
               Впишіть, що ви вмієте і що вже зробили. ОсьЯ складе з цього охайний профіль у одному з чотирьох бланків, а ви заберете його файлом PDF або HTML.
             </p>
             <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
@@ -169,7 +169,7 @@
 
       <!-- Порядок оформлення: справжня послідовність, тому кроки пронумеровано -->
       <section aria-labelledby="steps-title" class="border-b border-line dark:border-night-line">
-        <div class="mx-auto w-full max-w-6xl px-5 py-16 md:px-8 md:py-24">
+        <div class="mx-auto w-full max-w-page px-5 py-16 md:px-8 xl:px-12 md:py-24">
           <h2 id="steps-title" class="max-w-xl font-serif text-3xl leading-tight font-bold sm:text-4xl">Як оформити профіль</h2>
           <ol class="mt-12 grid gap-12 md:grid-cols-3 md:gap-0 md:divide-x md:divide-line dark:md:divide-night-line">
             <li class="md:pr-8">
@@ -185,7 +185,7 @@
               <h3 class="mt-5 font-serif text-xl font-bold">Оберіть бланк і кольори</h3>
               <p class="mt-2 leading-relaxed text-ink-soft dark:text-cream-soft">Чотири бланки й шість палітр. Поміняти їх можна будь-коли, введене не зникне.</p>
             </li>
-            <li class="md:px-8">
+            <li class="md:px-8 xl:px-12">
               <div class="flex items-end gap-4">
                 <span class="font-serif text-7xl leading-none font-bold text-ink/15 dark:text-cream/20" aria-hidden="true">2</span>
                 <!-- поле, яке заповнюють -->
@@ -215,7 +215,7 @@
 
       <!-- «Особливі відмітки»: як графа в документі, рядки «назва — значення» замість карток -->
       <section aria-labelledby="marks-title" class="border-b border-line dark:border-night-line">
-        <div class="mx-auto grid w-full max-w-6xl gap-10 px-5 py-16 md:px-8 md:py-24 lg:grid-cols-[1fr_1.6fr]">
+        <div class="mx-auto grid w-full max-w-page gap-10 px-5 py-16 md:px-8 xl:px-12 md:py-24 lg:grid-cols-[1fr_1.6fr]">
           <div>
             <h2 id="marks-title" class="font-serif text-3xl leading-tight font-bold sm:text-4xl">Особливі відмітки</h2>
             <p class="mt-4 max-w-sm leading-relaxed text-ink-soft dark:text-cream-soft">Коротко про те, на яких умовах працює сервіс. Ці умови однакові для всіх і не зміняться після реєстрації, бо реєстрації немає.</p>
@@ -251,7 +251,7 @@
 
       <!-- Бланки: справжні зменшені профілі, розкладені віялом (малює assets/js/home.js) -->
       <section aria-labelledby="blanks-title" class="overflow-hidden border-b border-line dark:border-night-line">
-        <div class="mx-auto w-full max-w-6xl px-5 py-16 md:px-8 md:py-24">
+        <div class="mx-auto w-full max-w-page px-5 py-16 md:px-8 xl:px-12 md:py-24">
           <div class="flex flex-wrap items-end justify-between gap-4">
             <h2 id="blanks-title" class="max-w-xl font-serif text-3xl leading-tight font-bold sm:text-4xl">Чотири бланки, один ваш профіль</h2>
             <a href="templates.html" class="inline-flex min-h-12 items-center font-semibold text-ink underline decoration-stamp decoration-2 underline-offset-4 hover:text-stamp focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-cream dark:decoration-stamp-light dark:hover:text-stamp-light dark:focus-visible:outline-cream">Порівняти всі бланки</a>
@@ -282,7 +282,7 @@
       <!-- Фінальний заклик: єдина темна смуга на сторінці -->
       <section aria-labelledby="cta-title" class="relative isolate overflow-hidden bg-ink text-cream dark:bg-night-sheet">
         <span class="rosette -top-24 -right-24 w-[34rem] text-cream/10" aria-hidden="true"></span>
-        <div class="mx-auto w-full max-w-6xl px-5 py-20 md:px-8 md:py-28">
+        <div class="mx-auto w-full max-w-page px-5 py-20 md:px-8 xl:px-12 md:py-28">
           <h2 id="cta-title" class="max-w-2xl font-serif text-4xl leading-tight font-bold text-balance sm:text-5xl">Перший варіант профілю займає десять хвилин</h2>
           <p class="mt-5 max-w-xl text-lg leading-relaxed text-cream-soft">Чернетка зберігається в браузері після кожної зміни, тож можна зупинитися й повернутися завтра.</p>
           <a href="builder.html" class="btn-primary-light mt-9 inline-flex min-h-12 items-center justify-center rounded-md px-8 text-base font-semibold text-ink transition-transform duration-150 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cream active:translate-y-0">Оформити профіль</a>
@@ -291,7 +291,7 @@
     </main>
 
     <footer class="border-t border-line dark:border-night-line">
-      <div class="mx-auto grid w-full max-w-6xl gap-8 px-5 py-12 md:grid-cols-[1.4fr_1fr_1fr] md:px-8">
+      <div class="mx-auto grid w-full max-w-page gap-8 px-5 py-12 md:grid-cols-[1.4fr_1fr_1fr] md:px-8 xl:px-12">
         <div>
           <a href="index.html" class="inline-flex min-h-12 flex-col justify-center rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink dark:focus-visible:outline-cream">
           <span class="font-serif text-2xl leading-none font-bold text-ink dark:text-cream">Ось<span class="holo-text">Я</span></span>
