@@ -1,0 +1,21 @@
+      <div class="mx-auto w-full max-w-6xl px-5 py-14 md:px-8 md:py-20">
+        <h1 class="font-serif text-4xl leading-tight font-bold sm:text-5xl">Шаблони</h1>
+        <p class="mt-4 max-w-2xl text-lg leading-relaxed text-ink-soft dark:text-cream-soft">
+          Один і той самий профіль у чотирьох шаблонах. Змініть палітру, щоб побачити, як він виглядатиме, і оберіть той, що пасує вашій меті. Шаблон можна змінити й пізніше, у конструкторі.
+        </p>
+
+        <div class="mt-10 grid gap-6 lg:grid-cols-2">
+          <div>
+            <h2 id="filter-title" class="font-mono text-sm text-ink-soft dark:text-cream-soft">Для чого потрібне портфоліо</h2>
+            <div data-filters role="group" aria-labelledby="filter-title" class="mt-3 flex flex-wrap gap-2"></div>
+          </div>
+          <div>
+            <h2 id="palette-title" class="font-mono text-sm text-ink-soft dark:text-cream-soft">Палітра перегляду</h2>
+            <div data-palettes role="group" aria-labelledby="palette-title" class="mt-3 flex flex-wrap gap-2"></div>
+          </div>
+        </div>
+
+        <p data-status role="status" class="mt-8 min-h-6 text-sm text-ink-soft dark:text-cream-soft"></p>
+        <ul data-list aria-busy="true" class="mt-4 grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-4"></ul>
+        <noscript><p class="mt-4 rounded-lg border border-line p-6 dark:border-night-line">Щоб побачити шаблони, увімкніть JavaScript у браузері.</p></noscript>
+      </div>

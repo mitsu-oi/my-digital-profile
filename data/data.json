@@ -1,0 +1,177 @@
+{
+  "version": 1,
+  "templates": [
+    {
+      "id": "card",
+      "name": "Посвідчення",
+      "description": "Компактна картка-документ: фото, ім’я, фах і найважливіше поруч. Схожа на службове посвідчення.",
+      "fits": ["job", "short"]
+    },
+    {
+      "id": "resume",
+      "name": "Резюме",
+      "description": "Одна колонка, розділи один під одним. Найкраще друкується на аркуші А4 і зберігається як PDF.",
+      "fits": ["job"]
+    },
+    {
+      "id": "dossier",
+      "name": "Досьє",
+      "description": "Дві колонки: ліворуч контакти й навички, праворуч проєкти та досвід. Вміщує багато матеріалу.",
+      "fits": ["job", "clients"]
+    },
+    {
+      "id": "visit",
+      "name": "Візитка",
+      "description": "Лише головне по центру: хто ви, що вмієте і як із вами зв’язатися. Зручно відкривати з телефона.",
+      "fits": ["clients", "short"]
+    }
+  ],
+  "fits": [
+    { "id": "job", "name": "Для відгуку на вакансію" },
+    { "id": "clients", "name": "Для клієнтів" },
+    { "id": "short", "name": "Коротко про себе" }
+  ],
+  "palettes": [
+    { "id": "ink", "name": "Чорнило", "bg": "#fffdf8", "text": "#14213d", "muted": "#55607a", "accent": "#b63a22", "line": "#cfc8b8" },
+    { "id": "emerald", "name": "Смарагд", "bg": "#f7faf7", "text": "#12302a", "muted": "#4a635c", "accent": "#0f6b54", "line": "#c5d6cf" },
+    { "id": "plum", "name": "Слива", "bg": "#fbf8fc", "text": "#2b1836", "muted": "#65546f", "accent": "#7a2d8f", "line": "#d9cde0" },
+    { "id": "graphite", "name": "Графіт", "bg": "#f7f7f6", "text": "#1c1d21", "muted": "#5a5d66", "accent": "#1d4ed8", "line": "#d0d1d4" },
+    { "id": "clay", "name": "Глина", "bg": "#fbf6f1", "text": "#3a2318", "muted": "#6e574b", "accent": "#a3401c", "line": "#dfd0c4" },
+    { "id": "night", "name": "Північ", "bg": "#111a2e", "text": "#f1ede3", "muted": "#a9b2c7", "accent": "#7dd3c0", "line": "#2f3b5c" }
+  ],
+  "spheres": [
+    { "id": "design", "name": "Дизайн і фото" },
+    { "id": "it", "name": "ІТ" },
+    { "id": "people", "name": "Навчання і маркетинг" }
+  ],
+  "examples": [
+    {
+      "id": "olena",
+      "sphere": "design",
+      "profile": {
+        "template": "card",
+        "palette": "ink",
+        "number": "000 247",
+        "person": { "name": "Олена Коваль", "role": "UX-дизайнерка", "city": "Львів" },
+        "blocks": [
+          { "type": "about", "text": "Проєктую мобільні застосунки для банків і сервісів доставки. Починаю з розмов із користувачами, а не з макетів." },
+          { "type": "skills", "items": ["Figma", "Дослідження", "Прототипи", "Дизайн-системи"] },
+          { "type": "projects", "items": [
+            { "title": "Застосунок доставки «Кошик»", "text": "Скоротила оформлення замовлення з семи кроків до трьох.", "link": "https://example.com/koshyk" },
+            { "title": "Кабінет клієнта банку", "text": "Провела 12 інтерв’ю та переробила головний екран.", "link": "" }
+          ] },
+          { "type": "contacts", "email": "olena@example.com", "phone": "", "link": "https://example.com/olena" }
+        ]
+      }
+    },
+    {
+      "id": "maksym",
+      "sphere": "it",
+      "profile": {
+        "template": "resume",
+        "palette": "graphite",
+        "number": "000 248",
+        "person": { "name": "Максим Гнатюк", "role": "Frontend-розробник, студент 3 курсу", "city": "Київ" },
+        "blocks": [
+          { "type": "about", "text": "Верстаю адаптивні сайти й пишу інтерфейси на чистому JavaScript. Шукаю стажування на літо." },
+          { "type": "skills", "items": ["HTML", "CSS", "JavaScript", "Git", "Tailwind CSS"] },
+          { "type": "projects", "items": [
+            { "title": "Розклад занять факультету", "text": "Сайт, яким користуються 400 студентів: пошук за групою і викладачем.", "link": "https://example.com/rozklad" },
+            { "title": "Трекер звичок", "text": "Працює без сервера, дані зберігає в браузері.", "link": "https://example.com/habits" }
+          ] },
+          { "type": "education", "items": [
+            { "title": "Комп’ютерні науки, бакалавр", "place": "КПІ ім. Ігоря Сікорського", "period": "2024 — дотепер" }
+          ] },
+          { "type": "achievements", "items": ["Фіналіст студентського хакатону 2026", "Сертифікат з основ вебдоступності"] },
+          { "type": "contacts", "email": "maksym@example.com", "phone": "", "link": "https://example.com/maksym" }
+        ]
+      }
+    },
+    {
+      "id": "iryna",
+      "sphere": "people",
+      "profile": {
+        "template": "visit",
+        "palette": "emerald",
+        "number": "000 249",
+        "person": { "name": "Ірина Мельник", "role": "Репетиторка англійської", "city": "Тернопіль" },
+        "blocks": [
+          { "type": "about", "text": "Готую до НМТ і співбесід англійською. Заняття онлайн, перше знайомство безкоштовне." },
+          { "type": "skills", "items": ["НМТ", "Розмовна практика", "Ділова англійська"] },
+          { "type": "contacts", "email": "iryna@example.com", "phone": "", "link": "https://example.com/iryna" }
+        ]
+      }
+    },
+    {
+      "id": "andrii",
+      "sphere": "design",
+      "profile": {
+        "template": "dossier",
+        "palette": "night",
+        "number": "000 250",
+        "person": { "name": "Андрій Савчук", "role": "Фотограф", "city": "Одеса" },
+        "blocks": [
+          { "type": "about", "text": "Знімаю архітектуру та інтер’єри для готелів і забудовників. Працюю з природним світлом." },
+          { "type": "skills", "items": ["Інтер’єрна зйомка", "Ретуш", "Зйомка з дрона"] },
+          { "type": "projects", "items": [
+            { "title": "Готель «Маяк»", "text": "40 кадрів для сайту й сторінок бронювання.", "link": "https://example.com/mayak" },
+            { "title": "Житловий квартал «Причал»", "text": "Зйомка будівництва щомісяця протягом року.", "link": "" },
+            { "title": "Серія «Одеські двори»", "text": "Власний проєкт, виставка у 2025 році.", "link": "https://example.com/dvory" }
+          ] },
+          { "type": "experience", "items": [
+            { "title": "Фотограф-фрилансер", "place": "Одеса", "period": "2021 — дотепер", "text": "Понад 60 комерційних зйомок." }
+          ] },
+          { "type": "contacts", "email": "andrii@example.com", "phone": "", "link": "https://example.com/andrii" }
+        ]
+      }
+    },
+    {
+      "id": "sofiia",
+      "sphere": "people",
+      "profile": {
+        "template": "resume",
+        "palette": "plum",
+        "number": "000 251",
+        "person": { "name": "Софія Бойко", "role": "Маркетологиня", "city": "Харків" },
+        "blocks": [
+          { "type": "about", "text": "Веду соцмережі та розсилки невеликих магазинів. Рахую результат у замовленнях, а не в уподобаннях." },
+          { "type": "experience", "items": [
+            { "title": "Маркетологиня", "place": "Книгарня «Сторінка»", "period": "2023 — дотепер", "text": "Розсилка приносить п’яту частину онлайн-замовлень." },
+            { "title": "Асистентка з контенту", "place": "Студія «Ранок»", "period": "2022 — 2023", "text": "Готувала тексти й графік дописів для шести клієнтів." }
+          ] },
+          { "type": "skills", "items": ["Розсилки", "Соцмережі", "Аналітика", "Тексти"] },
+          { "type": "education", "items": [
+            { "title": "Маркетинг, бакалавр", "place": "ХНУ ім. В. Н. Каразіна", "period": "2018 — 2022" }
+          ] },
+          { "type": "contacts", "email": "sofiia@example.com", "phone": "", "link": "" }
+        ]
+      }
+    },
+    {
+      "id": "nazar",
+      "sphere": "it",
+      "profile": {
+        "template": "card",
+        "palette": "clay",
+        "number": "000 252",
+        "person": { "name": "Назар Лисенко", "role": "Аналітик даних, початківець", "city": "Львів" },
+        "blocks": [
+          { "type": "about", "text": "Перетворюю таблиці на зрозумілі графіки. Навчаюся на прикладній математиці." },
+          { "type": "skills", "items": ["Excel", "SQL", "Python", "Візуалізація"] },
+          { "type": "projects", "items": [
+            { "title": "Аналіз цін на оренду у Львові", "text": "Зібрав 3 000 оголошень і показав, як ціна залежить від району.", "link": "https://example.com/rent" }
+          ] },
+          { "type": "contacts", "email": "nazar@example.com", "phone": "", "link": "" }
+        ]
+      }
+    }
+  ],
+  "faq": [
+    { "question": "Чи потрібно реєструватися?", "answer": "Ні. Конструктор відкривається одразу, пошту чи пароль ми не просимо." },
+    { "question": "Де зберігається те, що я вводжу?", "answer": "Лише у вашому браузері на вашому пристрої. На сервер нічого не надсилається, тому ми не бачимо ваших даних." },
+    { "question": "Як показати портфоліо роботодавцю чи клієнту?", "answer": "Збережіть його як PDF або як HTML-файл і надішліть листом чи в месенджері. Окремої адреси в мережі портфоліо не отримує." },
+    { "question": "Чи можна змінити портфоліо пізніше?", "answer": "Так. Чернетка лишається в браузері, а збережений HTML-файл можна знову відкрити в конструкторі й дописати." },
+    { "question": "Що буде, якщо я очищу дані браузера?", "answer": "Чернетка зникне. Щоб не втратити роботу, збережіть HTML-файл: із нього все відновлюється." },
+    { "question": "Скільки це коштує?", "answer": "Нічого. Сервіс безкоштовний, і в збереженому файлі немає нашої реклами." }
+  ]
+}

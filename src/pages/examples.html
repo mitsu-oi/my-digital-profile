@@ -1,0 +1,25 @@
+      <div class="mx-auto w-full max-w-6xl px-5 py-14 md:px-8 md:py-20">
+        <h1 class="font-serif text-4xl leading-tight font-bold sm:text-5xl">Приклади</h1>
+        <p class="mt-4 max-w-2xl text-lg leading-relaxed text-ink-soft dark:text-cream-soft">
+          Шість вигаданих людей різних фахів. Подивіться, що вони пишуть про себе, і візьміть будь-який приклад за основу: замість їхніх даних впишете свої.
+        </p>
+
+        <h2 id="sphere-title" class="mt-10 font-mono text-sm text-ink-soft dark:text-cream-soft">Сфера</h2>
+        <div data-filters role="group" aria-labelledby="sphere-title" class="mt-3 flex flex-wrap gap-2"></div>
+
+        <p data-status role="status" class="mt-8 min-h-6 text-sm text-ink-soft dark:text-cream-soft"></p>
+        <ul data-list aria-busy="true" class="mt-4 grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3"></ul>
+        <noscript><p class="mt-4 rounded-lg border border-line p-6 dark:border-night-line">Щоб побачити приклади, увімкніть JavaScript у браузері.</p></noscript>
+      </div>
+
+      <!-- Вікно перегляду прикладу в повному розмірі -->
+      <dialog data-dialog aria-labelledby="dialog-title" class="m-auto w-[calc(100%-2rem)] max-w-3xl rounded-lg border border-line bg-paper p-0 text-ink backdrop:bg-night/70 dark:border-night-line dark:bg-night dark:text-cream">
+        <div class="flex items-center justify-between gap-4 border-b border-line px-5 py-3 dark:border-night-line">
+          <h2 id="dialog-title" data-dialog-title class="font-serif text-lg font-bold">Перегляд прикладу</h2>
+          <button type="button" data-dialog-close class="inline-flex min-h-12 shrink-0 items-center rounded-md border border-line px-4 font-medium hover:bg-sheet focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:border-night-line dark:hover:bg-night-sheet dark:focus-visible:outline-cream">Закрити</button>
+        </div>
+        <div class="p-5">
+          <div data-dialog-body class="overflow-hidden rounded-lg border border-line dark:border-night-line"></div>
+          <a data-dialog-use href="builder.html" class="btn-primary mt-5 inline-flex min-h-12 items-center justify-center rounded-md px-6 font-semibold text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:focus-visible:outline-cream">Взяти за основу</a>
+        </div>
+      </dialog>

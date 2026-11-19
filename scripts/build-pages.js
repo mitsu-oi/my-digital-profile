@@ -10,9 +10,9 @@ const SITE = 'https://my-digital-profile.vercel.app/'; // адреса прод�
 const pages = [
   { file: 'index.html', nav: null, title: 'ОсьЯ — мій цифровий профіль', description: 'Зберіть портфоліо у вигляді цифрового посвідчення за 10 хвилин: шаблон, палітра, блоки й живий перегляд. Без реєстрації.' },
   { file: 'builder.html', nav: 'Конструктор', title: 'Конструктор портфоліо — ОсьЯ', description: 'Оберіть шаблон і палітру, додайте проєкти та навички й одразу побачте готове портфоліо.' },
-  { file: 'templates.html', nav: 'Шаблони', title: 'Шаблони портфоліо — ОсьЯ', description: 'Чотири шаблони цифрового профілю: посвідчення, резюме, досьє та візитка.' },
-  { file: 'examples.html', nav: 'Приклади', title: 'Приклади портфоліо — ОсьЯ', description: 'Готові портфоліо різних фахів для натхнення.' },
-  { file: 'about.html', nav: 'Про сервіс', title: 'Про сервіс — ОсьЯ', description: 'Для кого створено ОсьЯ, як працює сервіс і чому ваші дані не залишають браузер.' },
+  { file: 'templates.html', module: 'templates.js', nav: 'Шаблони', title: 'Шаблони портфоліо — ОсьЯ', description: 'Чотири шаблони цифрового профілю: посвідчення, резюме, досьє та візитка.' },
+  { file: 'examples.html', module: 'examples.js', nav: 'Приклади', title: 'Приклади портфоліо — ОсьЯ', description: 'Готові портфоліо різних фахів для натхнення.' },
+  { file: 'about.html', module: 'about.js', nav: 'Про сервіс', title: 'Про сервіс — ОсьЯ', description: 'Для кого створено ОсьЯ, як працює сервіс і чому ваші дані не залишають браузер.' },
   { file: 'contact.html', nav: 'Контакти', title: 'Контакти — ОсьЯ', description: 'Напишіть команді сервісу «Мій цифровий профіль».' },
 ];
 
@@ -52,7 +52,8 @@ const head = (page) => `<!doctype html>
     <link rel="stylesheet" href="css/site.css">
     <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
     <script src="assets/js/site.js" defer></script>
-  </head>
+${page.module ? `    <script type="module" src="assets/js/${page.module}"></script>
+` : ''}  </head>
   <body class="flex min-h-screen flex-col bg-paper font-sans text-ink antialiased dark:bg-night dark:text-cream">
     <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded-md focus:bg-ink focus:px-4 focus:py-3 focus:text-cream">Перейти до основного вмісту</a>
 `;
