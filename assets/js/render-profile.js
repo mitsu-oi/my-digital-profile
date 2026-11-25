@@ -190,7 +190,7 @@ function layoutVisit(profile, level, sections) {
   if (line) name.append(el('p', 'mt-2 text-(--p-muted)', line));
   root.append(name);
   // візитка показує лише головне
-  const shown = ['about', 'skills', 'contacts'];
+  const shown = profile.sections || ['about', 'skills', 'contacts'];
   for (const section of sections) {
     if (!shown.includes(section.dataset.type)) continue;
     section.classList.add('w-full', 'max-w-md');

@@ -150,7 +150,7 @@ function renderPreview() {
   queueMicrotask(() => {
     pending = false;
     const palette = data.palettes.find((item) => item.id === state.palette);
-    preview.replaceChildren(renderProfile(state, palette, { level: 3 }));
+    preview.replaceChildren(renderProfile({ ...state, sections: allowedTypes() }, palette, { level: 3 }));
   });
 }
 
@@ -389,7 +389,7 @@ function addSkill(block, value) {
   return '';
 }
 
-function blockEditor(block, index) {
+function blockEditor(block, index, count) {
   const info = BLOCKS[block.type];
   const section = el('section', 'rounded-lg border border-line bg-sheet/70 p-4 sm:p-5 dark:border-night-line dark:bg-night-sheet');
   section.dataset.blockId = block.id;
@@ -402,7 +402,7 @@ function blockEditor(block, index) {
   const tools = el('div', 'flex shrink-0 gap-2');
   tools.append(
     iconButton('up', `Перемістити розділ «${info.title}» вище`, '↑', index === 0),
-    iconButton('down', `Перемістити розділ «${info.title}» нижче`, '↓', index === state.blocks.length - 1),
+    iconButton('down', `Перемістити розділ «${info.title}» нижче`, '↓', index === count - 1),
     iconButton('remove', `Прибрати розділ «${info.title}»`, '×', false),
   );
   head.append(title, tools);
@@ -457,14 +457,27 @@ function blockEditor(block, index) {
   return section;
 }
 
+// Які розділи вміє показати поточний бланк (поле sections у data.json; без нього — усі)
+function allowedTypes() {
+  return data.templates.find((item) => item.id === state.template)?.sections || ORDER;
+}
+// Розділи, що є в профілі й показуються в поточному бланку — лише їх видно у формі
+const visibleBlocks = () => state.blocks.filter((block) => allowedTypes().includes(block.type));
+
 function drawBlocks() {
-  if (!state.blocks.length) {
-    blocksBox.replaceChildren(el('p', 'rounded-lg border border-dashed border-line p-5 text-ink-soft dark:border-night-line dark:text-cream-soft', 'Розділів поки немає. Почніть із «Про мене»: виберіть його нижче й натисніть «Додати розділ».'));
-  } else {
-    blocksBox.replaceChildren(...state.blocks.map(blockEditor));
+  const visible = visibleBlocks();
+  const hidden = state.blocks.filter((block) => !visible.includes(block));
+  const nodes = visible.length
+    ? visible.map((block, index) => blockEditor(block, index, visible.length))
+    : [el('p', 'rounded-lg border border-dashed border-line p-5 text-ink-soft dark:border-night-line dark:text-cream-soft', 'Розділів поки немає. Почніть із «Про мене»: виберіть його нижче й натисніть «Додати розділ».')];
+  // сховані розділи не зникають: дані лишаються в профілі й повертаються з іншим бланком
+  if (hidden.length) {
+    const template = data.templates.find((item) => item.id === state.template);
+    nodes.push(el('p', 'rounded-lg border border-dashed border-line p-4 text-sm leading-relaxed text-ink-soft dark:border-night-line dark:text-cream-soft', `Бланк «${template.name}» не показує: ${hidden.map((block) => BLOCKS[block.type].title).join(', ')}. Ці дані збережено — вони повернуться, якщо обрати інший бланк.`));
   }
-  // у списку «Новий розділ» — лише ті, яких ще немає
-  const free = ORDER.filter((type) => !state.blocks.some((block) => block.type === type));
+  blocksBox.replaceChildren(...nodes);
+  // у списку «Новий розділ» — лише ті, яких ще немає і які вміє показати бланк
+  const free = allowedTypes().filter((type) => !state.blocks.some((block) => block.type === type));
   addType.replaceChildren(...free.map((type) => Object.assign(el('option', '', BLOCKS[type].title), { value: type })));
   addRow.hidden = !free.length;
   allAdded.hidden = Boolean(free.length);
@@ -494,6 +507,11 @@ function onInput(event) {
   const input = event.target;
   if (input.name === 'template' || input.name === 'palette') {
     state[input.name] = input.value;
+    if (input.name === 'template') {
+      drawBlocks(); // інший бланк — інший набір розділів у формі
+      const hidden = state.blocks.filter((block) => !allowedTypes().includes(block.type));
+      if (hidden.length) announce(`Сховано розділи: ${hidden.map((block) => BLOCKS[block.type].title).join(', ')}. Дані збережено.`);
+    }
     return changed();
   }
   if (input.dataset.person) {
@@ -584,20 +602,28 @@ function onClick(event) {
     blocksBox.querySelector(`[data-block-id="${created.id}"] input, [data-block-id="${created.id}"] textarea, [data-block-id="${created.id}"] [data-action="add-entry"]`)?.focus();
   }
   if ((action === 'up' || action === 'down') && block) {
-    const target = action === 'up' ? index - 1 : index + 1;
-    if (target < 0 || target >= state.blocks.length) return;
-    [state.blocks[index], state.blocks[target]] = [state.blocks[target], state.blocks[index]];
+    // переміщення серед видимих розділів: розділ ставиться безпосередньо перед (або після) видимого сусіда,
+    // а сховані розділи лишаються там, де були
+    const visible = visibleBlocks();
+    const at = visible.indexOf(block);
+    const target = action === 'up' ? at - 1 : at + 1;
+    if (target < 0 || target >= visible.length) return;
+    const neighbour = visible[target];
+    state.blocks.splice(index, 1);
+    const place = state.blocks.indexOf(neighbour) + (action === 'down' ? 1 : 0);
+    state.blocks.splice(place, 0, block);
     drawBlocks();
-    announce(`Розділ «${BLOCKS[block.type].title}» тепер ${target + 1}-й із ${state.blocks.length}.`);
+    announce(`Розділ «${BLOCKS[block.type].title}» тепер ${target + 1}-й із ${visible.length}.`);
     // фокус лишається на тій самій кнопці; якщо розділ дійшов до краю — на протилежній
-    const edge = target === 0 || target === state.blocks.length - 1;
+    const edge = target === 0 || target === visible.length - 1;
     focusLater(`[data-block-id="${block.id}"] [data-action="${edge ? (action === 'up' ? 'down' : 'up') : action}"]`);
   }
   if (action === 'remove' && block) {
     state.blocks.splice(index, 1);
     drawBlocks();
     announce(`Розділ «${BLOCKS[block.type].title}» прибрано. Його можна додати знову.`);
-    const next = state.blocks[Math.min(index, state.blocks.length - 1)];
+    const rest = visibleBlocks();
+    const next = rest.find((item) => state.blocks.indexOf(item) >= index) || rest[rest.length - 1];
     // фокус переходить на сусідній розділ (його першу доступну кнопку), а якщо розділів не лишилось — на вибір нового
     (next ? blocksBox.querySelector(`[data-block-id="${next.id}"] button:not(:disabled)`) : addType)?.focus();
   }

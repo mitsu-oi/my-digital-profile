@@ -23,7 +23,8 @@
       "id": "visit",
       "name": "Візитка",
       "description": "Лише головне по центру: хто ви, що вмієте і як із вами зв’язатися. Зручно відкривати з телефона.",
-      "fits": ["clients", "short"]
+      "fits": ["clients", "short"],
+      "sections": ["about", "skills", "contacts"]
     }
   ],
   "fits": [
