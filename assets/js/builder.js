@@ -25,16 +25,38 @@ const LIMITS = {
 // Розділи: назва, підказка й підписи полів для записів (проєкт, досвід, освіта)
 const BLOCKS = {
   about: { title: 'Про мене', hint: '2–3 речення: чим займаєтеся і що вам цікаво.' },
-  skills: { title: 'Навички', hint: 'Через кому: Figma, Дослідження, Прототипи.' },
+  skills: { title: 'Навички', hint: 'Оберіть зі списку або впишіть свою й натисніть «Додати».' },
   projects: { title: 'Проєкти', entry: 'Проєкт', max: LIMITS.entries, fields: [['title', 'Назва'], ['text', 'Що зроблено', 'textarea'], ['link', 'Посилання', 'link']] },
-  experience: { title: 'Досвід', entry: 'Місце роботи', max: LIMITS.entries, fields: [['title', 'Посада'], ['place', 'Де'], ['period', 'Коли'], ['text', 'Що робили', 'textarea']] },
-  education: { title: 'Освіта', entry: 'Навчання', max: LIMITS.education, fields: [['title', 'Спеціальність'], ['place', 'Заклад'], ['period', 'Роки']] },
+  experience: { title: 'Досвід', entry: 'Місце роботи', max: LIMITS.entries, fields: [['title', 'Посада'], ['place', 'Де'], ['period', 'Період роботи', 'years'], ['text', 'Що робили', 'textarea']] },
+  education: { title: 'Освіта', entry: 'Навчання', max: LIMITS.education, fields: [['title', 'Спеціальність'], ['place', 'Заклад'], ['period', 'Роки навчання', 'years']] },
   achievements: { title: 'Досягнення', hint: 'Кожне з нового рядка.' },
   contacts: { title: 'Контакти', hint: 'Достатньо одного способу зв’язку.' },
 };
 const ORDER = Object.keys(BLOCKS);
 
 const PHONE_RE = /^\+380 \(\d{2}\) \d{3}-\d{2}-\d{2}$/;
+
+// ---------- Роки для досвіду й освіти: лише вибір зі списку, довільний текст не вводиться ----------
+const THIS_YEAR = new Date().getFullYear();
+const FIRST_YEAR = 1960;
+
+// «2021», «now» → «2021 — дотепер». Порожні частини пропускаються.
+function formatPeriod(from, to) {
+  const end = to === 'now' ? 'дотепер' : to;
+  if (from && end) return `${from} — ${end}`;
+  if (from) return `з ${from}`;
+  if (end) return to === 'now' ? 'дотепер' : `до ${end}`;
+  return '';
+}
+
+// Зворотне перетворення для прикладів із data.json: «2018 — 2022», «2021 — дотепер»
+function parsePeriod(period) {
+  const match = /(\d{4})(?:\s*[—–-]\s*(\d{4}|дотепер))?/i.exec(String(period || ''));
+  if (!match) return { from: '', to: '' };
+  return { from: match[1], to: match[2] ? (/\d/.test(match[2]) ? match[2] : 'now') : '' };
+}
+
+const periodProblem = (from, to) => (from && to && to !== 'now' && Number(to) < Number(from) ? 'Рік завершення не може бути раніше за рік початку.' : '');
 
 // ---------- Елементи сторінки ----------
 const root = document.querySelector('[data-builder]');
@@ -79,13 +101,18 @@ function cleanProfile(source) {
       if (block.type === 'skills') clean.items = (block.items || []).map((item) => str(item, LIMITS.skill)).filter(Boolean).slice(0, LIMITS.skills);
       if (block.type === 'achievements') clean.items = (block.items || []).map((item) => str(item, LIMITS.achievement)).filter(Boolean).slice(0, LIMITS.achievements);
       if (BLOCKS[block.type].fields) {
-        clean.items = (block.items || []).slice(0, BLOCKS[block.type].max).map((item) => ({
-          title: str(item.title, LIMITS.title),
-          place: str(item.place, LIMITS.short),
-          period: str(item.period, LIMITS.short),
-          text: str(item.text, LIMITS.entryText),
-          link: str(item.link, LIMITS.link),
-        }));
+        clean.items = (block.items || []).slice(0, BLOCKS[block.type].max).map((item) => {
+          const { from, to } = parsePeriod(item.period);
+          return {
+            title: str(item.title, LIMITS.title),
+            place: str(item.place, LIMITS.short),
+            from,
+            to,
+            period: formatPeriod(from, to),
+            text: str(item.text, LIMITS.entryText),
+            link: str(item.link, LIMITS.link),
+          };
+        });
       }
       if (block.type === 'contacts') Object.assign(clean, { email: str(block.email, 80), phone: str(block.phone, 20), link: str(block.link, LIMITS.link) });
       return clean;
@@ -224,6 +251,144 @@ function field({ id, label, value, kind = 'text', max, hint, bind }) {
   return wrap;
 }
 
+// Два списки «рік початку / рік завершення». Довільний текст сюди не потрапляє — лише роки зі списку або «дотепер».
+function yearsField(idBase, label, item, bind) {
+  const group = el('fieldset', 'min-w-0');
+  group.append(el('legend', 'font-semibold', label));
+  const row = el('div', 'mt-1.5 grid grid-cols-2 gap-3');
+  const select = (key, text, withNow) => {
+    const wrap = el('div');
+    const labelEl = el('label', 'text-sm text-ink-soft dark:text-cream-soft', text);
+    labelEl.htmlFor = `${idBase}-${key}`;
+    const input = el('select', 'field mt-1');
+    input.id = `${idBase}-${key}`;
+    Object.assign(input.dataset, bind, { field: key, years: '' });
+    const options = [Object.assign(el('option', '', '—'), { value: '' })];
+    if (withNow) options.push(Object.assign(el('option', '', 'дотепер'), { value: 'now' }));
+    // рік завершення може бути в майбутньому (очікуваний випуск), рік початку — ні
+    for (let year = withNow ? THIS_YEAR + 6 : THIS_YEAR; year >= FIRST_YEAR; year--) options.push(Object.assign(el('option', '', String(year)), { value: String(year) }));
+    input.append(...options);
+    input.value = item[key] || '';
+    input.setAttribute('aria-describedby', `${idBase}-years-error`);
+    wrap.append(labelEl, input);
+    return wrap;
+  };
+  row.append(select('from', 'Рік початку', false), select('to', 'Рік завершення', true));
+  const error = el('p', 'mt-1 text-sm font-medium text-stamp empty:hidden dark:text-stamp-light', periodProblem(item.from, item.to));
+  error.id = `${idBase}-years-error`;
+  group.append(row, error);
+  return group;
+}
+
+// Навички: обрані — як «бирки» з кнопкою прибрати; нижче поле для своєї навички (воно ж фільтрує підказки)
+// і готові підказки з data.json, згруповані за сферами (як на сайтах вакансій).
+const skillFilters = {}; // текст у полі пошуку для кожного розділу — переживає перемальовування
+const openGroups = {}; // номери відкритих груп підказок для кожного розділу
+const CHIP = 'inline-flex min-h-11 items-center gap-1.5 rounded-md border px-3 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:focus-visible:outline-cream';
+
+function skillsEditor(block, info) {
+  const wrap = el('div', 'space-y-4');
+  const full = block.items.length >= LIMITS.skills;
+
+  const chosen = el('ul', 'flex flex-wrap gap-2');
+  chosen.setAttribute('aria-label', 'Обрані навички');
+  for (const skill of block.items) {
+    const remove = el('button', `${CHIP} border-ink bg-ink text-cream hover:bg-ink/85 dark:border-stamp-light dark:bg-night-raised dark:text-cream`);
+    remove.type = 'button';
+    remove.dataset.action = 'remove-skill';
+    remove.dataset.skill = skill;
+    remove.setAttribute('aria-label', `Прибрати навичку «${skill}»`);
+    const cross = el('span', 'text-base leading-none', '×');
+    cross.setAttribute('aria-hidden', 'true');
+    remove.append(el('span', '', skill), cross);
+    const item = el('li');
+    item.append(remove);
+    chosen.append(item);
+  }
+  wrap.append(block.items.length ? chosen : el('p', 'text-ink-soft dark:text-cream-soft', 'Навичок поки не обрано.'));
+
+  // своя навичка + пошук серед підказок
+  const inputId = `${block.id}-skill-input`;
+  const row = el('div');
+  const label = el('label', 'font-semibold', 'Своя навичка або пошук');
+  label.htmlFor = inputId;
+  const line = el('div', 'mt-1.5 flex gap-2');
+  const input = el('input', 'field mt-0 min-w-0 flex-1');
+  Object.assign(input, { id: inputId, type: 'text', maxLength: LIMITS.skill, value: skillFilters[block.id] || '', placeholder: 'Наприклад, Canva', disabled: full });
+  input.dataset.skillInput = block.id;
+  input.setAttribute('aria-describedby', `${block.id}-skill-hint ${block.id}-skill-error`);
+  const add = el('button', BTN_TEXT, 'Додати');
+  Object.assign(add, { type: 'button', disabled: full });
+  add.dataset.action = 'add-skill';
+  line.append(input, add);
+  const hint = el('p', 'mt-1.5 text-sm text-ink-soft dark:text-cream-soft', `${info.hint} Обрано ${block.items.length} з ${LIMITS.skills}.`);
+  hint.id = `${block.id}-skill-hint`;
+  const error = el('p', 'mt-1 text-sm font-medium text-stamp empty:hidden dark:text-stamp-light', full ? 'Обрано максимум навичок. Щоб додати нову, приберіть одну з обраних.' : '');
+  error.id = `${block.id}-skill-error`;
+  row.append(label, line, hint, error);
+  wrap.append(row);
+
+  // готові підказки
+  const lower = block.items.map((item) => item.toLowerCase());
+  const groups = el('div', 'space-y-3');
+  groups.dataset.skillSuggestions = block.id;
+  // кожна група — <details>: відкрита лише перша, решта розкривається за потреби або пошуком
+  (data.skillSuggestions || []).forEach(({ group, items }, groupIndex) => {
+    const box = el('details', 'group/skills');
+    box.dataset.skillGroup = '';
+    // які групи відкриті, пам’ятаємо між перемальовуваннями, інакше після вибору навички група згорталась би
+    const opened = (openGroups[block.id] ??= new Set([0]));
+    box.open = opened.has(groupIndex);
+    box.addEventListener('toggle', () => (box.open ? opened.add(groupIndex) : opened.delete(groupIndex)));
+    const summary = el('summary', 'flex min-h-11 cursor-pointer list-none items-center gap-2 font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:focus-visible:outline-cream [&::-webkit-details-marker]:hidden');
+    const mark = el('span', 'font-mono text-stamp transition-transform group-open/skills:rotate-45 dark:text-stamp-light', '+');
+    mark.setAttribute('aria-hidden', 'true');
+    summary.append(mark, el('span', '', group), el('span', 'font-normal text-sm text-ink-soft dark:text-cream-soft', `(${items.length})`));
+    box.append(summary);
+    const list = el('div', 'mt-1.5 flex flex-wrap gap-2');
+    for (const skill of items) {
+      const on = lower.includes(skill.toLowerCase());
+      const toggle = el('button', `${CHIP} border-line bg-sheet text-ink hover:border-ink aria-pressed:border-ink aria-pressed:bg-ink aria-pressed:text-cream disabled:cursor-not-allowed disabled:opacity-40 dark:border-night-line dark:bg-night-sheet dark:text-cream dark:hover:border-cream-soft dark:aria-pressed:border-stamp-light dark:aria-pressed:bg-night-raised`, on ? `✓ ${skill}` : `+ ${skill}`);
+      toggle.type = 'button';
+      toggle.dataset.action = 'toggle-skill';
+      toggle.dataset.skill = skill;
+      toggle.setAttribute('aria-pressed', String(on));
+      toggle.setAttribute('aria-label', skill);
+      toggle.disabled = full && !on;
+      list.append(toggle);
+    }
+    box.append(list);
+    groups.append(box);
+  });
+  wrap.append(groups);
+  applySkillFilter(groups, skillFilters[block.id] || '');
+  return wrap;
+}
+
+// Показує лише підказки, що містять введений текст; порожні групи ховає
+function applySkillFilter(groups, text) {
+  const needle = text.trim().toLowerCase();
+  for (const box of groups.querySelectorAll('[data-skill-group]')) {
+    let visible = 0;
+    for (const button of box.querySelectorAll('button')) {
+      const show = !needle || button.dataset.skill.toLowerCase().includes(needle);
+      button.hidden = !show;
+      if (show) visible++;
+    }
+    box.hidden = !visible;
+    if (needle && visible) box.open = true; // під час пошуку збіги одразу видно
+  }
+}
+
+function addSkill(block, value) {
+  const skill = value.trim().replace(/\s+/g, ' ').slice(0, LIMITS.skill);
+  if (!skill) return 'Впишіть назву навички.';
+  if (block.items.some((item) => item.toLowerCase() === skill.toLowerCase())) return `«${skill}» уже є серед обраних.`;
+  if (block.items.length >= LIMITS.skills) return 'Обрано максимум навичок.';
+  block.items.push(skill);
+  return '';
+}
+
 function blockEditor(block, index) {
   const info = BLOCKS[block.type];
   const section = el('section', 'rounded-lg border border-line bg-sheet/70 p-4 sm:p-5 dark:border-night-line dark:bg-night-sheet');
@@ -249,9 +414,7 @@ function blockEditor(block, index) {
   if (block.type === 'about') {
     body.append(field({ id: `${block.id}-text`, label: 'Текст', value: block.text, kind: 'textarea', max: LIMITS.text, hint: info.hint, bind: { ...bind, field: 'text' } }));
   }
-  if (block.type === 'skills') {
-    body.append(field({ id: `${block.id}-items`, label: 'Перелік', value: block.items.join(', '), max: LIMITS.skills * (LIMITS.skill + 2), hint: info.hint, bind: { ...bind, field: 'items', list: 'comma' } }));
-  }
+  if (block.type === 'skills') body.append(skillsEditor(block, info));
   if (block.type === 'achievements') {
     body.append(field({ id: `${block.id}-items`, label: 'Досягнення', value: block.items.join('\n'), kind: 'textarea', max: LIMITS.achievements * (LIMITS.achievement + 1), hint: info.hint, bind: { ...bind, field: 'items', list: 'lines' } }));
   }
@@ -268,6 +431,10 @@ function blockEditor(block, index) {
       const group = el('fieldset', 'space-y-4 rounded-md border border-dashed border-line p-4 dark:border-night-line');
       group.append(el('legend', 'px-1 font-mono text-xs text-ink-soft dark:text-cream-soft', `${info.entry} ${entry + 1}`));
       for (const [key, label, kind] of info.fields) {
+        if (kind === 'years') {
+          group.append(yearsField(`${block.id}-${entry}`, label, item, { ...bind, entry }));
+          continue;
+        }
         const max = key === 'text' ? LIMITS.entryText : key === 'link' ? LIMITS.link : key === 'title' ? LIMITS.title : LIMITS.short;
         group.append(field({ id: `${block.id}-${entry}-${key}`, label, value: item[key], kind: kind || 'text', max, bind: { ...bind, field: key, entry } }));
       }
@@ -333,12 +500,29 @@ function onInput(event) {
     state.person[input.dataset.person] = input.value;
     return changed();
   }
+  // поле «своя навичка» поки що лише фільтрує підказки; у профіль навичка йде після «Додати» або Enter
+  if (input.dataset.skillInput) {
+    skillFilters[input.dataset.skillInput] = input.value;
+    const groups = blocksBox.querySelector(`[data-skill-suggestions="${input.dataset.skillInput}"]`);
+    if (groups) applySkillFilter(groups, input.value);
+    document.getElementById(`${input.dataset.skillInput}-skill-error`).textContent = '';
+    return;
+  }
   const block = state.blocks.find((item) => item.id === input.dataset.block);
   if (!block) return;
   const { field: key, entry, list } = input.dataset;
-  if (list === 'comma') {
-    block.items = input.value.split(',').map((item) => item.trim().slice(0, LIMITS.skill)).filter(Boolean).slice(0, LIMITS.skills);
-  } else if (list === 'lines') {
+  if (input.dataset.years !== undefined) {
+    // рік початку / завершення: перераховуємо текст періоду й перевіряємо порядок років
+    const item = block.items[Number(entry)];
+    item[key] = input.value;
+    const problem = periodProblem(item.from, item.to);
+    item.period = problem ? '' : formatPeriod(item.from, item.to);
+    const idBase = `${block.id}-${entry}`;
+    document.getElementById(`${idBase}-years-error`).textContent = problem;
+    for (const side of ['from', 'to']) document.getElementById(`${idBase}-${side}`).setAttribute('aria-invalid', String(Boolean(problem)));
+    return changed();
+  }
+  if (list === 'lines') {
     block.items = input.value.split('\n').map((item) => item.trim().slice(0, LIMITS.achievement)).filter(Boolean).slice(0, LIMITS.achievements);
   } else if (entry !== undefined) {
     block.items[Number(entry)][key] = input.value;
@@ -360,6 +544,23 @@ function onBlur(event) {
     changed();
   }
   checkField(input);
+}
+
+// Додає навичку з поля «своя навичка» (кнопка «Додати» або Enter)
+function submitSkill(block) {
+  const input = document.getElementById(`${block.id}-skill-input`);
+  const problem = addSkill(block, input.value);
+  if (problem) {
+    document.getElementById(`${block.id}-skill-error`).textContent = problem;
+    input.focus();
+    return;
+  }
+  const added = block.items[block.items.length - 1];
+  skillFilters[block.id] = '';
+  drawBlocks();
+  announce(`Навичку «${added}» додано.`);
+  focusLater(`#${block.id}-skill-input`);
+  changed();
 }
 
 // Після перемальовування редакторів повертає фокус на потрібну кнопку (DOM уже оновлено синхронно)
@@ -400,8 +601,26 @@ function onClick(event) {
     // фокус переходить на сусідній розділ (його першу доступну кнопку), а якщо розділів не лишилось — на вибір нового
     (next ? blocksBox.querySelector(`[data-block-id="${next.id}"] button:not(:disabled)`) : addType)?.focus();
   }
+  if (action === 'toggle-skill' && block) {
+    const skill = button.dataset.skill;
+    const at = block.items.findIndex((item) => item.toLowerCase() === skill.toLowerCase());
+    if (at >= 0) block.items.splice(at, 1);
+    else addSkill(block, skill);
+    drawBlocks();
+    announce(at >= 0 ? `Навичку «${skill}» прибрано.` : `Навичку «${skill}» додано.`);
+    focusLater(`[data-block-id="${block.id}"] [data-action="toggle-skill"][data-skill="${CSS.escape(skill)}"]`);
+  }
+  if (action === 'remove-skill' && block) {
+    const skill = button.dataset.skill;
+    block.items = block.items.filter((item) => item !== skill);
+    drawBlocks();
+    announce(`Навичку «${skill}» прибрано.`);
+    // фокус на наступну обрану навичку, а якщо їх не лишилось — на поле введення
+    focusLater(`[data-block-id="${block.id}"] [data-action="remove-skill"], #${block.id}-skill-input`);
+  }
+  if (action === 'add-skill' && block) submitSkill(block);
   if (action === 'add-entry' && block && block.items.length < BLOCKS[block.type].max) {
-    block.items.push({ title: '', place: '', period: '', text: '', link: '' });
+    block.items.push({ title: '', place: '', from: '', to: '', period: '', text: '', link: '' });
     drawBlocks();
     focusLater(`#${block.id}-${block.items.length - 1}-title`);
   }
@@ -485,6 +704,14 @@ async function start() {
   form.addEventListener('focusout', onBlur);
   form.addEventListener('click', onClick);
   form.addEventListener('submit', (event) => event.preventDefault()); // Enter у полі не перезавантажує сторінку
+  // Enter у полі «своя навичка» додає її (як кнопка «Додати»)
+  form.addEventListener('keydown', (event) => {
+    const id = event.target.dataset?.skillInput;
+    if (event.key !== 'Enter' || !id) return;
+    event.preventDefault();
+    const block = state.blocks.find((item) => item.id === id);
+    if (block) submitSkill(block);
+  });
   photoInput.addEventListener('change', onPhoto);
   for (const button of root.querySelectorAll('[data-view-btn]')) button.addEventListener('click', () => setView(button.dataset.viewBtn));
   // поки немає чернетки (етап 4), попереджаємо перед закриттям сторінки зі змінами

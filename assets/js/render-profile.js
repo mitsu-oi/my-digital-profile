@@ -108,8 +108,10 @@ function blockSection(block, level) {
 }
 
 // Фото або ініціали. Фото приймається лише як data:image (його готує конструктор із файла користувача).
+const hasPhoto = (profile) => typeof profile.photo === 'string' && /^data:image\/(png|jpeg|webp);base64,/.test(profile.photo);
+
 function photo(profile, classes) {
-  const src = typeof profile.photo === 'string' && /^data:image\/(png|jpeg|webp);base64,/.test(profile.photo) ? profile.photo : '';
+  const src = hasPhoto(profile) ? profile.photo : '';
   if (src) {
     const img = el('img', `shrink-0 border border-(--p-line) object-cover ${classes}`);
     img.src = src;
@@ -145,10 +147,14 @@ function layoutCard(profile, level, blocks) {
 
 function layoutResume(profile, level, blocks) {
   const { person } = profile;
-  const head = el('header', 'border-b-2 border-(--p-text) pb-4');
-  head.append(el(`h${level}`, 'font-serif text-3xl leading-tight font-bold', person.name || 'Ваше ім’я'));
+  const head = el('header', 'flex items-start justify-between gap-5 border-b-2 border-(--p-text) pb-4');
+  const text = el('div', 'min-w-0');
+  text.append(el(`h${level}`, 'font-serif text-3xl leading-tight font-bold', person.name || 'Ваше ім’я'));
   const line = [person.role, person.city].filter(Boolean).join(', ');
-  if (line) head.append(el('p', 'mt-2 text-(--p-muted)', line));
+  if (line) text.append(el('p', 'mt-2 text-(--p-muted)', line));
+  head.append(text);
+  // у резюме фото необов’язкове: без нього не малюємо й ініціали, щоб бланк лишався строгим
+  if (hasPhoto(profile)) head.append(photo(profile, 'h-24 w-20 rounded-sm'));
   const body = el('div', 'mt-5 space-y-5');
   body.append(...blocks);
   const root = el('div', 'p-6 @md:p-8');
