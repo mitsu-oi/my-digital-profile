@@ -1016,18 +1016,18 @@ function updateMeter() {
   meter.label.textContent = `Заповнено ${percent} %`;
   meter.bar.style.width = `${percent}%`;
   meter.track.setAttribute('aria-valuenow', String(percent));
-  // до трьох підказок, що дописати; кожна — кнопка, що переводить до потрібного поля чи розділу
+  // наступна підказка, що дописати (кнопка переводить до потрібного поля чи розділу) і скільки ще лишилось
   meter.hints.replaceChildren(
-    ...missing.slice(0, 3).map((check) => {
-      const button = el('button', 'inline-flex min-h-11 items-center gap-2 text-left font-medium text-ink underline decoration-line underline-offset-4 hover:decoration-ink dark:text-cream dark:decoration-night-line dark:hover:decoration-cream', check.hint);
+    ...missing.slice(0, 1).map((check) => {
+      const button = el('button', 'inline-flex min-h-11 items-center text-left font-medium text-ink underline decoration-line underline-offset-4 hover:decoration-ink dark:text-cream dark:decoration-night-line dark:hover:decoration-cream', check.hint);
       button.type = 'button';
       button.addEventListener('click', () => goTo(check));
-      const item = el('li');
-      item.append(button);
+      const item = el('li', 'flex items-center gap-1.5');
+      item.append(el('span', 'text-ink-soft dark:text-cream-soft', 'Далі:'), button);
       return item;
     }),
   );
-  if (missing.length > 3) meter.hints.append(el('li', 'text-ink-soft dark:text-cream-soft', `і ще ${missing.length - 3}`));
+  if (missing.length > 1) meter.hints.append(el('li', 'text-ink-soft dark:text-cream-soft', `і ще ${missing.length - 1}`));
   const complete = percent === 100;
   meter.done.hidden = !complete;
   meter.stamp.hidden = !complete;
@@ -1064,9 +1064,10 @@ const deviceFrame = root?.querySelector('[data-device-frame]');
 function fitDevice() {
   if (!deviceFrame) return;
   preview.style.width = deviceWidth ? `${deviceWidth}px` : '';
-  const available = deviceFrame.clientWidth;
+  const style = getComputedStyle(deviceFrame);
+  const available = deviceFrame.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
   // перегляд схований (вкладка «Заповнення» на телефоні) — ширини немає; ResizeObserver перерахує, коли з’явиться
-  preview.style.zoom = deviceWidth && available && available < deviceWidth ? String(available / deviceWidth) : '';
+  preview.style.zoom = deviceWidth && available > 0 && available < deviceWidth ? String(available / deviceWidth) : '';
 }
 
 function setDevice(width) {
