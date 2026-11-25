@@ -13,6 +13,9 @@ const TITLES = {
   contacts: 'Контакти',
 };
 
+// Email: щось@щось.домен, без пробілів. Той самий вираз перевіряє поле в конструкторі.
+export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
 // Пропускає лише адреси http і https. Усе інше (наприклад javascript:) відкидається.
 export function safeLink(value) {
   try {
@@ -81,7 +84,7 @@ function blockBody(block) {
 
   if (block.type === 'contacts') {
     const list = el('ul', 'space-y-1');
-    if (block.email) {
+    if (block.email && EMAIL_RE.test(block.email)) {
       const mail = el('a', 'break-all text-(--p-accent) underline underline-offset-2', block.email);
       mail.href = `mailto:${block.email}`;
       list.append(wrap('li', '', mail));
@@ -104,8 +107,16 @@ function blockSection(block, level) {
   return section;
 }
 
-function photo(name, classes) {
-  const box = el('div', `flex shrink-0 items-center justify-center border border-(--p-line) font-serif font-bold text-(--p-muted) ${classes}`, initials(name) || '?');
+// Фото або ініціали. Фото приймається лише як data:image (його готує конструктор із файла користувача).
+function photo(profile, classes) {
+  const src = typeof profile.photo === 'string' && /^data:image\/(png|jpeg|webp);base64,/.test(profile.photo) ? profile.photo : '';
+  if (src) {
+    const img = el('img', `shrink-0 border border-(--p-line) object-cover ${classes}`);
+    img.src = src;
+    img.alt = profile.person.name ? `Фото: ${profile.person.name}` : 'Фото';
+    return img;
+  }
+  const box = el('div', `flex shrink-0 items-center justify-center border border-(--p-line) font-serif font-bold text-(--p-muted) ${classes}`, initials(profile.person.name) || '?');
   box.setAttribute('aria-hidden', 'true');
   return box;
 }
@@ -123,7 +134,7 @@ function layoutCard(profile, level, blocks) {
   if (person.city) text.append(el('p', 'text-sm text-(--p-muted)', person.city));
   const sticker = el('div', 'holo size-12 shrink-0 rounded-full');
   sticker.setAttribute('aria-hidden', 'true');
-  identity.append(photo(person.name, 'h-24 w-20 rounded-sm text-2xl'), text, sticker);
+  identity.append(photo(profile, 'h-24 w-20 rounded-sm text-2xl'), text, sticker);
 
   const body = el('div', 'mt-5 space-y-5');
   body.append(...blocks);
@@ -149,8 +160,8 @@ function layoutDossier(profile, level, sections) {
   const { person } = profile;
   // у бічну колонку йдуть контакти й навички, решта праворуч
   const sideTypes = ['contacts', 'skills'];
-  const side = el('aside', 'space-y-5 border-b border-(--p-line) p-5 @lg:w-2/5 @lg:border-r @lg:border-b-0');
-  side.append(photo(person.name, 'size-20 rounded-full text-2xl'));
+  const side = el('div', 'space-y-5 border-b border-(--p-line) p-5 @lg:w-2/5 @lg:border-r @lg:border-b-0');
+  side.append(photo(profile, 'size-20 rounded-full text-2xl'));
   const name = el('div');
   name.append(el(`h${level}`, 'font-serif text-2xl leading-snug font-bold', person.name || 'Ваше ім’я'));
   if (person.role) name.append(el('p', 'mt-1 font-medium', person.role));
@@ -166,7 +177,7 @@ function layoutDossier(profile, level, sections) {
 function layoutVisit(profile, level, sections) {
   const { person } = profile;
   const root = el('div', 'flex flex-col items-center gap-4 p-8 text-center');
-  root.append(photo(person.name, 'size-24 rounded-full text-3xl'));
+  root.append(photo(profile, 'size-24 rounded-full text-3xl'));
   const name = el('div');
   name.append(el(`h${level}`, 'font-serif text-3xl leading-tight font-bold', person.name || 'Ваше ім’я'));
   const line = [person.role, person.city].filter(Boolean).join(', ');

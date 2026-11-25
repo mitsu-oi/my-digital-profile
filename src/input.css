@@ -226,6 +226,60 @@
       var(--holo-x, 0%) var(--holo-y, 50%);
   }
 
+  /* ---------- Поля форм (конструктор, контакти) ----------
+     Один клас на всі поля, щоб вигляд був однаковий; стан помилки — через aria-invalid, який ставить JS */
+  .field {
+    display: block;
+    width: 100%;
+    min-height: 3rem;
+    margin-top: 0.375rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md);
+    background: var(--color-sheet);
+    color: var(--color-ink);
+    font-size: 1rem;
+    transition: border-color var(--duration-quick) var(--ease-smooth-out);
+  }
+  textarea.field {
+    min-height: 7rem;
+    padding-block: 0.75rem;
+    line-height: 1.5;
+    resize: vertical;
+  }
+  .field::placeholder {
+    color: color-mix(in oklab, var(--color-ink-soft) 75%, transparent);
+  }
+  .field:hover {
+    border-color: var(--color-ink-soft);
+  }
+  .field:focus-visible {
+    border-color: var(--color-ink);
+    outline: 2px solid var(--color-ink);
+    outline-offset: 1px;
+  }
+  .field[aria-invalid="true"] {
+    border-color: var(--color-stamp);
+  }
+  .dark .field {
+    border-color: var(--color-night-line);
+    background: var(--color-night-sheet);
+    color: var(--color-cream);
+  }
+  .dark .field::placeholder {
+    color: color-mix(in oklab, var(--color-cream-soft) 75%, transparent);
+  }
+  .dark .field:hover {
+    border-color: var(--color-cream-soft);
+  }
+  .dark .field:focus-visible {
+    border-color: var(--color-cream);
+    outline-color: var(--color-cream);
+  }
+  .dark .field[aria-invalid="true"] {
+    border-color: var(--color-stamp-light);
+  }
+
   /* ---------- Мотиви документа ----------
      Гільйош (захисний візерунок паспорта) — SVG-файл як маска, тому колір задає звичайна властивість color.
      Елемент лежить під вмістом: батьку потрібні relative і isolate. */
