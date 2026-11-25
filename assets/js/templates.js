@@ -7,6 +7,9 @@ const filters = document.querySelector('[data-filters]');
 const palettes = document.querySelector('[data-palettes]');
 const status = document.querySelector('[data-status]');
 
+// назви розділів для підпису «Обов’язкові розділи» (ті самі, що в конструкторі)
+const SECTION_NAMES = { about: 'Про мене', skills: 'Навички', projects: 'Проєкти', experience: 'Досвід', education: 'Освіта', achievements: 'Досягнення', contacts: 'Контакти' };
+
 // стан сторінки: що зараз вибрано
 const state = { fit: 'all', palette: 'ink' };
 let data = null;
@@ -64,7 +67,8 @@ function drawList() {
     text.append(
       el('h2', 'mt-4 font-serif text-2xl font-bold', template.name),
       el('p', 'mt-2 leading-relaxed text-ink-soft dark:text-cream-soft', template.description),
-      el('p', 'mt-2 flex-1 text-sm text-ink-soft dark:text-cream-soft', `Пасує: ${fits.join(', ')}.`),
+      el('p', 'mt-2 text-sm text-ink-soft dark:text-cream-soft', `Пасує: ${fits.join(', ')}.`),
+      el('p', 'mt-1 flex-1 text-sm text-ink-soft dark:text-cream-soft', `Обов’язкові розділи: ${(template.required || []).map((type) => SECTION_NAMES[type]).join(', ')}.`),
       choose,
     );
     article.append(frame, text);

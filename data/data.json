@@ -5,26 +5,30 @@
       "id": "card",
       "name": "Посвідчення",
       "description": "Компактна картка-документ: фото, ім’я, фах і найважливіше поруч. Схожа на службове посвідчення.",
-      "fits": ["job", "short"]
+      "fits": ["job", "short"],
+      "required": ["about", "skills", "contacts"]
     },
     {
       "id": "resume",
       "name": "Резюме",
       "description": "Одна колонка, розділи один під одним. Найкраще друкується на аркуші А4 і зберігається як PDF.",
-      "fits": ["job"]
+      "fits": ["job"],
+      "required": ["about", "experience", "education", "skills", "contacts"]
     },
     {
       "id": "dossier",
       "name": "Досьє",
       "description": "Дві колонки: ліворуч контакти й навички, праворуч проєкти та досвід. Вміщує багато матеріалу.",
-      "fits": ["job", "clients"]
+      "fits": ["job", "clients"],
+      "required": ["contacts", "skills", "projects", "experience"]
     },
     {
       "id": "visit",
       "name": "Візитка",
       "description": "Лише головне по центру: хто ви, що вмієте і як із вами зв’язатися. Зручно відкривати з телефона.",
       "fits": ["clients", "short"],
-      "sections": ["about", "skills", "contacts"]
+      "sections": ["about", "skills", "contacts"],
+      "required": ["about", "skills", "contacts"]
     }
   ],
   "fits": [

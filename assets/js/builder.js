@@ -133,11 +133,43 @@ function initialState() {
   const example = data.examples.find((item) => item.id === params.get('example'));
   const profile = example
     ? cleanProfile(example.profile)
-    : cleanProfile({ person: { name: params.get('name') || '', role: params.get('role') || '' }, blocks: [{ type: 'about' }, { type: 'skills' }, { type: 'projects' }, { type: 'contacts' }] });
+    : cleanProfile({ person: { name: params.get('name') || '', role: params.get('role') || '' }, blocks: [] });
   const known = (list, id) => (list.some((item) => item.id === id) ? id : null);
   profile.template = known(data.templates, params.get('template')) || known(data.templates, profile.template) || data.templates[0].id;
   profile.palette = known(data.palettes, params.get('palette')) || known(data.palettes, profile.palette) || data.palettes[0].id;
+  state = profile;
+  ensureRequired();
   return profile;
+}
+
+// ---------- Обов’язкові розділи бланку ----------
+const currentTemplate = () => data.templates.find((item) => item.id === state.template);
+const requiredTypes = () => currentTemplate()?.required || [];
+
+// Додає порожні обов’язкові розділи, яких бракує. Позначка auto — «додано автоматично»:
+// такий розділ зникне при зміні бланку, якщо лишився порожнім і новому бланку не потрібен.
+function ensureRequired() {
+  const added = [];
+  const required = requiredTypes();
+  required.forEach((type, order) => {
+    if (state.blocks.some((block) => block.type === type)) return;
+    // ставимо розділ перед першим наявним обов’язковим, який у бланку йде після нього;
+    // якщо такого немає — після останнього наявного обов’язкового (а не в самий кінець за додатковими)
+    const later = state.blocks.findIndex((block) => required.indexOf(block.type) > order);
+    let place = later;
+    if (later < 0) {
+      const lastRequired = state.blocks.map((block) => required.includes(block.type)).lastIndexOf(true);
+      place = lastRequired < 0 ? 0 : lastRequired + 1;
+    }
+    state.blocks.splice(place, 0, { ...emptyBlock(type), auto: true });
+    added.push(BLOCKS[type].title);
+  });
+  return added;
+}
+
+function dropUnneededAuto() {
+  const required = requiredTypes();
+  state.blocks = state.blocks.filter((block) => !(block.auto && !required.includes(block.type) && blockStatus(block) === 'empty'));
 }
 
 // ---------- Перегляд ----------
@@ -431,6 +463,7 @@ function blockEditor(block, index, count) {
   // заголовок і кнопки: вгору, вниз, прибрати (альтернатива перетягуванню — вимога WCAG 2.5.7)
   const head = el('div', 'flex items-center justify-between gap-3');
   const isCollapsed = collapsed.has(block.id);
+  const required = requiredTypes().includes(block.type);
   // заголовок — кнопка: натиснули — картка згорнулась або розгорнулась (aria-expanded каже читачу екрана стан)
   const title = el('h3', 'min-w-0 flex-1 font-serif text-xl font-bold');
   title.id = `${block.id}-title`;
@@ -443,6 +476,10 @@ function blockEditor(block, index, count) {
   chevron.setAttribute('aria-hidden', 'true');
   if (isCollapsed) chevron.classList.add('-rotate-90');
   toggle.append(chevron, el('span', '', info.title));
+  if (required) {
+    const tag = el('span', 'rounded-sm border border-line px-1.5 py-0.5 font-mono text-[11px] font-normal text-ink-soft dark:border-night-line dark:text-cream-soft', 'обов’язковий');
+    toggle.append(tag);
+  }
   // у згорнутій картці поруч із назвою — стан заповнення; «!» означає, що всередині є незаповнені поля
   if (isCollapsed) {
     const status = STATUS[blockStatus(block)];
@@ -457,7 +494,7 @@ function blockEditor(block, index, count) {
   tools.append(
     iconButton('up', `Перемістити розділ «${info.title}» вище`, '↑', index === 0),
     iconButton('down', `Перемістити розділ «${info.title}» нижче`, '↓', index === count - 1),
-    iconButton('remove', `Прибрати розділ «${info.title}»`, '×', false),
+    ...(required ? [] : [iconButton('remove', `Прибрати розділ «${info.title}»`, '×', false)]),
   );
   head.append(title, tools);
   section.append(head);
@@ -532,11 +569,13 @@ function drawBlocks() {
     nodes.push(el('p', 'rounded-lg border border-dashed border-line p-4 text-sm leading-relaxed text-ink-soft dark:border-night-line dark:text-cream-soft', `Бланк «${template.name}» не показує: ${hidden.map((block) => BLOCKS[block.type].title).join(', ')}. Ці дані збережено — вони повернуться, якщо обрати інший бланк.`));
   }
   blocksBox.replaceChildren(...nodes);
-  // у списку «Новий розділ» — лише ті, яких ще немає і які вміє показати бланк
-  const free = allowedTypes().filter((type) => !state.blocks.some((block) => block.type === type));
+  // «Додатковий розділ»: лише необов’язкові для бланку, яких ще немає
+  const optional = allowedTypes().filter((type) => !requiredTypes().includes(type));
+  const free = optional.filter((type) => !state.blocks.some((block) => block.type === type));
   addType.replaceChildren(...free.map((type) => Object.assign(el('option', '', BLOCKS[type].title), { value: type })));
   addRow.hidden = !free.length;
   allAdded.hidden = Boolean(free.length);
+  allAdded.textContent = optional.length ? 'Усі додаткові розділи вже додано.' : `Бланк «${currentTemplate().name}» має лише обов’язкові розділи.`;
 }
 
 // ---------- Перевірка полів ----------
@@ -564,9 +603,15 @@ function onInput(event) {
   if (input.name === 'template' || input.name === 'palette') {
     state[input.name] = input.value;
     if (input.name === 'template') {
-      drawBlocks(); // інший бланк — інший набір розділів у формі
+      // інший бланк — інший набір розділів: прибираємо непотрібні порожні автододані, додаємо обов’язкові
+      dropUnneededAuto();
+      const added = ensureRequired();
+      drawBlocks();
       const hidden = state.blocks.filter((block) => !allowedTypes().includes(block.type));
-      if (hidden.length) announce(`Сховано розділи: ${hidden.map((block) => BLOCKS[block.type].title).join(', ')}. Дані збережено.`);
+      const parts = [];
+      if (added.length) parts.push(`Додано обов’язкові розділи: ${added.join(', ')}.`);
+      if (hidden.length) parts.push(`Сховано: ${hidden.map((block) => BLOCKS[block.type].title).join(', ')}, дані збережено.`);
+      if (parts.length) announce(parts.join(' '));
     }
     return changed();
   }
@@ -584,6 +629,7 @@ function onInput(event) {
   }
   const block = state.blocks.find((item) => item.id === input.dataset.block);
   if (!block) return;
+  delete block.auto;
   const { field: key, entry, list } = input.dataset;
   if (input.dataset.years !== undefined) {
     // рік початку / завершення: перераховуємо текст періоду й перевіряємо порядок років
@@ -674,7 +720,7 @@ function onClick(event) {
     const edge = target === 0 || target === visible.length - 1;
     focusLater(`[data-block-id="${block.id}"] [data-action="${edge ? (action === 'up' ? 'down' : 'up') : action}"]`);
   }
-  if (action === 'remove' && block) {
+  if (action === 'remove' && block && !requiredTypes().includes(block.type)) {
     state.blocks.splice(index, 1);
     drawBlocks();
     announce(`Розділ «${BLOCKS[block.type].title}» прибрано. Його можна додати знову.`);
