@@ -1,10 +1,13 @@
-// Збирає шість сторінок сайту: спільні <head>, шапка й підвал + вміст із src/pages/<назва>.html.
-// Запуск: npm run build:pages. Готові файли (index.html тощо) лежать у корені й не правляться вручну.
+// Збирає сторінки сайту: спільні <head>, шапка й підвал + вміст із src/pages/<назва>.html.
+// Також генерує robots.txt і sitemap.xml. Запуск: npm run build:pages.
+// Готові файли (index.html тощо) лежать у корені й не правляться вручну.
 const fs = require('fs');
 const path = require('path');
 
 const root = path.resolve(__dirname, '..');
-const SITE = 'https://my-digital-profile.vercel.app/'; // адреса продакшну (уточнити після деплою)
+// Адреса продакшну: від неї будуються canonical, Open Graph і sitemap. Після деплою вписати справжню.
+const SITE = 'https://my-digital-profile.vercel.app/';
+const OG_IMAGE = `${SITE}assets/images/og.png`;
 
 // ---------- сторінки ----------
 const pages = [
@@ -14,7 +17,24 @@ const pages = [
   { file: 'examples.html', module: 'examples.js', nav: 'Приклади', title: 'Приклади портфоліо — ОсьЯ', description: 'Готові портфоліо різних фахів для натхнення.' },
   { file: 'about.html', module: 'about.js', nav: 'Про сервіс', title: 'Про сервіс — ОсьЯ', description: 'Для кого створено ОсьЯ, як працює сервіс і чому ваші дані не залишають браузер.' },
   { file: 'contact.html', module: 'contact.js', nav: 'Контакти', title: 'Контакти — ОсьЯ', description: 'Напишіть команді сервісу «Мій цифровий профіль».' },
+  // сторінка «не знайдено»: Vercel сам віддає 404.html для неіснуючих адрес; її не індексуємо й не показуємо в меню
+  { file: '404.html', nav: null, noindex: true, title: 'Сторінку не знайдено — ОсьЯ', description: 'Такої сторінки немає. Перейдіть на головну або відкрийте конструктор профілю.' },
 ];
+
+// Структуровані дані для головної: описуємо лише те, що справді є на сторінці (безкоштовний вебзастосунок)
+const JSON_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'ОсьЯ — мій цифровий профіль',
+  alternateName: 'Мій цифровий профіль',
+  url: SITE,
+  description: 'Конструктор портфоліо у вигляді цифрового посвідчення: бланк, палітра, розділи й готовий файл PDF або HTML. Без реєстрації.',
+  inLanguage: 'uk',
+  applicationCategory: 'BusinessApplication',
+  operatingSystem: 'Будь-який сучасний браузер',
+  image: OG_IMAGE,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'UAH' },
+};
 
 // ---------- спільні шматки розмітки ----------
 const icon = (name, classes = 'size-5') => `<svg class="${classes}" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#${name}"></use></svg>`;
@@ -29,6 +49,9 @@ const NAV_DESKTOP = 'inline-flex min-h-12 items-center border-b-2 border-transpa
 const NAV_MOBILE = 'flex min-h-12 items-center border-b border-line px-1 text-base font-medium text-ink aria-[current=page]:text-stamp dark:border-night-line dark:text-cream dark:aria-[current=page]:text-stamp-light';
 const BTN_PRIMARY = 'btn-primary min-h-12 items-center justify-center gap-2 rounded-md px-6 text-base font-semibold text-cream transition-transform duration-150 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink active:translate-y-0 active:scale-[0.97] dark:focus-visible:outline-cream';
 
+// повна адреса сторінки: головна — просто адреса сайту
+const url = (page) => `${SITE}${page.file === 'index.html' ? '' : page.file}`;
+
 const head = (page) => `<!doctype html>
 <html lang="uk">
   <head>
@@ -36,8 +59,25 @@ const head = (page) => `<!doctype html>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${page.title}</title>
     <meta name="description" content="${page.description}">
-    <link rel="canonical" href="${SITE}${page.file === 'index.html' ? '' : page.file}">
-    <meta name="theme-color" content="#f6f3ec">
+${page.noindex ? `    <meta name="robots" content="noindex">
+` : `    <link rel="canonical" href="${url(page)}">
+    <!-- Open Graph і Twitter: картка з картинкою, коли посиланням діляться в месенджерах і соцмережах -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="ОсьЯ — мій цифровий профіль">
+    <meta property="og:locale" content="uk_UA">
+    <meta property="og:title" content="${page.title}">
+    <meta property="og:description" content="${page.description}">
+    <meta property="og:url" content="${url(page)}">
+    <meta property="og:image" content="${OG_IMAGE}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="ОсьЯ: портфоліо, оформлене як документ, приклад профілю з печаткою «Перевірено»">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="${page.title}">
+    <meta name="twitter:description" content="${page.description}">
+    <meta name="twitter:image" content="${OG_IMAGE}">
+`}${page.file === 'index.html' ? `    <script type="application/ld+json">${JSON.stringify(JSON_LD)}</script>
+` : ''}    <meta name="theme-color" content="#f6f3ec">
     <!-- Тема ставиться до першого малювання сторінки, щоб не було миготіння: збережений вибір або налаштування системи -->
     <script>
       (function () {
@@ -52,6 +92,10 @@ const head = (page) => `<!doctype html>
     <link rel="stylesheet" href="css/site.css">
     <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
     <script src="assets/js/site.js" defer></script>
+    <!-- Vercel Web Analytics: рахує анонімні перегляди сторінок без cookies. Профіль і введені дані не передаються.
+         Скрипт /_vercel/insights/script.js існує лише на сайті, розгорнутому на Vercel (локально дає 404 — це нормально). -->
+    <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+    <script src="/_vercel/insights/script.js" defer></script>
 ${page.module ? `    <script type="module" src="assets/js/${page.module}"></script>
 ` : ''}  </head>
   <body class="flex min-h-screen flex-col bg-paper font-sans text-ink antialiased dark:bg-night dark:text-cream">
@@ -127,7 +171,27 @@ const stub = (page) => `      <div class="mx-auto w-full max-w-page px-5 py-24 m
 for (const page of pages) {
   const source = path.join(root, 'src', 'pages', page.file);
   const content = fs.existsSync(source) ? fs.readFileSync(source, 'utf8').replace(/\r\n/g, '\n').trimEnd() : stub(page);
-  const html = `${head(page)}${header(page)}\n    <main id="main" tabindex="-1" class="flex-1">\n${content}\n    </main>\n\n${footer()}`;
+  let html = `${head(page)}${header(page)}\n    <main id="main" tabindex="-1" class="flex-1">\n${content}\n    </main>\n\n${footer()}`;
+  // 404 віддається за будь-якою адресою, навіть вкладеною (/a/b/c), тож відносні адреси робимо абсолютними (від кореня).
+  // Тег <base> не підходить: він зламав би посилання-якорі на кшталт #main.
+  if (page.noindex) html = html.replace(/(\s(?:href|src)=")(?![a-z]+:|\/|#)/g, '$1/');
   fs.writeFileSync(path.join(root, page.file), html);
 }
-console.log('Зібрано сторінок:', pages.length);
+// ---------- robots.txt і sitemap.xml ----------
+const today = new Date().toISOString().slice(0, 10);
+fs.writeFileSync(path.join(root, 'robots.txt'), `# Дозволено індексувати весь сайт
+User-agent: *
+Allow: /
+
+Sitemap: ${SITE}sitemap.xml
+`);
+const indexed = pages.filter((page) => !page.noindex);
+fs.writeFileSync(path.join(root, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${indexed.map((page) => `  <url>
+    <loc>${url(page)}</loc>
+    <lastmod>${today}</lastmod>
+  </url>`).join('\n')}
+</urlset>
+`);
+console.log('Зібрано сторінок:', pages.length, '+ robots.txt, sitemap.xml');

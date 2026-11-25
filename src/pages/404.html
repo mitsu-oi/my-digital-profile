@@ -1,0 +1,20 @@
+      <div class="mx-auto w-full max-w-page px-5 py-20 md:px-8 md:py-28 xl:px-12">
+        <div class="grid items-center gap-12 lg:grid-cols-[1fr_auto]">
+          <div>
+            <p class="font-mono text-sm text-stamp dark:text-stamp-light">Помилка 404</p>
+            <h1 class="mt-3 font-serif text-4xl leading-tight font-bold sm:text-5xl">Такої сторінки немає</h1>
+            <p class="mt-4 max-w-xl text-lg leading-relaxed text-ink-soft dark:text-cream-soft">Можливо, в адресі помилка або сторінку перейменували. Ваша чернетка в конструкторі нікуди не зникла: вона зберігається в браузері.</p>
+            <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+              <a href="builder.html" class="btn-primary inline-flex min-h-12 items-center justify-center rounded-md px-7 font-semibold text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:focus-visible:outline-cream">Відкрити конструктор</a>
+              <a href="index.html" class="inline-flex min-h-12 items-center justify-center rounded-md border-2 border-ink px-7 font-semibold text-ink transition-colors hover:bg-ink hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:border-cream dark:text-cream dark:hover:bg-night-raised dark:focus-visible:outline-cream">На головну</a>
+            </div>
+          </div>
+          <!-- штамп «Не знайдено» замість ілюстрації -->
+          <svg viewBox="0 0 220 220" class="mx-auto w-48 -rotate-[8deg] text-stamp sm:w-60 dark:text-stamp-light" aria-hidden="true">
+            <defs><path id="nf-ring" d="M110 110m-80 0a80 80 0 1 1 160 0a80 80 0 1 1-160 0" /></defs>
+            <g fill="none" stroke="currentColor"><circle cx="110" cy="110" r="102" stroke-width="4" /><circle cx="110" cy="110" r="94" stroke-width="1.4" /><circle cx="110" cy="110" r="62" stroke-width="1.6" /></g>
+            <text class="font-mono" font-size="14" letter-spacing="3.5" fill="currentColor"><textPath href="#nf-ring">СТОРІНКУ НЕ ЗНАЙДЕНО · ОСЬЯ ·</textPath></text>
+            <text x="110" y="124" text-anchor="middle" class="font-serif" font-size="40" font-weight="700" fill="currentColor">404</text>
+          </svg>
+        </div>
+      </div>

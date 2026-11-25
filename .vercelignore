@@ -1,0 +1,10 @@
+# Що НЕ потрапляє на сайт: вихідні файли, скрипти збірки, документація.
+# Відвідувачам потрібні лише готові сторінки, css/, assets/, data/, robots.txt і sitemap.xml.
+src/
+scripts/
+docs/
+node_modules/
+*.md
+package.json
+package-lock.json
+.github/
