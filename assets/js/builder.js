@@ -282,6 +282,39 @@ function yearsField(idBase, label, item, bind) {
 
 // Навички: обрані — як «бирки» з кнопкою прибрати; нижче поле для своєї навички (воно ж фільтрує підказки)
 // і готові підказки з data.json, згруповані за сферами (як на сайтах вакансій).
+// ---------- Згортання карток розділів ----------
+const collapsed = new Set(); // id згорнутих розділів — переживає перемальовування
+
+// Наскільки заповнено розділ: 'full' — усе потрібне є, 'partial' — щось почате, але не дописане, 'empty' — порожньо.
+// Для записів (проєкт, досвід, освіта) обов’язкові назва, місце/текст і період; посилання — необов’язкове.
+// period порожній, якщо роки йдуть у неправильному порядку, тож він теж перевіряється
+const REQUIRED = { projects: ['title', 'text'], experience: ['title', 'place', 'from', 'period', 'text'], education: ['title', 'place', 'from', 'period'] };
+function blockStatus(block) {
+  const filled = (value) => typeof value === 'string' && value.trim() !== '';
+  if (block.type === 'about') return filled(block.text) ? 'full' : 'empty';
+  if (block.type === 'skills' || block.type === 'achievements') return block.items.length ? 'full' : 'empty';
+  if (block.type === 'contacts') {
+    const values = [block.email, block.phone, block.link].filter(filled);
+    if (!values.length) return 'empty';
+    const valid = (!filled(block.email) || EMAIL_RE.test(block.email.trim())) && (!filled(block.phone) || PHONE_RE.test(block.phone.trim())) && (!filled(block.link) || safeLink(block.link));
+    return valid ? 'full' : 'partial';
+  }
+  if (REQUIRED[block.type]) {
+    if (!block.items.length) return 'empty';
+    const touched = block.items.some((item) => Object.values(item).some(filled));
+    if (!touched) return 'empty';
+    const complete = block.items.every((item) => REQUIRED[block.type].every((key) => filled(item[key])) && (!filled(item.link) || safeLink(item.link)));
+    return complete ? 'full' : 'partial';
+  }
+  return 'full';
+}
+
+const STATUS = {
+  full: { text: 'заповнено', mark: '✓', classes: 'text-ink-soft dark:text-cream-soft' },
+  partial: { text: 'є незаповнені поля', mark: '!', classes: 'text-stamp dark:text-stamp-light' },
+  empty: { text: 'порожньо', mark: '○', classes: 'text-ink-soft dark:text-cream-soft' },
+};
+
 const skillFilters = {}; // текст у полі пошуку для кожного розділу — переживає перемальовування
 const openGroups = {}; // номери відкритих груп підказок для кожного розділу
 const CHIP = 'inline-flex min-h-11 items-center gap-1.5 rounded-md border px-3 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:focus-visible:outline-cream';
@@ -397,8 +430,29 @@ function blockEditor(block, index, count) {
 
   // заголовок і кнопки: вгору, вниз, прибрати (альтернатива перетягуванню — вимога WCAG 2.5.7)
   const head = el('div', 'flex items-center justify-between gap-3');
-  const title = el('h3', 'font-serif text-xl font-bold', info.title);
+  const isCollapsed = collapsed.has(block.id);
+  // заголовок — кнопка: натиснули — картка згорнулась або розгорнулась (aria-expanded каже читачу екрана стан)
+  const title = el('h3', 'min-w-0 flex-1 font-serif text-xl font-bold');
   title.id = `${block.id}-title`;
+  const toggle = el('button', 'group/toggle -mx-2 flex min-h-12 w-full items-center gap-2 rounded-md px-2 text-left hover:bg-paper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:hover:bg-night-raised dark:focus-visible:outline-cream');
+  toggle.type = 'button';
+  toggle.dataset.action = 'collapse';
+  toggle.setAttribute('aria-expanded', String(!isCollapsed));
+  toggle.setAttribute('aria-controls', `${block.id}-body`);
+  const chevron = el('span', 'inline-block font-mono text-base text-ink-soft transition-transform duration-150 ease-smooth-out dark:text-cream-soft', '▾');
+  chevron.setAttribute('aria-hidden', 'true');
+  if (isCollapsed) chevron.classList.add('-rotate-90');
+  toggle.append(chevron, el('span', '', info.title));
+  // у згорнутій картці поруч із назвою — стан заповнення; «!» означає, що всередині є незаповнені поля
+  if (isCollapsed) {
+    const status = STATUS[blockStatus(block)];
+    const badge = el('span', `ml-1 inline-flex items-center gap-1 font-sans text-sm font-semibold ${status.classes}`);
+    const mark = el('span', 'inline-flex size-5 items-center justify-center rounded-full border border-current text-xs leading-none', status.mark);
+    mark.setAttribute('aria-hidden', 'true');
+    badge.append(mark, el('span', '', status.text));
+    toggle.append(badge);
+  }
+  title.append(toggle);
   const tools = el('div', 'flex shrink-0 gap-2');
   tools.append(
     iconButton('up', `Перемістити розділ «${info.title}» вище`, '↑', index === 0),
@@ -409,6 +463,8 @@ function blockEditor(block, index, count) {
   section.append(head);
 
   const body = el('div', 'mt-4 space-y-4');
+  body.id = `${block.id}-body`;
+  body.hidden = isCollapsed;
   const bind = { block: block.id };
 
   if (block.type === 'about') {
@@ -626,6 +682,15 @@ function onClick(event) {
     const next = rest.find((item) => state.blocks.indexOf(item) >= index) || rest[rest.length - 1];
     // фокус переходить на сусідній розділ (його першу доступну кнопку), а якщо розділів не лишилось — на вибір нового
     (next ? blocksBox.querySelector(`[data-block-id="${next.id}"] button:not(:disabled)`) : addType)?.focus();
+  }
+  if (action === 'collapse' && block) {
+    const wasCollapsed = collapsed.has(block.id);
+    if (wasCollapsed) collapsed.delete(block.id);
+    else collapsed.add(block.id);
+    drawBlocks();
+    focusLater(`[data-block-id="${block.id}"] [data-action="collapse"]`);
+    if (!wasCollapsed) announce(`Розділ «${BLOCKS[block.type].title}» згорнуто: ${STATUS[blockStatus(block)].text}.`);
+    return;
   }
   if (action === 'toggle-skill' && block) {
     const skill = button.dataset.skill;
