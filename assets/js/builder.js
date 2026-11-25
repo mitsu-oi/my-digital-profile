@@ -74,7 +74,6 @@ const photoRemove = root?.querySelector('[data-action="photo-remove"]');
 
 let data = null; // вміст data.json
 let state = null; // поточний профіль
-let dirty = false; // чи є незбережені зміни (до появи чернетки на етапі 4)
 let uid = 0;
 const newId = () => `b${Date.now().toString(36)}${(uid++).toString(36)}`;
 
@@ -102,13 +101,16 @@ function cleanProfile(source) {
       if (block.type === 'achievements') clean.items = (block.items || []).map((item) => str(item, LIMITS.achievement)).filter(Boolean).slice(0, LIMITS.achievements);
       if (BLOCKS[block.type].fields) {
         clean.items = (block.items || []).slice(0, BLOCKS[block.type].max).map((item) => {
-          const { from, to } = parsePeriod(item.period);
+          const year = (value) => (typeof value === 'string' && (/^\d{4}$/.test(value) || value === 'now') ? value : '');
+          const parsed = parsePeriod(item.period);
+          const from = year(item.from) || parsed.from;
+          const to = year(item.to) || parsed.to;
           return {
             title: str(item.title, LIMITS.title),
             place: str(item.place, LIMITS.short),
             from,
             to,
-            period: formatPeriod(from, to),
+            period: periodProblem(from, to) ? '' : formatPeriod(from, to),
             text: str(item.text, LIMITS.entryText),
             link: str(item.link, LIMITS.link),
           };
@@ -120,16 +122,16 @@ function cleanProfile(source) {
   return {
     template: source.template,
     palette: source.palette,
-    number: `000 ${String(Math.floor(Math.random() * 900) + 100)}`,
+    number: /^000 \d{3}$/.test(source.number) ? source.number : `000 ${String(Math.floor(Math.random() * 900) + 100)}`,
     person: { name: str(person.name, 60), role: str(person.role, 80), city: str(person.city, 40) },
-    photo: '',
+    // фото з чернетки приймаємо лише як data:image і не більше ~1,5 МБ тексту
+    photo: typeof source.photo === 'string' && source.photo.length < 1_500_000 && /^data:image\/(png|jpeg|webp);base64,/.test(source.photo) ? source.photo : '',
     blocks,
   };
 }
 
 // Читає параметри адреси: ?template=&palette= (зі сторінки «Шаблони»), ?example= (з «Прикладів»), ?name=&role= (з головної)
-function initialState() {
-  const params = new URLSearchParams(location.search);
+function initialState(params = new URLSearchParams(location.search)) {
   const example = data.examples.find((item) => item.id === params.get('example'));
   const profile = example
     ? cleanProfile(example.profile)
@@ -187,7 +189,103 @@ function renderPreview() {
 }
 
 function changed() {
-  dirty = true;
+  renderPreview();
+  scheduleSave();
+}
+
+// ---------- Чернетка в localStorage ----------
+// Зберігається лише в цьому браузері (на сервер нічого не йде), живе 30 днів від останньої зміни.
+// Формат: { version, savedAt, profile }. При читанні все проходить через cleanProfile — білий список полів.
+// Чому не cookies: вони вміщують лише ~4 КБ і браузер надсилає їх на сервер із кожним запитом.
+const DRAFT_KEY = 'osya-draft';
+const DRAFT_VERSION = 1;
+const DRAFT_DAYS = 30;
+const draftStatus = root?.querySelector('[data-draft-status]');
+let saveTimer = 0;
+
+function setDraftStatus(text, problem = false) {
+  if (!draftStatus) return;
+  draftStatus.textContent = text;
+  draftStatus.classList.toggle('text-stamp', problem);
+  draftStatus.classList.toggle('dark:text-stamp-light', problem);
+  draftStatus.classList.toggle('font-medium', problem);
+}
+
+function removeDraft() {
+  try {
+    localStorage.removeItem(DRAFT_KEY);
+  } catch (error) {
+    /* сховище недоступне — видаляти нічого */
+  }
+}
+
+function readDraft() {
+  let raw = null;
+  try {
+    raw = localStorage.getItem(DRAFT_KEY);
+  } catch (error) {
+    setDraftStatus('Браузер заборонив сховище (можливо, приватний режим), тому чернетка не зберігатиметься.', true);
+    return null;
+  }
+  if (!raw) return null;
+  try {
+    const draft = JSON.parse(raw);
+    const age = Date.now() - Date.parse(draft.savedAt);
+    // застара, іншої версії чи пошкоджена чернетка не ламає сторінку — просто ігнорується й видаляється
+    if (draft.version !== DRAFT_VERSION || !(age >= 0 && age < DRAFT_DAYS * 864e5) || !draft.profile || typeof draft.profile !== 'object') throw new Error('стара або чужа чернетка');
+    return draft;
+  } catch (error) {
+    console.warn('Чернетку не прочитано:', error.message);
+    removeDraft();
+    return null;
+  }
+}
+
+const timeText = (date) => date.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' });
+
+function saveDraft() {
+  clearTimeout(saveTimer);
+  saveTimer = 0;
+  const { template, palette, number, person, photo, blocks } = state;
+  const write = (profile) => localStorage.setItem(DRAFT_KEY, JSON.stringify({ version: DRAFT_VERSION, savedAt: new Date().toISOString(), profile }));
+  try {
+    write({ template, palette, number, person, photo, blocks });
+    setDraftStatus(`Чернетку збережено о ${timeText(new Date())}. Вона зберігається в цьому браузері 30 днів.`);
+  } catch (error) {
+    // переповнене сховище (найчастіше через фото): зберігаємо без фото й чесно кажемо про це
+    try {
+      write({ template, palette, number, person, photo: '', blocks });
+      setDraftStatus('Чернетку збережено без фото: у сховищі браузера бракує місця. Фото лишиться, поки сторінка відкрита.', true);
+    } catch (again) {
+      setDraftStatus('Не вдалося зберегти чернетку: браузер не дозволяє запис. Не закривайте сторінку, поки не збережете файл.', true);
+    }
+  }
+}
+
+// зберігаємо не на кожну літеру, а через пів секунди після останньої зміни
+function scheduleSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveDraft, 500);
+}
+
+// профіль із чернетки: білий список полів + перевірка бланку й палітри
+function stateFromDraft(draft) {
+  const profile = cleanProfile(draft.profile);
+  const known = (list, id) => (list.some((item) => item.id === id) ? id : null);
+  profile.template = known(data.templates, draft.profile.template) || data.templates[0].id;
+  profile.palette = known(data.palettes, draft.profile.palette) || data.palettes[0].id;
+  state = profile;
+  ensureRequired();
+  return profile;
+}
+
+// Заповнює форму з поточного state і перемальовує все (після відновлення чернетки чи заміни профілю)
+function redrawAll() {
+  for (const input of form.querySelectorAll('[data-person]')) input.value = state.person[input.dataset.person];
+  photoRemove.hidden = !state.photo;
+  collapsed.clear();
+  drawChoices();
+  drawBlocks();
   renderPreview();
 }
 
@@ -812,6 +910,46 @@ async function onPhoto() {
   }
 }
 
+// ---------- Вибір між чернеткою й посиланням ----------
+function offerReplace(params) {
+  const box = root.querySelector('[data-draft-choice]');
+  const text = root.querySelector('[data-draft-choice-text]');
+  const replace = root.querySelector('[data-draft-replace]');
+  const example = data.examples.find((item) => item.id === params.get('example'));
+  const template = data.templates.find((item) => item.id === params.get('template'));
+  let what = 'новий профіль';
+  if (example) what = `приклад «${example.profile.person.name}»`;
+  else if (template) what = `бланк «${template.name}» для вашої чернетки`;
+  text.textContent = `У браузері є ваша чернетка, тому відкрито її. Відкрити натомість ${what}?`;
+  if (example) replace.textContent = 'Відкрити приклад замість чернетки';
+  else if (template) replace.textContent = `Змінити бланк на «${template.name}»`;
+  else replace.textContent = 'Почати з нового';
+  box.hidden = false;
+  const close = () => {
+    box.hidden = true;
+    form.querySelector('#person-name').focus();
+  };
+  root.querySelector('[data-draft-keep]').addEventListener('click', () => {
+    close();
+    announce('Залишено вашу чернетку.');
+  }, { once: true });
+  replace.addEventListener('click', () => {
+    if (template && !example) {
+      // бланк за посиланням: беремо вашу чернетку, лише міняємо бланк (дані не губляться)
+      state.template = template.id;
+      if (data.palettes.some((item) => item.id === params.get('palette'))) state.palette = params.get('palette');
+      dropUnneededAuto();
+      ensureRequired();
+    } else {
+      initialState(params);
+    }
+    redrawAll();
+    saveDraft();
+    close();
+    announce('Готово, чернетку оновлено.');
+  }, { once: true });
+}
+
 // ---------- Перемикач «Заповнення / Перегляд» на телефоні ----------
 function setView(view) {
   root.dataset.view = view;
@@ -831,11 +969,20 @@ async function start() {
     return;
   }
   loading.hidden = true;
-  state = initialState();
-  for (const input of form.querySelectorAll('[data-person]')) input.value = state.person[input.dataset.person];
-  drawChoices();
-  drawBlocks();
-  renderPreview();
+  // Що показати: чернетку чи те, що прийшло за посиланням (?example, ?template, ?name)
+  const params = new URLSearchParams(location.search);
+  const fromLink = ['example', 'template', 'palette', 'name', 'role'].some((key) => params.has(key));
+  const draft = readDraft();
+  if (draft) {
+    stateFromDraft(draft);
+    setDraftStatus(`Відновлено чернетку від ${new Date(draft.savedAt).toLocaleString('uk-UA', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}.`);
+    if (fromLink) offerReplace(params);
+  } else {
+    initialState(params);
+  }
+  // параметри адреси прибираємо, щоб оновлення сторінки відкривало чернетку, а не знову приклад
+  if (fromLink) history.replaceState(null, '', location.pathname);
+  redrawAll();
 
   form.addEventListener('input', onInput);
   form.addEventListener('focusout', onBlur);
@@ -851,9 +998,23 @@ async function start() {
   });
   photoInput.addEventListener('change', onPhoto);
   for (const button of root.querySelectorAll('[data-view-btn]')) button.addEventListener('click', () => setView(button.dataset.viewBtn));
-  // поки немає чернетки (етап 4), попереджаємо перед закриттям сторінки зі змінами
-  window.addEventListener('beforeunload', (event) => {
-    if (dirty) event.preventDefault();
+  // «Почати спочатку»: чернетку видалено, профіль порожній (з обов’язковими розділами поточного бланку)
+  root.querySelector('[data-reset]').addEventListener('click', () => {
+    if (!window.confirm('Очистити все, що ви ввели? Чернетку буде видалено, повернути її не вийде.')) return;
+    const { template, palette } = state;
+    clearTimeout(saveTimer);
+    saveTimer = 0;
+    removeDraft();
+    initialState(new URLSearchParams({ template, palette }));
+    redrawAll();
+    photoInput.value = '';
+    setDraftStatus('Почато спочатку. Нові зміни знову зберігатимуться автоматично.');
+    announce('Профіль очищено.');
+    form.querySelector('#person-name').focus();
+  });
+  // якщо сторінку закривають, поки таймер збереження ще не спрацював, зберігаємо одразу
+  window.addEventListener('pagehide', () => {
+    if (saveTimer) saveDraft();
   });
 }
 
