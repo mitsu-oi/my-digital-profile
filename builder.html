@@ -177,33 +177,37 @@
                На великому екрані колонка липка й заввишки з вікно: зверху інструменти, посередині профіль
                (гортається сам), знизу кнопки збереження — їх видно завжди, на будь-якій висоті екрана. -->
           <section aria-labelledby="preview-title" class="hidden min-w-0 group-data-[view=preview]:block lg:block">
-            <div class="flex flex-col gap-3 lg:sticky lg:top-24 lg:h-[calc(100dvh-7.5rem)]">
-              <!-- рядок інструментів: назва, пристрої -->
-              <div class="flex items-center justify-between gap-3">
-                <h2 id="preview-title" class="font-mono text-sm text-ink-soft dark:text-cream-soft">Перегляд</h2>
-                <div class="flex gap-1 rounded-lg border border-line p-0.5 dark:border-night-line" role="group" aria-label="Перегляд на пристрої">
-                  <button type="button" data-device="375" aria-pressed="false" aria-label="Як на телефоні" title="Телефон" class="inline-flex size-11 items-center justify-center rounded-md text-ink-soft transition-colors hover:bg-paper hover:text-ink aria-pressed:bg-ink aria-pressed:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-cream-soft dark:hover:bg-night-raised dark:hover:text-cream dark:aria-pressed:bg-night-raised dark:aria-pressed:text-cream dark:aria-pressed:ring-1 dark:aria-pressed:ring-stamp-light dark:focus-visible:outline-cream"><svg class="size-5" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#device-phone"></use></svg></button>
-                  <button type="button" data-device="768" aria-pressed="false" aria-label="Як на планшеті" title="Планшет" class="inline-flex size-11 items-center justify-center rounded-md text-ink-soft transition-colors hover:bg-paper hover:text-ink aria-pressed:bg-ink aria-pressed:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-cream-soft dark:hover:bg-night-raised dark:hover:text-cream dark:aria-pressed:bg-night-raised dark:aria-pressed:text-cream dark:aria-pressed:ring-1 dark:aria-pressed:ring-stamp-light dark:focus-visible:outline-cream"><svg class="size-5" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#device-tablet"></use></svg></button>
-                  <button type="button" data-device="0" aria-pressed="true" aria-label="Як на комп’ютері" title="Комп’ютер" class="inline-flex size-11 items-center justify-center rounded-md text-ink-soft transition-colors hover:bg-paper hover:text-ink aria-pressed:bg-ink aria-pressed:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-cream-soft dark:hover:bg-night-raised dark:hover:text-cream dark:aria-pressed:bg-night-raised dark:aria-pressed:text-cream dark:aria-pressed:ring-1 dark:aria-pressed:ring-stamp-light dark:focus-visible:outline-cream"><svg class="size-5" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#device-desktop"></use></svg></button>
+            <div class="flex flex-col gap-2 lg:sticky lg:top-24 lg:h-[calc(100dvh-7rem)]">
+              <!-- рядок 1: назва, пристрої, збереження — усе компактно, щоб профілю лишалось більше місця -->
+              <div class="flex flex-wrap items-center gap-2">
+                <h2 id="preview-title" class="mr-auto font-mono text-sm text-ink-soft dark:text-cream-soft">Перегляд</h2>
+                <div class="flex rounded-lg border border-line p-0.5 dark:border-night-line" role="group" aria-label="Перегляд на пристрої">
+                  <button type="button" data-device="375" aria-pressed="false" aria-label="Як на телефоні" title="Телефон" class="inline-flex size-10 items-center justify-center rounded-md text-ink-soft transition-colors hover:bg-paper hover:text-ink aria-pressed:bg-ink aria-pressed:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-cream-soft dark:hover:bg-night-raised dark:hover:text-cream dark:aria-pressed:bg-night-raised dark:aria-pressed:text-cream dark:aria-pressed:ring-1 dark:aria-pressed:ring-stamp-light dark:focus-visible:outline-cream"><svg class="size-[1.1rem]" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#device-phone"></use></svg></button>
+                  <button type="button" data-device="768" aria-pressed="false" aria-label="Як на планшеті" title="Планшет" class="inline-flex size-10 items-center justify-center rounded-md text-ink-soft transition-colors hover:bg-paper hover:text-ink aria-pressed:bg-ink aria-pressed:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-cream-soft dark:hover:bg-night-raised dark:hover:text-cream dark:aria-pressed:bg-night-raised dark:aria-pressed:text-cream dark:aria-pressed:ring-1 dark:aria-pressed:ring-stamp-light dark:focus-visible:outline-cream"><svg class="size-[1.1rem]" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#device-tablet"></use></svg></button>
+                  <button type="button" data-device="0" aria-pressed="true" aria-label="Як на комп’ютері" title="Комп’ютер" class="inline-flex size-10 items-center justify-center rounded-md text-ink-soft transition-colors hover:bg-paper hover:text-ink aria-pressed:bg-ink aria-pressed:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-cream-soft dark:hover:bg-night-raised dark:hover:text-cream dark:aria-pressed:bg-night-raised dark:aria-pressed:text-cream dark:aria-pressed:ring-1 dark:aria-pressed:ring-stamp-light dark:focus-visible:outline-cream"><svg class="size-[1.1rem]" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#device-desktop"></use></svg></button>
+                </div>
+                <div class="flex gap-2" role="group" aria-label="Зберегти профіль">
+                  <button type="button" data-export="pdf" aria-label="Зберегти як PDF" title="Відкриє вікно друку, там оберіть «Зберегти як PDF»" class="inline-flex h-10 items-center justify-center gap-1.5 rounded-md border border-ink px-3 text-sm font-semibold text-ink transition-colors hover:bg-ink hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:cursor-wait disabled:opacity-60 dark:border-cream dark:text-cream dark:hover:bg-night-raised dark:focus-visible:outline-cream"><svg class="size-4" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#printer"></use></svg>PDF</button>
+                  <button type="button" data-export="html" aria-label="Завантажити HTML-файл" title="Файл відкривається в будь-якому браузері, а потім його можна знову відкрити тут і дописати" class="inline-flex h-10 items-center justify-center gap-1.5 rounded-md border border-ink px-3 text-sm font-semibold text-ink transition-colors hover:bg-ink hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:cursor-wait disabled:opacity-60 dark:border-cream dark:text-cream dark:hover:bg-night-raised dark:focus-visible:outline-cream"><svg class="size-4" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#download"></use></svg>HTML</button>
                 </div>
               </div>
 
-              <!-- лічильник заповненості: відсоток, смужка-голограма, одна наступна підказка -->
-              <div data-meter>
-                <div class="flex items-baseline justify-between gap-3 text-sm">
-                  <p id="meter-label" data-meter-label class="font-semibold">Заповнено 0 %</p>
-                  <p data-meter-done hidden class="font-semibold text-stamp dark:text-stamp-light">Профіль готовий</p>
-                </div>
-                <div role="progressbar" aria-labelledby="meter-label" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-meter-track class="mt-1.5 h-1.5 overflow-hidden rounded-full bg-line dark:bg-night-line">
+              <!-- рядок 2: лічильник заповненості в один рядок — відсоток, тонка смужка, наступна підказка -->
+              <div data-meter class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+                <p id="meter-label" data-meter-label class="font-semibold whitespace-nowrap">Заповнено 0 %</p>
+                <div role="progressbar" aria-labelledby="meter-label" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-meter-track class="h-1 min-w-24 flex-1 overflow-hidden rounded-full bg-line dark:bg-night-line">
                   <div data-meter-bar class="holo h-full w-0 rounded-full transition-[width] duration-250 ease-smooth-out"></div>
                 </div>
-                <ul data-meter-hints class="mt-1 flex flex-wrap items-center gap-x-3 text-sm"></ul>
+                <p data-meter-done hidden class="font-semibold whitespace-nowrap text-stamp dark:text-stamp-light">Профіль готовий</p>
+                <ul data-meter-hints class="flex basis-full flex-wrap items-center gap-x-3 empty:hidden"></ul>
               </div>
+              <!-- результат збереження з’являється лише після натискання PDF / HTML -->
+              <p data-export-status role="status" class="text-xs leading-snug text-ink-soft empty:hidden dark:text-cream-soft"></p>
 
               <!-- профіль: займає весь вільний простір колонки й гортається всередині -->
               <div class="relative isolate min-h-0 flex-1 overflow-hidden rounded-lg border border-line bg-sheet/60 dark:border-night-line dark:bg-night-sheet">
                 <span class="guilloche text-ink/[0.04] dark:text-cream/[0.04]" aria-hidden="true"></span>
-                <div data-device-frame class="h-full overflow-y-auto p-3 sm:p-5">
+                <div data-device-frame class="h-full overflow-y-auto p-2 sm:p-3">
                   <div data-preview class="doc mx-auto overflow-hidden rounded-md shadow-[0_24px_50px_-30px_rgba(14,22,40,0.55)] ring-1 ring-line"></div>
                 </div>
                 <!-- печатка «Перевірено»: з’являється, коли профіль заповнено на 100 % -->
@@ -213,12 +217,6 @@
                 </svg></div>
               </div>
 
-              <!-- збереження: завжди під профілем -->
-              <div class="flex flex-wrap items-center gap-2">
-                <button type="button" data-export="pdf" class="inline-flex min-h-11 items-center justify-center gap-2 rounded-md border-2 border-ink px-4 text-sm font-semibold text-ink transition-colors hover:bg-ink hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:cursor-wait disabled:opacity-60 dark:border-cream dark:text-cream dark:hover:bg-night-raised dark:focus-visible:outline-cream"><svg class="size-5" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#printer"></use></svg>Зберегти як PDF</button>
-                <button type="button" data-export="html" class="inline-flex min-h-11 items-center justify-center gap-2 rounded-md border-2 border-ink px-4 text-sm font-semibold text-ink transition-colors hover:bg-ink hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:cursor-wait disabled:opacity-60 dark:border-cream dark:text-cream dark:hover:bg-night-raised dark:focus-visible:outline-cream"><svg class="size-5" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#download"></use></svg>Завантажити HTML</button>
-                <p data-export-status role="status" class="min-w-0 basis-full text-xs leading-snug text-ink-soft dark:text-cream-soft">HTML відкривається в будь-якому браузері, а потім його можна знову відкрити тут і дописати.</p>
-              </div>
             </div>
           </section>
         </div>

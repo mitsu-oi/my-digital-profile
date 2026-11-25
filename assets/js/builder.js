@@ -1019,7 +1019,7 @@ function updateMeter() {
   // наступна підказка, що дописати (кнопка переводить до потрібного поля чи розділу) і скільки ще лишилось
   meter.hints.replaceChildren(
     ...missing.slice(0, 1).map((check) => {
-      const button = el('button', 'inline-flex min-h-11 items-center text-left font-medium text-ink underline decoration-line underline-offset-4 hover:decoration-ink dark:text-cream dark:decoration-night-line dark:hover:decoration-cream', check.hint);
+      const button = el('button', 'inline-flex min-h-6 items-center text-left font-medium text-ink underline decoration-line underline-offset-4 hover:decoration-ink dark:text-cream dark:decoration-night-line dark:hover:decoration-cream', check.hint);
       button.type = 'button';
       button.addEventListener('click', () => goTo(check));
       const item = el('li', 'flex items-center gap-1.5');
@@ -1134,10 +1134,12 @@ async function onExport(button) {
     if (kind === 'html') {
       const name = fileName(state.person.name, 'html');
       download(text, name);
-      exportStatus.textContent = `Файл «${name}» завантажено. Його можна надіслати або згодом відкрити тут кнопкою «Відкрити збережений файл».`;
+      exportStatus.textContent = `Файл «${name}» завантажено. Згодом його можна відкрити тут кнопкою «Відкрити збережений файл».`;
+      clearStatusLater();
     } else {
       printFile(text);
       exportStatus.textContent = 'Відкрито вікно друку. Оберіть «Зберегти як PDF» у списку принтерів.';
+      clearStatusLater();
     }
   } catch (problem) {
     console.warn('Експорт не вдався:', problem);
@@ -1145,6 +1147,13 @@ async function onExport(button) {
   } finally {
     button.disabled = false;
   }
+}
+
+// Повідомлення про збереження ховається через 8 с, щоб не забирати висоту в профілю
+let statusTimer = 0;
+function clearStatusLater() {
+  clearTimeout(statusTimer);
+  statusTimer = setTimeout(() => (exportStatus.textContent = ''), 8000);
 }
 
 // Друк: той самий HTML-файл у прихованому вікні — PDF виглядає так само, як завантажений файл
