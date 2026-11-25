@@ -19,3 +19,6 @@ CLAUDE.md
 
 # локальні налаштування Claude Code
 .claude/
+
+# готовий сайт для Vercel (збирається npm run build)
+dist/

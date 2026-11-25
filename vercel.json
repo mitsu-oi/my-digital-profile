@@ -3,7 +3,9 @@
   "git": {
     "deploymentEnabled": false
   },
-  "outputDirectory": ".",
+  "installCommand": "npm ci",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
   "headers": [
     {
       "source": "/(.*)",

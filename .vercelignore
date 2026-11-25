@@ -1,10 +1,7 @@
-# Що НЕ потрапляє на сайт: вихідні файли, скрипти збірки, документація.
-# Відвідувачам потрібні лише готові сторінки, css/, assets/, data/, robots.txt і sitemap.xml.
-src/
-scripts/
-docs/
+# Що не відправляється на Vercel узагалі. Збірці потрібні package.json, src/ і scripts/,
+# а відвідувачам віддається лише папка dist/ (див. outputDirectory у vercel.json).
 node_modules/
-*.md
-package.json
-package-lock.json
+dist/
+docs/
 .github/
+*.md
