@@ -5,8 +5,8 @@ const fs = require('fs');
 const path = require('path');
 
 const root = path.resolve(__dirname, '..');
-// Адреса продакшну: від неї будуються canonical, Open Graph і sitemap. Після деплою вписати справжню.
-const SITE = 'https://my-digital-profile.vercel.app/';
+// Адреса продакшну (Vercel): від неї будуються canonical, Open Graph, robots.txt і sitemap.xml.
+const SITE = 'https://my-digital-profile-blond.vercel.app/';
 const OG_IMAGE = `${SITE}assets/images/og.png`;
 
 // ---------- сторінки ----------

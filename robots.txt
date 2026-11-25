@@ -2,4 +2,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://my-digital-profile.vercel.app/sitemap.xml
+Sitemap: https://my-digital-profile-blond.vercel.app/sitemap.xml
