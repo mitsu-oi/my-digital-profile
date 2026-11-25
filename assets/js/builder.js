@@ -4,6 +4,14 @@
 // Безпека: текст користувача потрапляє на сторінку лише через textContent / value, посилання — лише http(s).
 import { el, loadData, showLoadError } from './data.js';
 import { renderProfile, safeLink, EMAIL_RE } from './render-profile.js';
+import { buildHtmlFile, download, fileName, readProfileFile } from './export.js';
+
+// SortableJS (перетягування розділів) — з CDN, фіксована версія й перевірка цілісності SRI.
+// Якщо бібліотека не завантажиться, розділи й далі переставляються кнопками ↑ ↓.
+const SORTABLE = {
+  src: 'https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.6/Sortable.min.js',
+  integrity: 'sha384-HZZ/fukV+9G8gwTNjN7zQDG0Sp7MsZy5DDN6VfY3Be7V9dvQpEpR2jF2HlyFUUjU',
+};
 
 // ---------- Обмеження (захист від надто довгих даних і переповнення сторінки) ----------
 const LIMITS = {
@@ -185,6 +193,7 @@ function renderPreview() {
     pending = false;
     const palette = data.palettes.find((item) => item.id === state.palette);
     preview.replaceChildren(renderProfile({ ...state, sections: allowedTypes() }, palette, { level: 3 }));
+    updateMeter();
   });
 }
 
@@ -281,6 +290,7 @@ function stateFromDraft(draft) {
 
 // Заповнює форму з поточного state і перемальовує все (після відновлення чернетки чи заміни профілю)
 function redrawAll() {
+  wasComplete = null;
   for (const input of form.querySelectorAll('[data-person]')) input.value = state.person[input.dataset.person];
   photoRemove.hidden = !state.photo;
   collapsed.clear();
@@ -296,7 +306,7 @@ function announce(text) {
 }
 
 // ---------- Крок 1–2: бланки й палітри (радіокнопки: працюють з клавіатури стрілками) ----------
-const OPTION = 'relative flex min-h-12 cursor-pointer flex-col gap-1 rounded-md border border-line bg-sheet p-3 transition-colors hover:border-ink-soft has-[:checked]:border-ink has-[:checked]:ring-1 has-[:checked]:ring-ink has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ink dark:border-night-line dark:bg-night-sheet dark:hover:border-cream-soft dark:has-[:checked]:border-stamp-light dark:has-[:checked]:ring-stamp-light dark:has-[:focus-visible]:outline-cream';
+const OPTION = 'relative flex min-h-12 min-w-0 break-words cursor-pointer flex-col gap-1 rounded-md border border-line bg-sheet p-3 transition-colors hover:border-ink-soft has-[:checked]:border-ink has-[:checked]:ring-1 has-[:checked]:ring-ink has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ink dark:border-night-line dark:bg-night-sheet dark:hover:border-cream-soft dark:has-[:checked]:border-stamp-light dark:has-[:checked]:ring-stamp-light dark:has-[:focus-visible]:outline-cream';
 
 function radio(name, value, checked) {
   const input = el('input', 'sr-only');
@@ -426,7 +436,7 @@ function blockStatus(block) {
   if (block.type === 'contacts') {
     const values = [block.email, block.phone, block.link].filter(filled);
     if (!values.length) return 'empty';
-    const valid = (!filled(block.email) || EMAIL_RE.test(block.email.trim())) && (!filled(block.phone) || PHONE_RE.test(block.phone.trim())) && (!filled(block.link) || safeLink(block.link));
+    const valid = (!filled(block.email) || EMAIL_RE.test(block.email.trim())) && (!filled(block.phone) || phoneOk(block.phone)) && (!filled(block.link) || safeLink(block.link));
     return valid ? 'full' : 'partial';
   }
   if (REQUIRED[block.type]) {
@@ -589,6 +599,14 @@ function blockEditor(block, index, count) {
   }
   title.append(toggle);
   const tools = el('div', 'flex shrink-0 gap-2');
+  if (sortableReady) {
+    // ручка лише для миші й дотику; з клавіатури порядок змінюють кнопки ↑ ↓ (тому aria-hidden)
+    const grip = el('span', 'inline-flex size-12 cursor-grab touch-none items-center justify-center rounded-md text-xl text-ink-soft hover:bg-paper active:cursor-grabbing dark:text-cream-soft dark:hover:bg-night-raised', '⠿');
+    grip.dataset.drag = '';
+    grip.title = 'Перетягніть, щоб змінити порядок';
+    grip.setAttribute('aria-hidden', 'true');
+    tools.append(grip);
+  }
   tools.append(
     iconButton('up', `Перемістити розділ «${info.title}» вище`, '↑', index === 0),
     iconButton('down', `Перемістити розділ «${info.title}» нижче`, '↓', index === count - 1),
@@ -684,11 +702,14 @@ function normalisePhone(value) {
   return `+380 (${local.slice(0, 2)}) ${local.slice(2, 5)}-${local.slice(5, 7)}-${local.slice(7)}`;
 }
 
+// Телефон правильний, якщо його можна привести до формату +380 (XX) XXX-XX-XX (так само вважає й лічильник)
+const phoneOk = (value) => PHONE_RE.test(normalisePhone(value));
+
 function checkField(input) {
   const value = input.value.trim();
   let message = '';
   if (value && input.dataset.rule === 'email' && !EMAIL_RE.test(value)) message = 'Перевірте email: має бути на кшталт name@example.com.';
-  if (value && input.dataset.rule === 'phone' && !PHONE_RE.test(value)) message = 'Телефон у форматі +380 (67) 123-45-67.';
+  if (value && input.dataset.rule === 'phone' && !phoneOk(value)) message = 'Телефон у форматі +380 (67) 123-45-67.';
   if (value && input.dataset.rule === 'link' && !safeLink(value)) message = 'Посилання має починатися з https:// або http://. Інші адреси не показуються.';
   const error = document.getElementById(`${input.id}-error`);
   if (error) error.textContent = message;
@@ -728,6 +749,11 @@ function onInput(event) {
   const block = state.blocks.find((item) => item.id === input.dataset.block);
   if (!block) return;
   delete block.auto;
+  // автозаповнення або вставка телефону (не набір по літері): одразу приводимо до формату,
+  // інакше браузерне «+380971108087» вважалося б неправильним, поки людина не клацне в полі
+  if (input.dataset.rule === 'phone' && event.inputType !== 'insertText' && event.inputType !== 'deleteContentBackward' && phoneOk(input.value)) {
+    input.value = normalisePhone(input.value);
+  }
   const { field: key, entry, list } = input.dataset;
   if (input.dataset.years !== undefined) {
     // рік початку / завершення: перераховуємо текст періоду й перевіряємо порядок років
@@ -910,6 +936,214 @@ async function onPhoto() {
   }
 }
 
+// ---------- Лічильник заповненості ----------
+// Рахуємо: ім’я, фах, місто й кожен обов’язковий розділ бланку (стан «заповнено» з blockStatus).
+// На 100 % на перегляді з’являється печатка «Перевірено».
+const meter = {
+  label: root?.querySelector('[data-meter-label]'),
+  track: root?.querySelector('[data-meter-track]'),
+  bar: root?.querySelector('[data-meter-bar]'),
+  hints: root?.querySelector('[data-meter-hints]'),
+  done: root?.querySelector('[data-meter-done]'),
+  stamp: root?.querySelector('[data-stamp]'),
+};
+let wasComplete = null; // попередній стан, щоб печатка «падала» лише в момент досягнення 100 %
+
+function completeness() {
+  const checks = [
+    { ok: state.person.name.trim() !== '', hint: 'Впишіть ім’я та прізвище', target: '#person-name' },
+    { ok: state.person.role.trim() !== '', hint: 'Додайте фах', target: '#person-role' },
+    { ok: state.person.city.trim() !== '', hint: 'Додайте місто', target: '#person-city' },
+  ];
+  for (const type of requiredTypes()) {
+    const block = state.blocks.find((item) => item.type === type);
+    const status = block ? blockStatus(block) : 'empty';
+    checks.push({ ok: status === 'full', hint: status === 'partial' ? `Допишіть розділ «${BLOCKS[type].title}»` : `Заповніть розділ «${BLOCKS[type].title}»`, block });
+  }
+  const passed = checks.filter((check) => check.ok).length;
+  return { percent: Math.round((passed / checks.length) * 100), missing: checks.filter((check) => !check.ok) };
+}
+
+function updateMeter() {
+  if (!meter.bar) return;
+  const { percent, missing } = completeness();
+  meter.label.textContent = `Заповнено ${percent} %`;
+  meter.bar.style.width = `${percent}%`;
+  meter.track.setAttribute('aria-valuenow', String(percent));
+  // до трьох підказок, що дописати; кожна — кнопка, що переводить до потрібного поля чи розділу
+  meter.hints.replaceChildren(
+    ...missing.slice(0, 3).map((check) => {
+      const button = el('button', 'inline-flex min-h-11 items-center gap-2 text-left font-medium text-ink underline decoration-line underline-offset-4 hover:decoration-ink dark:text-cream dark:decoration-night-line dark:hover:decoration-cream', check.hint);
+      button.type = 'button';
+      button.addEventListener('click', () => goTo(check));
+      const item = el('li');
+      item.append(button);
+      return item;
+    }),
+  );
+  if (missing.length > 3) meter.hints.append(el('li', 'text-ink-soft dark:text-cream-soft', `і ще ${missing.length - 3}`));
+  const complete = percent === 100;
+  meter.done.hidden = !complete;
+  meter.stamp.hidden = !complete;
+  if (complete && wasComplete === false) {
+    // печатка «падає» заново: прибираємо й повертаємо клас анімації
+    const svg = meter.stamp.querySelector('svg');
+    svg.classList.remove('stamp-land');
+    void svg.getBoundingClientRect();
+    svg.classList.add('stamp-land');
+    announce('Профіль заповнено повністю. Поставлено печатку «Перевірено».');
+  }
+  wasComplete = complete;
+}
+
+// Перехід від підказки до поля: на телефоні спершу показуємо форму, згорнутий розділ розгортаємо
+function goTo(check) {
+  setView('edit');
+  if (check.block) {
+    if (collapsed.delete(check.block.id)) drawBlocks();
+    const section = blocksBox.querySelector(`[data-block-id="${check.block.id}"]`);
+    section?.scrollIntoView({ block: 'start' });
+    (section?.querySelector('input, textarea, select, [data-action="add-entry"]') || section?.querySelector('[data-action="collapse"]'))?.focus({ preventScroll: true });
+  } else {
+    form.querySelector(check.target)?.focus();
+  }
+}
+
+// ---------- Перегляд на пристроях ----------
+// Ширина аркуша = ширина пристрою; якщо колонка вужча, аркуш зменшується (zoom), а шаблон усе одно
+// перебудовується за своєю шириною, бо в рендері використано контейнерні запити (@container).
+let deviceWidth = 0; // 0 — на всю ширину колонки
+const deviceFrame = root?.querySelector('[data-device-frame]');
+
+function fitDevice() {
+  if (!deviceFrame) return;
+  preview.style.width = deviceWidth ? `${deviceWidth}px` : '';
+  const available = deviceFrame.clientWidth;
+  // перегляд схований (вкладка «Заповнення» на телефоні) — ширини немає; ResizeObserver перерахує, коли з’явиться
+  preview.style.zoom = deviceWidth && available && available < deviceWidth ? String(available / deviceWidth) : '';
+}
+
+function setDevice(width) {
+  deviceWidth = width;
+  for (const button of root.querySelectorAll('[data-device]')) button.setAttribute('aria-pressed', String(Number(button.dataset.device) === width));
+  fitDevice();
+}
+
+// ---------- Перетягування розділів (SortableJS з CDN) ----------
+let sortableReady = false;
+
+function loadSortable() {
+  const script = document.createElement('script');
+  Object.assign(script, { src: SORTABLE.src, integrity: SORTABLE.integrity, crossOrigin: 'anonymous', referrerPolicy: 'no-referrer' });
+  script.addEventListener('load', () => {
+    if (!window.Sortable) return;
+    sortableReady = true;
+    drawBlocks(); // з’являються ручки ⠿
+    window.Sortable.create(blocksBox, {
+      handle: '[data-drag]',
+      draggable: '[data-block-id]',
+      animation: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 150,
+      ghostClass: 'opacity-40',
+      onEnd(event) {
+        if (event.oldIndex === event.newIndex) return;
+        // новий порядок видимих розділів ставимо на ті самі місця в state.blocks; сховані не зсуваються
+        const order = [...blocksBox.querySelectorAll('[data-block-id]')].map((node) => node.dataset.blockId);
+        const visible = visibleBlocks();
+        const slots = visible.map((block) => state.blocks.indexOf(block)).sort((a, b) => a - b);
+        order.forEach((id, i) => (state.blocks[slots[i]] = visible.find((block) => block.id === id)));
+        drawBlocks();
+        const moved = state.blocks.find((block) => block.id === event.item.dataset.blockId);
+        announce(`Розділ «${BLOCKS[moved.type].title}» тепер ${order.indexOf(moved.id) + 1}-й із ${order.length}.`);
+        changed();
+      },
+    });
+  });
+  script.addEventListener('error', () => console.warn('SortableJS не завантажилась — порядок змінюється кнопками ↑ ↓.'));
+  document.head.append(script);
+}
+
+// ---------- Експорт: HTML-файл і PDF (через друк того самого файла) ----------
+const exportStatus = root?.querySelector('[data-export-status]');
+
+// дані профілю для файла: без службових позначок
+function profileForFile() {
+  const { template, palette, number, person, photo } = state;
+  const blocks = state.blocks.map(({ auto, ...block }) => block);
+  return { template, palette, number, person, photo, blocks };
+}
+
+async function makeFile() {
+  const palette = data.palettes.find((item) => item.id === state.palette);
+  // у файлі ім’я — головний заголовок сторінки (h1)
+  const node = renderProfile({ ...state, sections: allowedTypes() }, palette, { level: 1 });
+  return buildHtmlFile(node, profileForFile(), palette);
+}
+
+async function onExport(button) {
+  const kind = button.dataset.export;
+  button.disabled = true;
+  exportStatus.textContent = 'Готуємо файл…';
+  try {
+    const text = await makeFile();
+    if (kind === 'html') {
+      const name = fileName(state.person.name, 'html');
+      download(text, name);
+      exportStatus.textContent = `Файл «${name}» завантажено. Його можна надіслати або згодом відкрити тут кнопкою «Відкрити збережений файл».`;
+    } else {
+      printFile(text);
+      exportStatus.textContent = 'Відкрито вікно друку. Оберіть «Зберегти як PDF» у списку принтерів.';
+    }
+  } catch (problem) {
+    console.warn('Експорт не вдався:', problem);
+    exportStatus.textContent = 'Не вдалося підготувати файл. Перевірте з’єднання й спробуйте ще раз.';
+  } finally {
+    button.disabled = false;
+  }
+}
+
+// Друк: той самий HTML-файл у прихованому вікні — PDF виглядає так само, як завантажений файл
+function printFile(text) {
+  const frame = document.createElement('iframe');
+  frame.setAttribute('aria-hidden', 'true');
+  frame.tabIndex = -1;
+  frame.style.cssText = 'position:fixed;left:-10000px;top:0;width:900px;height:1200px;border:0';
+  frame.srcdoc = text;
+  frame.addEventListener('load', () => {
+    frame.contentWindow.focus();
+    frame.contentWindow.print();
+    setTimeout(() => frame.remove(), 1000);
+  }, { once: true });
+  document.body.append(frame);
+}
+
+// ---------- Імпорт раніше збереженого HTML-файла ----------
+const importInput = root?.querySelector('[data-import]');
+const importError = root?.querySelector('[data-import-error]');
+
+const hasContent = () => Object.values(state.person).some((value) => value.trim()) || Boolean(state.photo) || state.blocks.some((block) => blockStatus(block) !== 'empty');
+
+async function onImport() {
+  const file = importInput.files[0];
+  importError.textContent = '';
+  if (!file) return;
+  try {
+    const profile = await readProfileFile(file);
+    if (hasContent() && !window.confirm(`Відкрити «${file.name}»? Поточний профіль у конструкторі буде замінено даними з файла.`)) return;
+    // дані з файла проходять той самий білий список, що й чернетка (cleanProfile у stateFromDraft)
+    stateFromDraft({ profile });
+    redrawAll();
+    saveDraft();
+    setDraftStatus(`Відкрито файл «${file.name}». Зміни знову зберігаються автоматично.`);
+    announce('Профіль із файла відкрито.');
+    form.querySelector('#person-name').focus();
+  } catch (problem) {
+    // помилка читання не зачіпає поточну чернетку
+    importError.textContent = problem.message;
+  } finally {
+    importInput.value = '';
+  }
+}
+
 // ---------- Вибір між чернеткою й посиланням ----------
 function offerReplace(params) {
   const box = root.querySelector('[data-draft-choice]');
@@ -998,6 +1232,12 @@ async function start() {
   });
   photoInput.addEventListener('change', onPhoto);
   for (const button of root.querySelectorAll('[data-view-btn]')) button.addEventListener('click', () => setView(button.dataset.viewBtn));
+  for (const button of root.querySelectorAll('[data-device]')) button.addEventListener('click', () => setDevice(Number(button.dataset.device)));
+  if (deviceFrame && 'ResizeObserver' in window) new ResizeObserver(fitDevice).observe(deviceFrame);
+  for (const button of root.querySelectorAll('[data-export]')) button.addEventListener('click', () => onExport(button));
+  importInput?.addEventListener('change', onImport);
+  loadSortable();
+
   // «Почати спочатку»: чернетку видалено, профіль порожній (з обов’язковими розділами поточного бланку)
   root.querySelector('[data-reset]').addEventListener('click', () => {
     if (!window.confirm('Очистити все, що ви ввели? Чернетку буде видалено, повернути її не вийде.')) return;
