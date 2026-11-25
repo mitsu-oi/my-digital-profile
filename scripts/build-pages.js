@@ -13,7 +13,7 @@ const pages = [
   { file: 'templates.html', module: 'templates.js', nav: 'Шаблони', title: 'Шаблони портфоліо — ОсьЯ', description: 'Чотири шаблони цифрового профілю: посвідчення, резюме, досьє та візитка.' },
   { file: 'examples.html', module: 'examples.js', nav: 'Приклади', title: 'Приклади портфоліо — ОсьЯ', description: 'Готові портфоліо різних фахів для натхнення.' },
   { file: 'about.html', module: 'about.js', nav: 'Про сервіс', title: 'Про сервіс — ОсьЯ', description: 'Для кого створено ОсьЯ, як працює сервіс і чому ваші дані не залишають браузер.' },
-  { file: 'contact.html', nav: 'Контакти', title: 'Контакти — ОсьЯ', description: 'Напишіть команді сервісу «Мій цифровий профіль».' },
+  { file: 'contact.html', module: 'contact.js', nav: 'Контакти', title: 'Контакти — ОсьЯ', description: 'Напишіть команді сервісу «Мій цифровий профіль».' },
 ];
 
 // ---------- спільні шматки розмітки ----------

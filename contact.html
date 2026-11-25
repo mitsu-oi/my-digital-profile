@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="css/site.css">
     <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
     <script src="assets/js/site.js" defer></script>
+    <script type="module" src="assets/js/contact.js"></script>
   </head>
   <body class="flex min-h-screen flex-col bg-paper font-sans text-ink antialiased dark:bg-night dark:text-cream">
     <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded-md focus:bg-ink focus:px-4 focus:py-3 focus:text-cream">Перейти до основного вмісту</a>
@@ -68,11 +69,113 @@
     </header>
 
     <main id="main" tabindex="-1" class="flex-1">
-      <div class="mx-auto w-full max-w-page px-5 py-24 md:px-8 xl:px-12">
-        <p class="font-mono text-sm text-stamp dark:text-stamp-light">Сторінка в роботі</p>
-        <h1 class="mt-3 font-serif text-4xl font-bold">Контакти</h1>
-        <p class="mt-4 max-w-xl text-lg text-ink-soft dark:text-cream-soft">Цей розділ з’явиться на наступному етапі.</p>
+      <div class="mx-auto w-full max-w-page px-5 py-14 md:px-8 md:py-20 xl:px-12">
+        <div class="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,36rem)] lg:gap-16">
+          <!-- ліва колонка: про що писати й чесне пояснення -->
+          <div>
+            <h1 class="font-serif text-4xl leading-tight font-bold sm:text-5xl">Контакти</h1>
+            <p class="mt-4 max-w-xl text-lg leading-relaxed text-ink-soft dark:text-cream-soft">
+              Помітили помилку, маєте ідею для нового бланку чи не розумієте, як щось працює? Напишіть нам через форму.
+            </p>
+
+            <h2 class="mt-12 font-serif text-2xl font-bold">Перш ніж писати</h2>
+            <ul class="mt-4 space-y-3 leading-relaxed">
+              <li>Відповіді на часті запитання є на сторінці <a href="about.html" class="font-semibold underline decoration-stamp decoration-2 underline-offset-4 hover:text-stamp dark:decoration-stamp-light dark:hover:text-stamp-light">«Про сервіс»</a>.</li>
+              <li>Якщо щось зламалося в конструкторі, вкажіть, який бланк ви обрали і що саме натиснули.</li>
+              <li>Не надсилайте сюди своє портфоліо: воно зберігається лише у вашому браузері, і нам його бачити не потрібно.</li>
+            </ul>
+
+            <!-- чесне пояснення: сервера немає, тож повідомлення нікуди не йде -->
+            <aside aria-labelledby="demo-title" class="mt-12 max-w-xl rounded-lg border border-dashed border-line p-5 dark:border-night-line">
+              <h2 id="demo-title" class="font-mono text-sm text-stamp dark:text-stamp-light">Навчальний проєкт</h2>
+              <p class="mt-2 leading-relaxed text-ink-soft dark:text-cream-soft">
+                Форма показує, як працює перевірка полів, але нічого нікуди не надсилає: у сервісу немає сервера. Після натискання «Надіслати» ви побачите, яке звернення сформувалося.
+              </p>
+            </aside>
+          </div>
+
+          <!-- права колонка: форма-бланк «Звернення». Логіка — assets/js/contact.js -->
+          <div class="relative isolate">
+            <form data-contact novalidate class="rounded-lg bg-sheet p-6 text-ink shadow-[0_30px_60px_-30px_rgba(14,22,40,0.45)] ring-1 ring-line sm:p-8 dark:bg-night-sheet dark:text-cream dark:shadow-none dark:ring-night-line" aria-labelledby="form-title">
+              <div class="flex items-baseline justify-between gap-3 border-b-[3px] border-double border-ink dark:border-cream pb-3">
+                <h2 id="form-title" class="font-serif text-2xl font-bold">Звернення</h2>
+                <span class="font-mono text-xs text-ink-soft dark:text-cream-soft">форма № 2</span>
+              </div>
+              <p class="mt-3 text-sm text-ink-soft dark:text-cream-soft">Поля з позначкою <span aria-hidden="true">*</span><span class="sr-only">«обов’язково»</span> обов’язкові.</p>
+
+              <!-- зведення помилок після невдалого надсилання: фокус переходить сюди, кожен пункт веде до поля -->
+              <div data-summary hidden tabindex="-1" class="mt-5 rounded-md border-2 border-stamp p-4 dark:border-stamp-light focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">
+                <h3 class="font-semibold text-stamp dark:text-stamp-light">Перевірте, будь ласка, форму</h3>
+                <ul data-summary-list class="mt-2 list-disc space-y-1 pl-5 text-sm"></ul>
+              </div>
+
+              <div class="mt-6 space-y-5">
+                <div>
+                  <label for="c-name" class="font-semibold">Ім’я <span aria-hidden="true" class="text-stamp dark:text-stamp-light">*</span></label>
+                  <input id="c-name" name="name" type="text" autocomplete="name" maxlength="60" required aria-describedby="c-name-error" class="field">
+                  <p id="c-name-error" class="mt-1 text-sm font-medium text-stamp dark:text-stamp-light empty:hidden"></p>
+                </div>
+
+                <div class="grid gap-5 sm:grid-cols-2">
+                  <div>
+                    <label for="c-email" class="font-semibold">Email <span aria-hidden="true" class="text-stamp dark:text-stamp-light">*</span></label>
+                    <input id="c-email" name="email" type="email" autocomplete="email" maxlength="80" required aria-describedby="c-email-error" placeholder="name@example.com" class="field">
+                    <p id="c-email-error" class="mt-1 text-sm font-medium text-stamp dark:text-stamp-light empty:hidden"></p>
+                  </div>
+                  <div>
+                    <label for="c-phone" class="font-semibold">Телефон</label>
+                    <input id="c-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="19" aria-describedby="c-phone-hint c-phone-error" placeholder="+380 (67) 123-45-67" class="field">
+                    <p id="c-phone-hint" class="mt-1 text-sm text-ink-soft dark:text-cream-soft">Необов’язково. Формат підставиться сам.</p>
+                    <p id="c-phone-error" class="mt-1 text-sm font-medium text-stamp dark:text-stamp-light empty:hidden"></p>
+                  </div>
+                </div>
+
+                <div>
+                  <label for="c-topic" class="font-semibold">Тема <span aria-hidden="true" class="text-stamp dark:text-stamp-light">*</span></label>
+                  <select id="c-topic" name="topic" required aria-describedby="c-topic-error" class="field">
+                    <option value="">Оберіть тему</option>
+                    <option value="question">Питання про конструктор</option>
+                    <option value="bug">Щось не працює</option>
+                    <option value="idea">Ідея або побажання</option>
+                    <option value="other">Інше</option>
+                  </select>
+                  <p id="c-topic-error" class="mt-1 text-sm font-medium text-stamp dark:text-stamp-light empty:hidden"></p>
+                </div>
+
+                <div>
+                  <label for="c-message" class="font-semibold">Повідомлення <span aria-hidden="true" class="text-stamp dark:text-stamp-light">*</span></label>
+                  <textarea id="c-message" name="message" rows="5" maxlength="1000" required aria-describedby="c-message-count c-message-error" class="field"></textarea>
+                  <p id="c-message-count" data-count class="mt-1 text-right font-mono text-xs text-ink-soft dark:text-cream-soft">0 / 1000</p>
+                  <p id="c-message-error" class="mt-1 text-sm font-medium text-stamp dark:text-stamp-light empty:hidden"></p>
+                </div>
+
+                <div>
+                  <label class="flex min-h-11 cursor-pointer items-start gap-3 leading-snug">
+                    <input id="c-consent" name="consent" type="checkbox" required aria-describedby="c-consent-error" class="mt-0.5 size-5 shrink-0 accent-ink dark:accent-stamp-light">
+                    <span>Розумію, що це навчальна форма і повідомлення нікуди не надсилається <span aria-hidden="true" class="text-stamp dark:text-stamp-light">*</span></span>
+                  </label>
+                  <p id="c-consent-error" class="mt-1 text-sm font-medium text-stamp dark:text-stamp-light empty:hidden"></p>
+                </div>
+              </div>
+
+              <div class="mt-7 flex flex-wrap items-center gap-4 border-t border-line pt-5 dark:border-night-line">
+                <button type="submit" data-submit class="btn-primary inline-flex min-h-12 items-center justify-center rounded-md px-7 font-semibold text-cream transition-transform duration-150 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink active:translate-y-0 dark:focus-visible:outline-cream active:scale-[0.97] disabled:cursor-wait disabled:opacity-70">Надіслати</button>
+                <p data-sending role="status" class="text-sm text-ink-soft dark:text-cream-soft"></p>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
+
+      <!-- вікно-підтвердження: нативний <dialog> у модальному режимі робить решту сторінки недоступною (inert) -->
+      <dialog data-done aria-labelledby="done-title" class="m-auto w-[calc(100%-2rem)] max-w-lg rounded-lg border border-line bg-paper p-0 text-ink backdrop:bg-night/70 dark:border-night-line dark:bg-night dark:text-cream">
+        <div class="p-6 sm:p-8">
+          <h2 id="done-title" class="font-serif text-2xl font-bold">Звернення сформовано</h2>
+          <p class="mt-3 leading-relaxed text-ink-soft dark:text-cream-soft">Дякуємо! Це навчальний проєкт, тож повідомлення нікуди не надіслано. Ось що ви написали:</p>
+          <dl data-done-list class="mt-5 space-y-3 border-t border-line pt-4 text-sm dark:border-night-line"></dl>
+          <button type="button" data-done-close class="mt-6 inline-flex min-h-12 items-center rounded-md border-2 border-ink px-6 font-semibold text-ink hover:bg-ink hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:border-cream dark:text-cream dark:hover:bg-night-raised dark:focus-visible:outline-cream">Зрозуміло</button>
+        </div>
+      </dialog>
     </main>
 
     <footer class="border-t border-line dark:border-night-line">
