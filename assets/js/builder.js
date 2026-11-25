@@ -423,6 +423,8 @@ function yearsField(idBase, label, item, bind) {
 // Навички: обрані — як «бирки» з кнопкою прибрати; нижче поле для своєї навички (воно ж фільтрує підказки)
 // і готові підказки з data.json, згруповані за сферами (як на сайтах вакансій).
 // ---------- Згортання карток розділів ----------
+let reorderOpen = null; // id розділу, в якого відкрите меню «Вище / Нижче»
+let justDragged = false; // після перетягування браузер ще надсилає клік по ручці — його ігноруємо
 const collapsed = new Set(); // id згорнутих розділів — переживає перемальовування
 
 // Наскільки заповнено розділ: 'full' — усе потрібне є, 'partial' — щось почате, але не дописане, 'empty' — порожньо.
@@ -599,21 +601,40 @@ function blockEditor(block, index, count) {
   }
   title.append(toggle);
   const tools = el('div', 'flex shrink-0 gap-2');
-  if (sortableReady) {
-    // ручка лише для миші й дотику; з клавіатури порядок змінюють кнопки ↑ ↓ (тому aria-hidden)
-    const grip = el('span', 'inline-flex size-12 cursor-grab touch-none items-center justify-center rounded-md text-xl text-ink-soft hover:bg-paper active:cursor-grabbing dark:text-cream-soft dark:hover:bg-night-raised', '⠿');
-    grip.dataset.drag = '';
-    grip.title = 'Перетягніть, щоб змінити порядок';
-    grip.setAttribute('aria-hidden', 'true');
-    tools.append(grip);
-  }
-  tools.append(
-    iconButton('up', `Перемістити розділ «${info.title}» вище`, '↑', index === 0),
-    iconButton('down', `Перемістити розділ «${info.title}» нижче`, '↓', index === count - 1),
-    ...(required ? [] : [iconButton('remove', `Прибрати розділ «${info.title}»`, '×', false)]),
-  );
+  // Ручка ⠿ — одна кнопка на три способи змінити порядок:
+  //   мишею чи пальцем — перетягнути (SortableJS); з клавіатури — клавіші ↑ ↓, коли ручка у фокусі;
+  //   одним натисканням без перетягування (WCAG 2.5.7) — клік відкриває меню «Вище / Нижче».
+  const open = reorderOpen === block.id;
+  const grip = el('button', `${BTN_SMALL} cursor-grab touch-none text-xl active:cursor-grabbing aria-expanded:border-ink aria-expanded:bg-paper dark:aria-expanded:border-stamp-light dark:aria-expanded:bg-night-raised`);
+  grip.type = 'button';
+  grip.dataset.action = 'reorder';
+  grip.dataset.drag = '';
+  grip.disabled = count < 2;
+  grip.title = 'Перетягніть, щоб змінити порядок, або натисніть';
+  grip.setAttribute('aria-label', `Змінити порядок розділу «${info.title}»`);
+  grip.setAttribute('aria-keyshortcuts', 'ArrowUp ArrowDown');
+  grip.setAttribute('aria-expanded', String(open));
+  grip.setAttribute('aria-controls', `${block.id}-reorder`);
+  const dots = el('span', '', '⠿');
+  dots.setAttribute('aria-hidden', 'true');
+  grip.append(dots);
+  tools.append(grip, ...(required ? [] : [iconButton('remove', `Прибрати розділ «${info.title}»`, '×', false)]));
   head.append(title, tools);
   section.append(head);
+  // меню порядку: з’являється лише після кліку по ручці
+  const menu = el('div', 'mt-3 flex flex-wrap items-center justify-end gap-2');
+  menu.id = `${block.id}-reorder`;
+  menu.hidden = !open;
+  const moveButton = (action, text, disabled) => {
+    const button = el('button', `${BTN_TEXT} text-sm`, text);
+    button.type = 'button';
+    button.dataset.action = action;
+    button.disabled = disabled;
+    button.setAttribute('aria-label', `Перемістити розділ «${info.title}» ${action === 'up' ? 'вище' : 'нижче'}`);
+    return button;
+  };
+  menu.append(el('span', 'text-sm text-ink-soft dark:text-cream-soft', `Місце ${index + 1} з ${count}:`), moveButton('up', '↑ Вище', index === 0), moveButton('down', '↓ Нижче', index === count - 1));
+  section.append(menu);
 
   const body = el('div', 'mt-4 space-y-4');
   body.id = `${block.id}-body`;
@@ -790,6 +811,32 @@ function onBlur(event) {
   checkField(input);
 }
 
+// Переміщення серед видимих розділів: розділ ставиться безпосередньо перед (або після) видимого сусіда,
+// а сховані розділи лишаються там, де були. Повертає false, якщо рухати нікуди.
+function moveBlock(block, action) {
+  const visible = visibleBlocks();
+  const at = visible.indexOf(block);
+  const target = action === 'up' ? at - 1 : at + 1;
+  if (target < 0 || target >= visible.length) return false;
+  const neighbour = visible[target];
+  state.blocks.splice(state.blocks.indexOf(block), 1);
+  const place = state.blocks.indexOf(neighbour) + (action === 'down' ? 1 : 0);
+  state.blocks.splice(place, 0, block);
+  drawBlocks();
+  announce(`Розділ «${BLOCKS[block.type].title}» тепер ${target + 1}-й із ${visible.length}.`);
+  changed();
+  return true;
+}
+
+// Клавіші ↑ ↓ на ручці ⠿ переставляють розділ (фокус лишається на ручці)
+function onGripKey(event) {
+  const grip = event.target.closest?.('[data-action="reorder"]');
+  if (!grip || (event.key !== 'ArrowUp' && event.key !== 'ArrowDown')) return;
+  event.preventDefault(); // інакше сторінка прокрутиться
+  const block = state.blocks.find((item) => item.id === grip.closest('[data-block-id]').dataset.blockId);
+  if (block && moveBlock(block, event.key === 'ArrowUp' ? 'up' : 'down')) focusLater(`[data-block-id="${block.id}"] [data-action="reorder"]`);
+}
+
 // Додає навичку з поля «своя навичка» (кнопка «Додати» або Enter)
 function submitSkill(block) {
   const input = document.getElementById(`${block.id}-skill-input`);
@@ -827,24 +874,23 @@ function onClick(event) {
     announce(`Додано розділ «${BLOCKS[created.type].title}».`);
     blocksBox.querySelector(`[data-block-id="${created.id}"] input, [data-block-id="${created.id}"] textarea, [data-block-id="${created.id}"] [data-action="add-entry"]`)?.focus();
   }
+  if (action === 'reorder' && block) {
+    if (justDragged) return;
+    reorderOpen = reorderOpen === block.id ? null : block.id;
+    drawBlocks();
+    focusLater(`[data-block-id="${block.id}"] [data-action="reorder"]`);
+    return;
+  }
   if ((action === 'up' || action === 'down') && block) {
-    // переміщення серед видимих розділів: розділ ставиться безпосередньо перед (або після) видимого сусіда,
-    // а сховані розділи лишаються там, де були
+    if (!moveBlock(block, action)) return;
+    // фокус лишається на тій самій кнопці меню; якщо розділ дійшов до краю — на протилежній
     const visible = visibleBlocks();
     const at = visible.indexOf(block);
-    const target = action === 'up' ? at - 1 : at + 1;
-    if (target < 0 || target >= visible.length) return;
-    const neighbour = visible[target];
-    state.blocks.splice(index, 1);
-    const place = state.blocks.indexOf(neighbour) + (action === 'down' ? 1 : 0);
-    state.blocks.splice(place, 0, block);
-    drawBlocks();
-    announce(`Розділ «${BLOCKS[block.type].title}» тепер ${target + 1}-й із ${visible.length}.`);
-    // фокус лишається на тій самій кнопці; якщо розділ дійшов до краю — на протилежній
-    const edge = target === 0 || target === visible.length - 1;
+    const edge = action === 'up' ? at === 0 : at === visible.length - 1;
     focusLater(`[data-block-id="${block.id}"] [data-action="${edge ? (action === 'up' ? 'down' : 'up') : action}"]`);
   }
   if (action === 'remove' && block && !requiredTypes().includes(block.type)) {
+    if (reorderOpen === block.id) reorderOpen = null;
     state.blocks.splice(index, 1);
     drawBlocks();
     announce(`Розділ «${BLOCKS[block.type].title}» прибрано. Його можна додати знову.`);
@@ -1030,21 +1076,20 @@ function setDevice(width) {
 }
 
 // ---------- Перетягування розділів (SortableJS з CDN) ----------
-let sortableReady = false;
 
 function loadSortable() {
   const script = document.createElement('script');
   Object.assign(script, { src: SORTABLE.src, integrity: SORTABLE.integrity, crossOrigin: 'anonymous', referrerPolicy: 'no-referrer' });
   script.addEventListener('load', () => {
     if (!window.Sortable) return;
-    sortableReady = true;
-    drawBlocks(); // з’являються ручки ⠿
     window.Sortable.create(blocksBox, {
       handle: '[data-drag]',
       draggable: '[data-block-id]',
       animation: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 150,
       ghostClass: 'opacity-40',
       onEnd(event) {
+        justDragged = true;
+        setTimeout(() => (justDragged = false), 0);
         if (event.oldIndex === event.newIndex) return;
         // новий порядок видимих розділів ставимо на ті самі місця в state.blocks; сховані не зсуваються
         const order = [...blocksBox.querySelectorAll('[data-block-id]')].map((node) => node.dataset.blockId);
@@ -1223,6 +1268,7 @@ async function start() {
   form.addEventListener('click', onClick);
   form.addEventListener('submit', (event) => event.preventDefault()); // Enter у полі не перезавантажує сторінку
   // Enter у полі «своя навичка» додає її (як кнопка «Додати»)
+  form.addEventListener('keydown', onGripKey);
   form.addEventListener('keydown', (event) => {
     const id = event.target.dataset?.skillInput;
     if (event.key !== 'Enter' || !id) return;
