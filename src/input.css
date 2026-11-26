@@ -312,6 +312,31 @@
     mask-image: url("../assets/images/guilloche-waves.svg");
     mask-size: 240px 48px;
   }
+  /* Той самий гільйош — фоном усього сайту (клас site-bg на <body> ставить build-pages.js).
+     Окремий клас, а не body: css/site.css вбудовується й в експортований профіль, де візерунок не потрібен.
+     Шар лежить під усім вмістом сторінки й прокручується разом із нею; картки й смуги з власним фоном його закривають. */
+  .site-bg {
+    position: relative;
+    isolation: isolate;
+  }
+  .site-bg::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-color: color-mix(in srgb, var(--color-ink) 9%, transparent);
+    mask-image: url("../assets/images/guilloche-waves.svg");
+    mask-size: 240px 48px;
+  }
+  .dark .site-bg::before {
+    background-color: color-mix(in srgb, var(--color-cream) 6%, transparent);
+  }
+  @media print {
+    .site-bg::before {
+      content: none;
+    }
+  }
   .rosette {
     mask-image: url("../assets/images/guilloche-rosette.svg");
     mask-size: contain;

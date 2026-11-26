@@ -22,7 +22,18 @@ async function start() {
   }
 }
 
-if (frames.length) start();
+// Віяло нижче першого екрана: зменшені профілі малюються, лише коли до нього лишається ~600 px прокрутки
+if (frames.length) {
+  const observer = new IntersectionObserver(
+    (entries) => {
+      if (!entries.some((entry) => entry.isIntersecting)) return;
+      observer.disconnect();
+      start();
+    },
+    { rootMargin: '600px 0px' },
+  );
+  observer.observe(frames[0].closest('ul'));
+}
 
 // ---------- Жива демонстрація на першому екрані ----------
 // Ім’я та фах із полів одразу з’являються в «паспорті». Лише textContent: введений HTML не виконується.

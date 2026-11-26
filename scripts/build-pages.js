@@ -98,7 +98,7 @@ ${page.noindex ? `    <meta name="robots" content="noindex">
     <script src="/_vercel/insights/script.js" defer></script>
 ${page.module ? `    <script type="module" src="assets/js/${page.module}"></script>
 ` : ''}  </head>
-  <body class="flex min-h-screen flex-col bg-paper font-sans text-ink antialiased dark:bg-night dark:text-cream">
+  <body class="site-bg flex min-h-screen flex-col bg-paper font-sans text-ink antialiased dark:bg-night dark:text-cream">
     <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded-md focus:bg-ink focus:px-4 focus:py-3 focus:text-cream">Перейти до основного вмісту</a>
 `;
 

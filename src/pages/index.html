@@ -8,7 +8,6 @@
 
       <!-- Перший екран: заголовок і розгорнутий «паспорт» із прикладом профілю -->
       <section aria-labelledby="hero-title" class="relative isolate overflow-hidden border-b border-line dark:border-night-line">
-        <span class="guilloche text-ink/[0.05] dark:text-cream/[0.05]" aria-hidden="true"></span>
         <div class="mx-auto grid w-full max-w-page items-center gap-12 px-5 py-14 md:px-8 xl:px-12 md:py-20 lg:grid-cols-[0.85fr_1.15fr] lg:gap-10 xl:gap-16 xl:py-24">
           <div>
             <h1 id="hero-title" class="font-serif text-[2.6rem] leading-[1.05] font-bold tracking-tight text-balance sm:text-6xl xl:text-7xl">
@@ -43,7 +42,6 @@
             <div class="grid rounded-md bg-sheet text-ink shadow-[0_30px_60px_-30px_rgba(14,22,40,0.55)] ring-1 ring-line sm:grid-cols-2 lg:-rotate-[1.5deg]">
               <!-- ліва сторінка: дані -->
               <div class="relative isolate overflow-hidden p-5 sm:border-r sm:border-dashed sm:border-line sm:p-6">
-                <span class="guilloche text-ink/[0.07]" aria-hidden="true"></span>
                 <div class="flex items-baseline justify-between gap-3 font-mono text-[11px] text-ink-soft">
                   <span>Цифровий профіль</span>
                   <span>№ 000 247</span>
@@ -76,7 +74,6 @@
 
               <!-- права сторінка: «візові» штампи — проєкти й досягнення -->
               <div class="relative isolate hidden min-h-80 overflow-hidden p-6 sm:block" aria-hidden="true">
-                <span class="rosette top-1/2 left-1/2 w-72 -translate-x-1/2 -translate-y-1/2 text-ink/[0.08]"></span>
                 <p class="font-mono text-[11px] text-ink-soft">Відмітки</p>
 
                 <svg viewBox="0 0 140 140" class="absolute top-10 left-5 w-32 -rotate-[8deg] text-[#2b4c9b]" filter="url(#ink)">
@@ -190,7 +187,7 @@
 
           <div class="min-w-0 lg:col-start-1 lg:row-span-2 lg:row-start-1 lg:self-center">
             <div data-stack-slider class="mx-auto w-[min(100%,21rem)] sm:w-[23rem] xl:w-[27rem]">
-              <div data-stack-list class="flex items-start"></div>
+              <div data-stack-list class="flex aspect-[4/5] items-start"></div>
             </div>
             <!-- керування стосом: назад, лічильник-смужка, уперед -->
             <div class="mx-auto mt-10 flex w-[min(100%,21rem)] items-center gap-4 sm:w-[23rem]">
@@ -264,19 +261,19 @@
           <ul data-fan class="mt-12 grid grid-cols-2 gap-x-4 gap-y-8 lg:flex lg:justify-center lg:gap-0 lg:pt-6">
             <li class="transition-transform duration-250 ease-smooth-out lg:-mr-8 lg:-rotate-6 lg:hover:-translate-y-3 lg:hover:rotate-0">
               <div data-fan-frame="card" data-palette="ink" class="doc aspect-[4/5] overflow-hidden rounded-md bg-sheet shadow-[0_18px_40px_-24px_rgba(14,22,40,0.6)] ring-1 ring-line lg:w-60"></div>
-              <p class="relative z-10 mt-3 font-serif text-lg font-bold lg:mx-auto lg:w-fit lg:rounded-sm lg:bg-paper lg:px-3 lg:dark:bg-night">Посвідчення</p>
+              <p class="relative z-10 mt-3 font-serif text-lg font-bold w-fit rounded-sm bg-paper dark:bg-night lg:mx-auto lg:px-3">Посвідчення</p>
             </li>
             <li class="transition-transform duration-250 ease-smooth-out lg:-mr-8 lg:mt-6 lg:-rotate-2 lg:hover:-translate-y-3 lg:hover:rotate-0">
               <div data-fan-frame="resume" data-palette="graphite" class="doc aspect-[4/5] overflow-hidden rounded-md bg-sheet shadow-[0_18px_40px_-24px_rgba(14,22,40,0.6)] ring-1 ring-line lg:w-60"></div>
-              <p class="relative z-10 mt-3 font-serif text-lg font-bold lg:mx-auto lg:w-fit lg:rounded-sm lg:bg-paper lg:px-3 lg:dark:bg-night">Резюме</p>
+              <p class="relative z-10 mt-3 font-serif text-lg font-bold w-fit rounded-sm bg-paper dark:bg-night lg:mx-auto lg:px-3">Резюме</p>
             </li>
             <li class="transition-transform duration-250 ease-smooth-out lg:-mr-8 lg:mt-6 lg:rotate-2 lg:hover:-translate-y-3 lg:hover:rotate-0">
               <div data-fan-frame="dossier" data-palette="emerald" class="doc aspect-[4/5] overflow-hidden rounded-md bg-sheet shadow-[0_18px_40px_-24px_rgba(14,22,40,0.6)] ring-1 ring-line lg:w-60"></div>
-              <p class="relative z-10 mt-3 font-serif text-lg font-bold lg:mx-auto lg:w-fit lg:rounded-sm lg:bg-paper lg:px-3 lg:dark:bg-night">Досьє</p>
+              <p class="relative z-10 mt-3 font-serif text-lg font-bold w-fit rounded-sm bg-paper dark:bg-night lg:mx-auto lg:px-3">Досьє</p>
             </li>
             <li class="transition-transform duration-250 ease-smooth-out lg:rotate-6 lg:hover:-translate-y-3 lg:hover:rotate-0">
               <div data-fan-frame="visit" data-palette="night" class="doc aspect-[4/5] overflow-hidden rounded-md bg-sheet shadow-[0_18px_40px_-24px_rgba(14,22,40,0.6)] ring-1 ring-line lg:w-60"></div>
-              <p class="relative z-10 mt-3 font-serif text-lg font-bold lg:mx-auto lg:w-fit lg:rounded-sm lg:bg-paper lg:px-3 lg:dark:bg-night">Візитка</p>
+              <p class="relative z-10 mt-3 font-serif text-lg font-bold w-fit rounded-sm bg-paper dark:bg-night lg:mx-auto lg:px-3">Візитка</p>
             </li>
           </ul>
         </div>

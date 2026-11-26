@@ -82,7 +82,7 @@ function drawSlides() {
   });
   parts.list.classList.add('swiper-wrapper', ...FALLBACK);
   parts.list.replaceChildren(...slides);
-  parts.dots.replaceChildren(...data.examples.map(() => el('li', 'stack-dot h-1 flex-1 rounded-full')));
+  parts.list.classList.remove('aspect-[4/5]'); // місце, яке тримала порожня рамка, тепер займають картки
 }
 
 // ---------- запасний режим: звичайна прокрутка ----------
@@ -173,20 +173,22 @@ async function start() {
     section.hidden = true;
     return;
   }
-  drawSlides();
+  parts.dots.replaceChildren(...data.examples.map(() => el('li', 'stack-dot h-1 flex-1 rounded-full')));
   show(0);
   parts.list.addEventListener('scroll', onNativeScroll, { passive: true });
   parts.prev.addEventListener('click', () => step(-1));
   parts.next.addEventListener('click', () => step(1));
 
-  // Swiper потрібен лише коли секцію от-от побачать: так він не гальмує перший показ сторінки
+  // Картки й Swiper потрібні лише коли секцію от-от побачать: шість зменшених профілів і бібліотека
+  // не гальмують перший показ сторінки (Lighthouse: менше часу на Style & Layout і TBT)
   const observer = new IntersectionObserver(
     (entries) => {
       if (!entries.some((entry) => entry.isIntersecting)) return;
       observer.disconnect();
+      drawSlides();
       startSwiper();
     },
-    { rootMargin: '400px 0px' },
+    { rootMargin: '600px 0px' },
   );
   observer.observe(section);
 }
