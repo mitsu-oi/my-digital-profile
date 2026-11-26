@@ -9,7 +9,18 @@ export function el(tag, classes = '', text = '') {
 }
 
 // Завантажує дані сайту. Кидає помилку, якщо сервер відповів не 200 або файл має не той вигляд.
-export async function loadData() {
+// Один запит на сторінку: кілька модулів (віяло й стос на головній) отримують той самий результат.
+// Після помилки запам’ятоване скидається, тож кнопка «Спробувати ще» справді робить новий запит.
+let pending = null;
+export function loadData() {
+  pending ??= fetchData().catch((error) => {
+    pending = null;
+    throw error;
+  });
+  return pending;
+}
+
+async function fetchData() {
   const response = await fetch('data/data.json');
   if (!response.ok) throw new Error(`Сервер відповів кодом ${response.status}`);
   const data = await response.json();

@@ -2,6 +2,7 @@
 // Якщо дані не завантажились, лишаються порожні аркуші з назвами — сторінка все одно читається.
 import { loadData } from './data.js';
 import { renderProfile } from './render-profile.js';
+import './home-stack.js'; // стос прикладів зі Swiper
 
 const frames = document.querySelectorAll('[data-fan-frame]');
 

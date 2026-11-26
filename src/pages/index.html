@@ -156,6 +156,56 @@
         </div>
       </section>
 
+      <!-- Приклади інших людей: стос профілів-документів, який гортають пальцем, мишею, стрілками або клавішами ← →.
+           Карусель — Swiper з CDN (ефект «cards»), завантажується, коли секція наближається до екрана (assets/js/home-stack.js).
+           Якщо Swiper не завантажився, той самий список гортається звичайною прокруткою, а кнопки працюють так само. -->
+      <section aria-labelledby="stack-title" class="overflow-hidden border-b border-line dark:border-night-line" data-stack>
+        <!-- на телефоні: заголовок → стос → відомості; на широкому екрані стос ліворуч на всю висоту, текст праворуч -->
+        <div class="mx-auto grid w-full max-w-page gap-x-16 gap-y-10 px-5 py-16 md:px-8 xl:px-12 md:py-24 lg:grid-cols-[1fr_1.05fr] lg:gap-y-8">
+          <div class="min-w-0 lg:col-start-2 lg:row-start-1 lg:self-end">
+            <h2 id="stack-title" class="max-w-xl font-serif text-3xl leading-tight font-bold sm:text-4xl">Як оформили профілі інші</h2>
+            <p class="mt-4 max-w-lg leading-relaxed text-ink-soft dark:text-cream-soft">Шість вигаданих людей різних фахів. Перегорніть стос і візьміть за основу той профіль, що ближчий до вашого: бланк і кольори збережуться, а дані впишете свої.</p>
+          </div>
+
+          <div class="order-last min-w-0 lg:order-none lg:col-start-2 lg:row-start-2 lg:self-start">
+
+            <!-- відомості про верхній профіль у стосі; оновлюються під час гортання -->
+            <div data-stack-info aria-live="polite" class="min-h-64 border-t-[3px] border-double border-ink pt-5 dark:border-cream">
+              <p class="font-mono text-sm text-ink-soft dark:text-cream-soft" data-stack-count>Завантаження прикладів…</p>
+              <h3 class="mt-2 font-serif text-2xl font-bold sm:text-3xl" data-stack-name></h3>
+              <p class="mt-1 text-lg text-ink-soft dark:text-cream-soft" data-stack-role></p>
+              <p class="mt-4 line-clamp-3 max-w-lg leading-relaxed" data-stack-about></p>
+              <dl class="mt-5 grid max-w-lg grid-cols-3 gap-4 text-sm">
+                <div><dt class="font-mono text-xs text-ink-soft dark:text-cream-soft">Сфера</dt><dd class="mt-1 font-semibold" data-stack-sphere></dd></div>
+                <div><dt class="font-mono text-xs text-ink-soft dark:text-cream-soft">Бланк</dt><dd class="mt-1 font-semibold" data-stack-template></dd></div>
+                <div><dt class="font-mono text-xs text-ink-soft dark:text-cream-soft">Палітра</dt><dd class="mt-1 flex items-center gap-2 font-semibold"><span class="size-3.5 shrink-0 rounded-full ring-1 ring-line dark:ring-night-line" data-stack-swatch></span><span data-stack-palette></span></dd></div>
+              </dl>
+            </div>
+
+            <div class="mt-8 flex flex-wrap items-center gap-3">
+              <a href="builder.html" data-stack-use class="btn-primary inline-flex min-h-12 items-center justify-center rounded-md px-6 text-base font-semibold text-cream transition-transform duration-150 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink active:translate-y-0 active:scale-[0.97] dark:focus-visible:outline-cream">Взяти за основу</a>
+              <a href="examples.html" class="inline-flex min-h-12 items-center px-2 font-semibold text-ink underline decoration-stamp decoration-2 underline-offset-4 hover:text-stamp focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-cream dark:decoration-stamp-light dark:hover:text-stamp-light dark:focus-visible:outline-cream">Усі приклади</a>
+            </div>
+          </div>
+
+          <div class="min-w-0 lg:col-start-1 lg:row-span-2 lg:row-start-1 lg:self-center">
+            <div data-stack-slider class="mx-auto w-[min(100%,21rem)] sm:w-[23rem] xl:w-[27rem]">
+              <div data-stack-list class="flex items-start"></div>
+            </div>
+            <!-- керування стосом: назад, лічильник-смужка, уперед -->
+            <div class="mx-auto mt-10 flex w-[min(100%,21rem)] items-center gap-4 sm:w-[23rem]">
+              <button type="button" data-stack-prev aria-label="Попередній приклад" class="inline-flex size-12 shrink-0 items-center justify-center rounded-md border-2 border-ink text-ink transition-colors hover:bg-ink hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:cursor-default disabled:opacity-35 disabled:hover:bg-transparent disabled:hover:text-ink dark:border-cream dark:text-cream dark:hover:bg-night-raised dark:focus-visible:outline-cream dark:disabled:hover:text-cream">
+                <svg class="size-5 rotate-180" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow"></use></svg>
+              </button>
+              <ol data-stack-dots class="flex flex-1 gap-1.5" aria-hidden="true"></ol>
+              <button type="button" data-stack-next aria-label="Наступний приклад" class="inline-flex size-12 shrink-0 items-center justify-center rounded-md border-2 border-ink text-ink transition-colors hover:bg-ink hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:cursor-default disabled:opacity-35 disabled:hover:bg-transparent disabled:hover:text-ink dark:border-cream dark:text-cream dark:hover:bg-night-raised dark:focus-visible:outline-cream dark:disabled:hover:text-cream">
+                <svg class="size-5" aria-hidden="true" focusable="false"><use href="assets/icons/sprite.svg#arrow"></use></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- «Особливі відмітки»: як графа в документі, рядки «назва — значення» замість карток -->
       <section aria-labelledby="marks-title" class="border-b border-line dark:border-night-line">
         <div class="mx-auto grid w-full max-w-page gap-10 px-5 py-16 md:px-8 xl:px-12 md:py-24 lg:grid-cols-[1fr_1.6fr]">
