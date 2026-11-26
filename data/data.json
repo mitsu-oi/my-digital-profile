@@ -40,9 +40,9 @@
     { "id": "ink", "name": "Чорнило", "bg": "#fffdf8", "text": "#14213d", "muted": "#55607a", "accent": "#b63a22", "line": "#cfc8b8" },
     { "id": "graphite", "name": "Графіт", "bg": "#f7f7f6", "text": "#1c1d21", "muted": "#5a5d66", "accent": "#1d4ed8", "line": "#d0d1d4" },
     { "id": "clay", "name": "Глина", "bg": "#fbf6f1", "text": "#3a2318", "muted": "#6e574b", "accent": "#a3401c", "line": "#dfd0c4" },
-    { "id": "emerald", "name": "Смарагд", "bg": "#10221c", "text": "#e8efe9", "muted": "#a3bab0", "accent": "#e2bd6b", "line": "#2b4339" },
-    { "id": "plum", "name": "Слива", "bg": "#1d1526", "text": "#f0e9f3", "muted": "#b9a9c3", "accent": "#e0a3d6", "line": "#3d2f4b" },
-    { "id": "night", "name": "Північ", "bg": "#111a2e", "text": "#f1ede3", "muted": "#a9b2c7", "accent": "#7dd3c0", "line": "#2f3b5c" }
+    { "id": "anthracite", "name": "Антрацит", "bg": "#1c1d20", "text": "#ecebe6", "muted": "#aaa9a2", "accent": "#d4b26a", "line": "#37383d" },
+    { "id": "night", "name": "Північ", "bg": "#111a2e", "text": "#f1ede3", "muted": "#a9b2c7", "accent": "#7dd3c0", "line": "#2f3b5c" },
+    { "id": "plum", "name": "Слива", "bg": "#1d1526", "text": "#f0e9f3", "muted": "#b9a9c3", "accent": "#e0a3d6", "line": "#3d2f4b" }
   ],
   "skillSuggestions": [
     { "group": "Загальні", "items": ["Комунікація", "Робота в команді", "Тайм-менеджмент", "Публічні виступи", "Аналітичне мислення", "Англійська B2", "Навчання новому", "Відповідальність"] },
@@ -107,7 +107,7 @@
       "sphere": "people",
       "profile": {
         "template": "visit",
-        "palette": "emerald",
+        "palette": "anthracite",
         "number": "000 249",
         "photo": "assets/images/people/iryna.webp",
         "person": { "name": "Ірина Мельник", "role": "Репетиторка англійської", "city": "Тернопіль" },
