@@ -9,14 +9,15 @@
         <!-- «Пробник»: ліворуч вибір бланка й палітри, праворуч великий перегляд -->
         <section aria-labelledby="try-title" class="mt-12 grid gap-10 border-t-2 border-ink pt-10 lg:grid-cols-[22rem_1fr] lg:gap-14 dark:border-cream">
           <h2 id="try-title" class="sr-only">Спробувати бланк і палітру</h2>
+          <!-- місце під бланки й палітри зарезервовано (min-h), щоб після завантаження data.json сторінка не «стрибала» (CLS) -->
           <form data-picker class="lg:sticky lg:top-28 lg:self-start">
             <fieldset>
               <legend class="font-serif text-xl font-bold">Бланк</legend>
-              <div data-templates class="mt-3 grid grid-cols-2 gap-2 lg:grid-cols-1"></div>
+              <div data-templates class="mt-3 grid min-h-[6.5rem] grid-cols-2 gap-2 lg:min-h-[20.4rem] lg:grid-cols-1"></div>
             </fieldset>
             <fieldset class="mt-8">
               <legend class="font-serif text-xl font-bold">Палітра</legend>
-              <div data-palettes class="mt-3 grid grid-cols-3 gap-2"></div>
+              <div data-palettes class="mt-3 grid min-h-[10.25rem] grid-cols-3 gap-2"></div>
             </fieldset>
             <a data-choose href="builder.html" class="btn-primary mt-8 inline-flex min-h-12 w-full items-center justify-center rounded-md px-6 font-semibold text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:focus-visible:outline-cream">Оформити профіль на цьому бланку</a>
             <p data-status role="status" class="mt-3 min-h-6 text-sm text-ink-soft dark:text-cream-soft"></p>
