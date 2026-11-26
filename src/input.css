@@ -319,6 +319,16 @@
     aspect-ratio: 1;
   }
 
+  /* Курсор у полі «Фах» (крок 2 на головній): блимає, лише поки текст не друкується (клас .is-idle ставить home.js) */
+  .typing-caret.is-idle {
+    animation: caret-blink 1s step-end infinite;
+  }
+  @keyframes caret-blink {
+    50% {
+      opacity: 0;
+    }
+  }
+
   /* Штамп «падає» на сторінку один раз після завантаження — єдина «подія» першого екрана */
   .stamp-land {
     animation: stamp-land var(--duration-very-slow) var(--ease-bounce) 0.9s both;
@@ -379,7 +389,8 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .stamp-land {
+    .stamp-land,
+    .typing-caret.is-idle {
       animation: none;
     }
     dialog,
