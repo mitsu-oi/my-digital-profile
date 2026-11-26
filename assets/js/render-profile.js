@@ -107,14 +107,20 @@ function blockSection(block, level) {
   return section;
 }
 
-// Фото або ініціали. Фото приймається лише як data:image (його готує конструктор із файла користувача).
-const hasPhoto = (profile) => typeof profile.photo === 'string' && /^data:image\/(png|jpeg|webp);base64,/.test(profile.photo);
+// Фото або ініціали. Фото приймається лише як data:image (його готує конструктор із файла користувача)
+// або як портрет вигаданої людини з прикладів (assets/images/people/*.webp).
+const PHOTO = /^(data:image\/(png|jpeg|webp);base64,|assets\/images\/people\/[a-z]+\.webp$)/;
+const hasPhoto = (profile) => typeof profile.photo === 'string' && PHOTO.test(profile.photo);
 
 function photo(profile, classes) {
   const src = hasPhoto(profile) ? profile.photo : '';
   if (src) {
-    const img = el('img', `shrink-0 border border-(--p-line) object-cover ${classes}`);
+    const img = el('img', `shrink-0 border border-(--p-line) object-cover object-top ${classes}`);
     img.src = src;
+    img.width = 240;
+    img.height = 300;
+    img.loading = 'lazy';
+    img.decoding = 'async';
     img.alt = profile.person.name ? `Фото: ${profile.person.name}` : 'Фото';
     return img;
   }

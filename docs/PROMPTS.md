@@ -24,17 +24,30 @@
 Де з'являться: фото в профілях на сторінці «Приклади», у стосі прикладів і віялі бланків на головній.
 Співвідношення сторін **4:5** (вертикальне), щонайменше 800×1000 px, PNG або JPG.
 
-**Базовий промпт** (однаковий для всіх, щоб серія була цілісною):
+**Базовий промпт** (однаковий для всіх, щоб серія була цілісною). Друга версія: перша давала різні
+стилі (олівець, майже фото, підпис у кутку), тому манеру, фон і кадр прописано жорсткіше.
 
 ```
-Engraved portrait in the style of a banknote intaglio engraving, fine parallel line hatching and
-cross-hatching, monochrome dark navy ink on warm cream paper, head and shoulders, facing the viewer,
-calm friendly expression, plain light background, passport photo composition, centered, highly
-detailed linework, [ОПИС ЛЮДИНИ]
+Portrait drawn as a steel engraving like on a banknote: only fine parallel lines and cross-hatching,
+no smooth shading, no pencil texture. Monochrome dark navy ink lines on a flat warm cream background,
+no paper edges, no vignette, no frame. Head and shoulders, centered, facing the viewer, the head fills
+the upper half of the image, shoulders cut by the bottom edge. One portrait from a consistent series
+of passport engravings. [ОПИС ЛЮДИНИ]
 ```
 
 Чого уникати (у Firefly — поле «Exclude», в інших генераторах допишіть у кінці «without …»):
-`text, letters, watermark, frame, border, color, photorealistic skin, hands`
+`pencil sketch, charcoal, photo, color, signature, text, letters, watermark, paper border, shadow, hands`
+
+**Як тримати один стиль:** оберіть найвдаліший перший портрет як еталон. У Firefly завантажте його в
+**Style → Reference** і генеруйте решту з ним, налаштування Content type → Art, формат 4:5 для всіх.
+Невеликі відмінності не страшні: під час вбудови всі портрети переводяться в ті самі два кольори сайту
+(чорнило #14213d на папері #f6f3ec) з однаковим контрастом і обрізаються в однаковий кадр.
+
+Перша версія промпту (для звіту, щоб показати ітерацію):
+`Engraved portrait in the style of a banknote intaglio engraving, fine parallel line hatching and
+cross-hatching, monochrome dark navy ink on warm cream paper, head and shoulders, facing the viewer,
+calm friendly expression, plain light background, passport photo composition, centered, highly
+detailed linework, [ОПИС ЛЮДИНИ]`
 
 | Файл | Хто | Опис людини (вставити замість [ОПИС ЛЮДИНИ]) |
 |---|---|---|
@@ -43,7 +56,7 @@ detailed linework, [ОПИС ЛЮДИНИ]
 | `iryna.png` | Ірина Мельник, репетиторка англійської | `a Ukrainian woman around 32 years old with hair in a neat bun and round glasses, wearing a blouse` |
 | `andrii.png` | Андрій Савчук, фотограф, Одеса | `a Ukrainian man around 35 years old with a short beard, wearing a denim shirt` |
 | `sofiia.png` | Софія Бойко, маркетологиня | `a Ukrainian woman around 25 years old with long straight hair, wearing a blazer` |
-| `nazar.png` | Назар Лисенко, аналітик даних | `a young Ukrainian man around 22 years old with short curly hair, wearing a collared shirt` |
+| `nazar.png` | Назар Лисенко, аналітик даних (пасхалка в дусі фільму «Драйв») | `a young man around 25 years old with slightly tousled swept-back light hair, light stubble, a calm quiet half-smile, looking slightly to the side, wearing a satin bomber jacket with a scorpion embroidered on the shoulder over a white T-shirt` |
 
 Описи навмисно нейтральні: без професійних атрибутів (камера, ноутбук), бо їх зріже рамка фото 4:5.
 

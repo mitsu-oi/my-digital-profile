@@ -20,6 +20,14 @@ http
     }
     fs.readFile(file, (error, data) => {
       if (error) {
+        // як на Vercel: для сторінок віддаємо 404.html, для файлів (скриптів, картинок) — короткий текст
+        const ext = path.extname(file);
+        if (ext === '' || ext === '.html') {
+          fs.readFile(path.join(root, '404.html'), (pageError, page) => {
+            response.writeHead(404, { 'Content-Type': types['.html'], 'Cache-Control': 'no-store' }).end(pageError ? 'Не знайдено' : page);
+          });
+          return;
+        }
         response.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' }).end('Не знайдено');
         return;
       }

@@ -65,6 +65,7 @@
         "template": "card",
         "palette": "ink",
         "number": "000 247",
+        "photo": "assets/images/people/olena.webp",
         "person": { "name": "Олена Коваль", "role": "UX-дизайнерка", "city": "Львів" },
         "blocks": [
           { "type": "about", "text": "Проєктую мобільні застосунки для банків і сервісів доставки. Починаю з розмов із користувачами, а не з макетів." },
@@ -84,6 +85,7 @@
         "template": "resume",
         "palette": "graphite",
         "number": "000 248",
+        "photo": "assets/images/people/maksym.webp",
         "person": { "name": "Максим Гнатюк", "role": "Frontend-розробник, студент 3 курсу", "city": "Київ" },
         "blocks": [
           { "type": "about", "text": "Верстаю адаптивні сайти й пишу інтерфейси на чистому JavaScript. Шукаю стажування на літо." },
@@ -107,6 +109,7 @@
         "template": "visit",
         "palette": "emerald",
         "number": "000 249",
+        "photo": "assets/images/people/iryna.webp",
         "person": { "name": "Ірина Мельник", "role": "Репетиторка англійської", "city": "Тернопіль" },
         "blocks": [
           { "type": "about", "text": "Готую до НМТ і співбесід англійською. Заняття онлайн, перше знайомство безкоштовне." },
@@ -122,6 +125,7 @@
         "template": "dossier",
         "palette": "night",
         "number": "000 250",
+        "photo": "assets/images/people/andrii.webp",
         "person": { "name": "Андрій Савчук", "role": "Фотограф", "city": "Одеса" },
         "blocks": [
           { "type": "about", "text": "Знімаю архітектуру та інтер’єри для готелів і забудовників. Працюю з природним світлом." },
@@ -145,6 +149,7 @@
         "template": "resume",
         "palette": "plum",
         "number": "000 251",
+        "photo": "assets/images/people/sofiia.webp",
         "person": { "name": "Софія Бойко", "role": "Маркетологиня", "city": "Харків" },
         "blocks": [
           { "type": "about", "text": "Веду соцмережі та розсилки невеликих магазинів. Рахую результат у замовленнях, а не в уподобаннях." },
@@ -167,9 +172,10 @@
         "template": "card",
         "palette": "clay",
         "number": "000 252",
+        "photo": "assets/images/people/nazar.webp",
         "person": { "name": "Назар Лисенко", "role": "Аналітик даних, початківець", "city": "Львів" },
         "blocks": [
-          { "type": "about", "text": "Перетворюю таблиці на зрозумілі графіки. Навчаюся на прикладній математиці." },
+          { "type": "about", "text": "Перетворюю таблиці на зрозумілі графіки. Навчаюся на прикладній математиці. Найкращі ідеї приходять під час нічних поїздок містом під синтвейв." },
           { "type": "skills", "items": ["Excel", "SQL", "Python", "Візуалізація"] },
           { "type": "projects", "items": [
             { "title": "Аналіз цін на оренду у Львові", "text": "Зібрав 3 000 оголошень і показав, як ціна залежить від району.", "link": "https://example.com/rent" }

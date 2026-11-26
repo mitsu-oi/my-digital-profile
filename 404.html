@@ -25,6 +25,7 @@
          Скрипт /_vercel/insights/script.js існує лише на сайті, розгорнутому на Vercel (локально дає 404 — це нормально). -->
     <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
     <script src="/_vercel/insights/script.js" defer></script>
+    <script type="module" src="/assets/js/not-found.js"></script>
   </head>
   <body class="site-bg flex min-h-screen flex-col bg-paper font-sans text-ink antialiased dark:bg-night dark:text-cream">
     <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded-md focus:bg-ink focus:px-4 focus:py-3 focus:text-cream">Перейти до основного вмісту</a>
@@ -72,24 +73,47 @@
     </header>
 
     <main id="main" tabindex="-1" class="flex-1">
-      <div class="mx-auto w-full max-w-page px-5 py-20 md:px-8 md:py-28 xl:px-12">
-        <div class="grid items-center gap-12 lg:grid-cols-[1fr_auto]">
+      <svg width="0" height="0" class="absolute" aria-hidden="true" focusable="false">
+        <!-- нерівний край чорнила для штампа, як на головній -->
+        <filter id="ink">
+          <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" seed="7" result="noise" />
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale="2.2" />
+        </filter>
+      </svg>
+
+      <div class="mx-auto w-full max-w-page px-5 py-16 md:px-8 md:py-24 xl:px-12">
+        <div class="grid items-center gap-14 lg:grid-cols-[1fr_1fr] lg:gap-16">
           <div>
             <p class="font-mono text-sm text-stamp dark:text-stamp-light">Помилка 404</p>
             <h1 class="mt-3 font-serif text-4xl leading-tight font-bold sm:text-5xl">Такої сторінки немає</h1>
+            <p class="mt-4 max-w-xl font-mono text-sm break-all text-ink-soft dark:text-cream-soft">Ви відкрили: <span data-nf-path class="text-ink dark:text-cream">—</span></p>
             <p class="mt-4 max-w-xl text-lg leading-relaxed text-ink-soft dark:text-cream-soft">Можливо, в адресі помилка або сторінку перейменували. Ваша чернетка в конструкторі нікуди не зникла: вона зберігається в браузері.</p>
             <div class="mt-8 flex flex-col gap-3 sm:flex-row">
               <a href="/builder.html" class="btn-primary inline-flex min-h-12 items-center justify-center rounded-md px-7 font-semibold text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:focus-visible:outline-cream">Відкрити конструктор</a>
               <a href="/index.html" class="inline-flex min-h-12 items-center justify-center rounded-md border-2 border-ink px-7 font-semibold text-ink transition-colors hover:bg-ink hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:border-cream dark:text-cream dark:hover:bg-night-raised dark:focus-visible:outline-cream">На головну</a>
             </div>
+
+            <h2 class="mt-12 font-mono text-sm text-ink-soft dark:text-cream-soft">Або перейдіть до розділу</h2>
+            <ul class="mt-2 max-w-md divide-y divide-line border-y border-line dark:divide-night-line dark:border-night-line">
+              <li><a href="/templates.html" class="flex min-h-12 items-center justify-between gap-4 py-2 font-semibold hover:text-stamp focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:hover:text-stamp-light dark:focus-visible:outline-cream">Шаблони <span class="font-normal text-ink-soft dark:text-cream-soft">4 бланки</span></a></li>
+              <li><a href="/examples.html" class="flex min-h-12 items-center justify-between gap-4 py-2 font-semibold hover:text-stamp focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:hover:text-stamp-light dark:focus-visible:outline-cream">Приклади <span class="font-normal text-ink-soft dark:text-cream-soft">6 профілів</span></a></li>
+              <li><a href="/contact.html" class="flex min-h-12 items-center justify-between gap-4 py-2 font-semibold hover:text-stamp focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:hover:text-stamp-light dark:focus-visible:outline-cream">Контакти <span class="font-normal text-ink-soft dark:text-cream-soft">повідомити про биту адресу</span></a></li>
+            </ul>
           </div>
-          <!-- штамп «Не знайдено» замість ілюстрації -->
-          <svg viewBox="0 0 220 220" class="mx-auto w-48 -rotate-[8deg] text-stamp sm:w-60 dark:text-stamp-light" aria-hidden="true">
-            <defs><path id="nf-ring" d="M110 110m-80 0a80 80 0 1 1 160 0a80 80 0 1 1-160 0" /></defs>
-            <g fill="none" stroke="currentColor"><circle cx="110" cy="110" r="102" stroke-width="4" /><circle cx="110" cy="110" r="94" stroke-width="1.4" /><circle cx="110" cy="110" r="62" stroke-width="1.6" /></g>
-            <text class="font-mono" font-size="14" letter-spacing="3.5" fill="currentColor"><textPath href="#nf-ring">СТОРІНКУ НЕ ЗНАЙДЕНО · ОСЬЯ ·</textPath></text>
-            <text x="110" y="124" text-anchor="middle" class="font-serif" font-size="40" font-weight="700" fill="currentColor">404</text>
-          </svg>
+
+          <!-- гравюра «загублений документ», створена генеративним ШІ (промпт у docs/PROMPTS.md); на неї «падає» штамп.
+               Ілюстрацію переведено в кольори сайту, а краї розмито маскою, щоб вона зливалася з фоном; у темній темі це окремий аркуш. -->
+          <figure class="relative mx-auto w-full max-w-md lg:-mt-8 lg:self-start">
+            <img src="/assets/images/not-found-480.webp" srcset="/assets/images/not-found-480.webp 480w, /assets/images/not-found-880.webp 880w" sizes="(min-width: 480px) 448px, calc(100vw - 2.5rem)" width="880" height="880" decoding="async" alt="Гравюра: розгорнутий паспорт висить у повітрі над купкою порожніх конвертів." class="doc h-auto w-full [mask-image:radial-gradient(closest-side,#000_72%,transparent)] dark:rounded-md dark:[mask-image:none]">
+
+            <!-- штамп «падає» на довідку один раз -->
+            <svg viewBox="0 0 220 220" class="stamp-land absolute right-0 bottom-2 w-32 text-stamp [--stamp-turn:-14deg] sm:-right-8 sm:w-44" style="transform: rotate(-14deg)" filter="url(#ink)" aria-hidden="true">
+              <defs><path id="nf-ring" d="M110 110m-80 0a80 80 0 1 1 160 0a80 80 0 1 1-160 0" /></defs>
+              <g fill="none" stroke="currentColor"><circle cx="110" cy="110" r="102" stroke-width="4" /><circle cx="110" cy="110" r="94" stroke-width="1.4" /><circle cx="110" cy="110" r="62" stroke-width="1.6" /></g>
+              <text class="font-mono" font-size="14" letter-spacing="3.5" fill="currentColor"><textPath href="#nf-ring">СТОРІНКУ НЕ ЗНАЙДЕНО · ОСЬЯ ·</textPath></text>
+              <text x="110" y="124" text-anchor="middle" class="font-serif" font-size="40" font-weight="700" fill="currentColor">404</text>
+            </svg>
+          </figure>
         </div>
       </div>
     </main>
