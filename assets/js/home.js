@@ -1,6 +1,6 @@
 // Головна: заповнює «віяло» бланків справжніми зменшеними профілями з data.json.
 // Якщо дані не завантажились, лишаються порожні аркуші з назвами — сторінка все одно читається.
-import { loadData } from './data.js';
+import { LATIN, byId, calm, loadData, whenNear } from './data.js';
 import { renderProfile } from './render-profile.js';
 import './home-stack.js'; // стос прикладів зі Swiper
 
@@ -11,7 +11,7 @@ async function start() {
     const data = await loadData();
     const sample = data.examples[0].profile; // профіль Олени, той самий, що на «паспорті» вгорі
     for (const frame of frames) {
-      const palette = data.palettes.find((item) => item.id === frame.dataset.palette) || data.palettes[0];
+      const palette = byId(data.palettes, frame.dataset.palette);
       const preview = renderProfile(sample, palette, { template: frame.dataset.fanFrame, level: 3 });
       preview.classList.add('[zoom:0.55]');
       frame.inert = true; // ілюстрація: не для клавіатури й читача екрана
@@ -23,17 +23,7 @@ async function start() {
 }
 
 // Віяло нижче першого екрана: зменшені профілі малюються, лише коли до нього лишається ~600 px прокрутки
-if (frames.length) {
-  const observer = new IntersectionObserver(
-    (entries) => {
-      if (!entries.some((entry) => entry.isIntersecting)) return;
-      observer.disconnect();
-      start();
-    },
-    { rootMargin: '600px 0px' },
-  );
-  observer.observe(frames[0].closest('ul'));
-}
+if (frames.length) whenNear(frames[0].closest('ul'), start);
 
 // ---------- Жива демонстрація на першому екрані ----------
 // Ім’я та фах із полів одразу з’являються в «паспорті». Лише textContent: введений HTML не виконується.
@@ -42,10 +32,9 @@ const out = (name) => document.querySelector(`[data-demo-out="${name}"]`);
 const passport = document.querySelector('[data-demo-label]');
 
 // Транслітерація для машинозчитуваного рядка (за спрощеною офіційною таблицею 2010 року)
-const LATIN = { а: 'A', б: 'B', в: 'V', г: 'H', ґ: 'G', д: 'D', е: 'E', є: 'IE', ж: 'ZH', з: 'Z', и: 'Y', і: 'I', ї: 'I', й: 'I', к: 'K', л: 'L', м: 'M', н: 'N', о: 'O', п: 'P', р: 'R', с: 'S', т: 'T', у: 'U', ф: 'F', х: 'KH', ц: 'TS', ч: 'CH', ш: 'SH', щ: 'SHCH', ь: '', ю: 'IU', я: 'IA' };
 function toMrz(text) {
   return [...text.toLowerCase()]
-    .map((char) => (char in LATIN ? LATIN[char] : /[a-z]/.test(char) ? char.toUpperCase() : /[\s-]/.test(char) ? '<' : ''))
+    .map((char) => (char in LATIN ? LATIN[char].toUpperCase() : /[a-z]/.test(char) ? char.toUpperCase() : /[\s-]/.test(char) ? '<' : ''))
     .join('');
 }
 
@@ -83,7 +72,7 @@ const TYPE_MS = 85; // пауза між літерами під час набо
 const ERASE_MS = 40; // стирання швидше за набір
 const HOLD_MS = 1800; // скільки готове слово стоїть у полі
 
-if (typing && caret && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+if (typing && caret && !calm()) {
   let role = 0;
   let timer = null;
   let visible = false;

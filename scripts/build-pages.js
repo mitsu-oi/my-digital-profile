@@ -10,16 +10,7 @@ const SITE = 'https://my-digital-profile-blond.vercel.app/';
 const OG_IMAGE = `${SITE}assets/images/og.png`;
 
 // ---------- сторінки ----------
-const pages = [
-  { file: 'index.html', module: 'home.js', nav: null, title: 'ОсьЯ — мій цифровий профіль', description: 'Зберіть портфоліо у вигляді цифрового посвідчення за 10 хвилин: шаблон, палітра, блоки й живий перегляд. Без реєстрації.' },
-  { file: 'builder.html', module: 'builder.js', nav: 'Конструктор', title: 'Конструктор портфоліо — ОсьЯ', description: 'Оберіть шаблон і палітру, додайте проєкти та навички й одразу побачте готове портфоліо.' },
-  { file: 'templates.html', module: 'templates.js', nav: 'Шаблони', title: 'Шаблони портфоліо — ОсьЯ', description: 'Чотири шаблони цифрового профілю: посвідчення, резюме, досьє та візитка.' },
-  { file: 'examples.html', module: 'examples.js', nav: 'Приклади', title: 'Приклади портфоліо — ОсьЯ', description: 'Готові портфоліо різних фахів для натхнення.' },
-  { file: 'about.html', module: 'about.js', nav: 'Про сервіс', title: 'Про сервіс — ОсьЯ', description: 'Для кого створено ОсьЯ, як працює сервіс і чому ваші дані не залишають браузер.' },
-  { file: 'contact.html', module: 'contact.js', nav: 'Контакти', title: 'Контакти — ОсьЯ', description: 'Напишіть команді сервісу «Мій цифровий профіль».' },
-  // сторінка «не знайдено»: Vercel сам віддає 404.html для неіснуючих адрес; її не індексуємо й не показуємо в меню
-  { file: '404.html', module: 'not-found.js', nav: null, noindex: true, title: 'Сторінку не знайдено — ОсьЯ', description: 'Такої сторінки немає. Перейдіть на головну або відкрийте конструктор профілю.' },
-];
+const pages = require('./pages');
 
 // Структуровані дані для головної: описуємо лише те, що справді є на сторінці (безкоштовний вебзастосунок)
 const JSON_LD = {
@@ -174,7 +165,12 @@ for (const page of pages) {
   let html = `${head(page)}${header(page)}\n    <main id="main" tabindex="-1" class="flex-1">\n${content}\n    </main>\n\n${footer()}`;
   // 404 віддається за будь-якою адресою, навіть вкладеною (/a/b/c), тож відносні адреси робимо абсолютними (від кореня).
   // Тег <base> не підходить: він зламав би посилання-якорі на кшталт #main.
-  if (page.noindex) html = html.replace(/(\s(?:href|src)=")(?![a-z]+:|\/|#)/g, '$1/');
+  if (page.noindex) {
+    const absolute = (url) => (/^([a-z]+:|\/|#)/.test(url) ? url : `/${url}`);
+    html = html
+      .replace(/(\s(?:href|src)=")([^"]*)"/g, (match, attr, url) => `${attr}${absolute(url)}"`)
+      .replace(/(\ssrcset=")([^"]*)"/g, (match, attr, list) => `${attr}${list.split(',').map((item) => absolute(item.trim())).join(', ')}"`);
+  }
   fs.writeFileSync(path.join(root, page.file), html);
 }
 // ---------- robots.txt і sitemap.xml ----------

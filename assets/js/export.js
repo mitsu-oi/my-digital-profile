@@ -8,9 +8,11 @@
 // Імпорт: файл читається як текст і розбирається DOMParser-ом — він будує документ, але не запускає
 // жодних скриптів і не вантажить зображень. Беремо лише наш JSON-блок; решту файла ігноруємо.
 
-export const FILE_FORMAT = 'osya-profile';
-export const FILE_VERSION = 1;
-export const IMPORT_MAX_BYTES = 3 * 1024 * 1024; // 3 МБ: з фото файл зазвичай важить 300–600 КБ
+import { LATIN } from './data.js';
+
+const FILE_FORMAT = 'osya-profile';
+const FILE_VERSION = 1;
+const IMPORT_MAX_BYTES = 3 * 1024 * 1024; // 3 МБ: з фото файл зазвичай важить 300–600 КБ
 
 // Шрифти, які вбудовуються у файл (ті самі, що на сайті)
 const FONTS = ['golos-text-cyrillic', 'golos-text-latin', 'lora-cyrillic', 'lora-latin', 'jetbrains-mono-cyrillic', 'jetbrains-mono-latin'];
@@ -38,14 +40,13 @@ async function inlineCss() {
       }
     }),
   );
-  // голографічна маска гільйошу у файлі не потрібна (там немає цих елементів), а відносні адреси зламалися б
+  // маска гільйошу у файлі не потрібна (там немає цих елементів), а відносні адреси зламалися б
   css = css.replace(/url\("?\.\.\/assets\/images\/[^)"]+"?\)/g, 'none');
   cssCache = css;
   return css;
 }
 
 // Текст для імені файла: «Олена Коваль» -> «olena-koval»
-const LATIN = { а: 'a', б: 'b', в: 'v', г: 'h', ґ: 'g', д: 'd', е: 'e', є: 'ie', ж: 'zh', з: 'z', и: 'y', і: 'i', ї: 'i', й: 'i', к: 'k', л: 'l', м: 'm', н: 'n', о: 'o', п: 'p', р: 'r', с: 's', т: 't', у: 'u', ф: 'f', х: 'kh', ц: 'ts', ч: 'ch', ш: 'sh', щ: 'shch', ь: '', ю: 'iu', я: 'ia' };
 export function fileName(name, extension) {
   const slug = [...String(name || '').toLowerCase()]
     .map((char) => (char in LATIN ? LATIN[char] : /[a-z0-9]/.test(char) ? char : ' '))
@@ -92,8 +93,8 @@ ${node.outerHTML}
 }
 
 // Віддає файл користувачу як завантаження
-export function download(text, name, type = 'text/html') {
-  const url = URL.createObjectURL(new Blob([text], { type: `${type};charset=utf-8` }));
+export function download(text, name) {
+  const url = URL.createObjectURL(new Blob([text], { type: 'text/html;charset=utf-8' }));
   const link = document.createElement('a');
   link.href = url;
   link.download = name;

@@ -3,7 +3,7 @@
 // Swiper вантажиться з CDN лише тоді, коли секція наближається до екрана, з фіксованою версією та SRI.
 // Поки бібліотеки немає (або CDN недоступний), той самий список гортається звичайною прокруткою,
 // а кнопки «назад / уперед» і відомості про профіль працюють однаково в обох режимах.
-import { el, loadData, showLoadError } from './data.js';
+import { el, loadData, showLoadError, byId, calm, loadFile, whenNear } from './data.js';
 import { renderProfile } from './render-profile.js';
 
 // Файли з CDN: фіксована версія і контрольна сума (SRI). Змінений на CDN файл браузер не виконає.
@@ -40,7 +40,6 @@ let data = null;
 let swiper = null; // екземпляр Swiper, коли бібліотека завантажилась
 let current = 0;
 
-const byId = (list, id) => list.find((item) => item.id === id) || list[0];
 const pad = (number) => String(number).padStart(2, '0');
 
 // Показує відомості про профіль, що лежить зверху стосу. Лише textContent: дані не виконуються як HTML.
@@ -72,7 +71,7 @@ function drawSlides() {
     const slide = el('div', 'swiper-slide relative w-full shrink-0 snap-center');
     // назва для читача екрана; саме зображення профілю — ілюстрація, тому inert
     slide.append(el('span', 'sr-only', `${profile.person.name}, ${profile.person.role}`));
-    const frame = el('div', 'doc aspect-[4/5] overflow-hidden rounded-md bg-sheet shadow-[0_18px_40px_-24px_rgba(14,22,40,0.6)] ring-1 ring-line');
+    const frame = el('div', 'doc aspect-[4/5] overflow-hidden rounded-md bg-sheet shadow-doc ring-1 ring-line');
     frame.inert = true;
     const preview = renderProfile(profile, byId(data.palettes, profile.palette), { level: 3 });
     preview.classList.add('min-h-full', '[zoom:0.6]');
@@ -89,8 +88,7 @@ function drawSlides() {
 const slideWidth = () => parts.list.firstElementChild?.getBoundingClientRect().width || 1;
 
 function scrollToSlide(index) {
-  const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  parts.list.scrollTo({ left: index * (slideWidth() + 16), behavior: calm ? 'auto' : 'smooth' }); // 16 px — gap-4
+  parts.list.scrollTo({ left: index * (slideWidth() + 16), behavior: calm() ? 'auto' : 'smooth' }); // 16 px — gap-4
 }
 
 function onNativeScroll() {
@@ -109,16 +107,6 @@ function step(direction) {
 }
 
 // ---------- завантаження Swiper з CDN ----------
-function loadFile(tag, attributes) {
-  return new Promise((resolve, reject) => {
-    const node = document.createElement(tag);
-    Object.assign(node, attributes, { crossOrigin: 'anonymous', referrerPolicy: 'no-referrer' });
-    node.addEventListener('load', resolve);
-    node.addEventListener('error', () => reject(new Error(`Не завантажено ${attributes.src || attributes.href}`)));
-    document.head.append(node);
-  });
-}
-
 async function startSwiper() {
   try {
     await Promise.all([
@@ -131,7 +119,6 @@ async function startSwiper() {
   }
   if (!window.Swiper) return;
 
-  const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   parts.list.classList.remove(...FALLBACK);
   parts.list.scrollLeft = 0;
   parts.slider.classList.add('swiper');
@@ -141,7 +128,7 @@ async function startSwiper() {
     initialSlide: current,
     grabCursor: true,
     rewind: true, // після останнього профілю — знову перший
-    speed: calm ? 0 : 450,
+    speed: calm() ? 0 : 450,
     cardsEffect: { slideShadows: false, perSlideOffset: 9, perSlideRotate: 3 },
     keyboard: { enabled: true, onlyInViewport: true }, // клавіші ← → , коли стос на екрані
     a11y: {
@@ -164,9 +151,8 @@ async function start() {
   try {
     data = await loadData();
   } catch (error) {
-    console.warn('Приклади не завантажено:', error.message);
     parts.count.textContent = '';
-    showLoadError(parts.list, start);
+    showLoadError(parts.list, start, error);
     return;
   }
   if (!data.examples.length) {
@@ -178,19 +164,10 @@ async function start() {
   parts.list.addEventListener('scroll', onNativeScroll, { passive: true });
   parts.prev.addEventListener('click', () => step(-1));
   parts.next.addEventListener('click', () => step(1));
-
-  // Картки й Swiper потрібні лише коли секцію от-от побачать: шість зменшених профілів і бібліотека
-  // не гальмують перший показ сторінки (Lighthouse: менше часу на Style & Layout і TBT)
-  const observer = new IntersectionObserver(
-    (entries) => {
-      if (!entries.some((entry) => entry.isIntersecting)) return;
-      observer.disconnect();
-      drawSlides();
-      startSwiper();
-    },
-    { rootMargin: '600px 0px' },
-  );
-  observer.observe(section);
+  drawSlides();
+  startSwiper();
 }
 
-if (section && Object.values(parts).every(Boolean)) start();
+// Дані, картки й Swiper потрібні лише коли секцію от-от побачать: шість зменшених профілів, data.json і
+// бібліотека не гальмують перший показ сторінки (Lighthouse: менше часу на Style & Layout і TBT)
+if (section && Object.values(parts).every(Boolean)) whenNear(section, start);

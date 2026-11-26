@@ -2,11 +2,11 @@
 // Форма нічого нікуди не надсилає — сервера немає, і сторінка чесно про це каже.
 // Перевірка: поле перевіряється після виходу з нього (blur), а виправлене — одразу під час введення;
 // при невдалому «Надіслати» зверху з’являється зведення помилок, і фокус переходить до нього.
-import { EMAIL_RE } from './render-profile.js';
+import { el } from './data.js';
+import { EMAIL_RE, PHONE_RE, maskPhone, maskPhoneInput } from './render-profile.js';
 
 // Ім’я: будь-які літери (\p{L} — українські, латинські, з наголосами), пробіл, дефіс, апостроф; 2–60 символів
 const NAME_RE = /^[\p{L}'’ʼ -]{2,60}$/u;
-const PHONE_RE = /^\+380 \(\d{2}\) \d{3}-\d{2}-\d{2}$/;
 const MESSAGE_MIN = 10;
 const MESSAGE_MAX = 1000;
 
@@ -19,23 +19,7 @@ const sending = form?.querySelector('[data-sending]');
 const dialog = document.querySelector('[data-done]');
 const doneList = dialog?.querySelector('[data-done-list]');
 
-// ---------- Маска телефону ----------
-// З будь-якого введення беремо цифри: «0671234567», «380671234567», «+38 (067) 123 45 67» —
-// і будуємо +380 (XX) XXX-XX-XX поступово, поки людина друкує.
-function maskPhone(value) {
-  let digits = value.replace(/\D/g, '');
-  if (digits.startsWith('380')) digits = digits.slice(3);
-  else if (digits.startsWith('80')) digits = digits.slice(2);
-  else if (digits.startsWith('0')) digits = digits.slice(1);
-  digits = digits.slice(0, 9);
-  if (!digits) return '';
-  let out = `+380 (${digits.slice(0, 2)}`;
-  if (digits.length >= 2) out += ')';
-  if (digits.length > 2) out += ` ${digits.slice(2, 5)}`;
-  if (digits.length > 5) out += `-${digits.slice(5, 7)}`;
-  if (digits.length > 7) out += `-${digits.slice(7, 9)}`;
-  return out;
-}
+// Маска телефону (maskPhone, maskPhoneInput) спільна з конструктором: render-profile.js
 
 // ---------- Правила для кожного поля ----------
 // Кожне правило повертає текст помилки або порожній рядок
@@ -92,7 +76,7 @@ function updateCounter() {
 function onInput(event) {
   const input = event.target;
   if (input.name === 'phone') {
-    input.value = maskPhone(input.value);
+    maskPhoneInput(input, event);
   }
   if (input.name === 'message') updateCounter();
   // уже показана помилка зникає, щойно значення виправлене; нову не показуємо посеред набору
@@ -102,6 +86,8 @@ function onInput(event) {
 function onBlur(event) {
   const input = event.target;
   if (!RULES[input.name]) return;
+  // номер, який виправляли посередині, форматуємо при виході з поля
+  if (input.name === 'phone' && /\d/.test(input.value)) input.value = maskPhone(input.value);
   // порожнє поле, з якого просто пройшли Tab-ом, не сварить — лише заповнене з помилкою
   if (input.type !== 'checkbox' && !input.value.trim() && input.getAttribute('aria-invalid') !== 'true') return;
   check(input);
@@ -110,15 +96,13 @@ function onBlur(event) {
 function showSummary(problems) {
   summaryList.replaceChildren(
     ...problems.map(({ input, message }) => {
-      const link = document.createElement('a');
+      const link = el('a', 'underline underline-offset-2', `${LABELS[input.name]}: ${message}`);
       link.href = `#${input.id}`;
-      link.className = 'underline underline-offset-2';
-      link.textContent = `${LABELS[input.name]}: ${message}`;
       link.addEventListener('click', (event) => {
         event.preventDefault();
         input.focus();
       });
-      const item = document.createElement('li');
+      const item = el('li');
       item.append(link);
       return item;
     }),
@@ -160,14 +144,8 @@ function showDone() {
   ];
   doneList.replaceChildren(
     ...rows.map(([term, value]) => {
-      const wrap = document.createElement('div');
-      const dt = document.createElement('dt');
-      dt.className = 'font-mono text-xs text-ink-soft dark:text-cream-soft';
-      dt.textContent = term;
-      const dd = document.createElement('dd');
-      dd.className = 'mt-0.5 break-words whitespace-pre-line';
-      dd.textContent = value;
-      wrap.append(dt, dd);
+      const wrap = el('div');
+      wrap.append(el('dt', 'font-mono text-xs text-ink-soft dark:text-cream-soft', term), el('dd', 'mt-0.5 break-words whitespace-pre-line', value));
       return wrap;
     }),
   );

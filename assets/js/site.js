@@ -52,8 +52,11 @@
 
   // ---------- голограма реагує на рух миші ----------
   // Позиція курсора записується у CSS-змінні; градієнт у стилях зсувається слідом.
+  // Змінні ставляться лише на голографічні елементи, а не на <html>: інакше кожен рух миші
+  // змушував би браузер перераховувати стилі всієї сторінки (змінні успадковуються всіма елементами).
   const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (!calm) {
+    const HOLO = '.holo, .holo-text, .btn-primary, .btn-primary-light';
     let frame = 0;
     window.addEventListener(
       'pointermove',
@@ -61,8 +64,12 @@
         if (event.pointerType !== 'mouse' || frame) return;
         frame = requestAnimationFrame(() => {
           frame = 0;
-          root.style.setProperty('--holo-x', `${Math.round((event.clientX / window.innerWidth) * 100)}%`);
-          root.style.setProperty('--holo-y', `${Math.round((event.clientY / window.innerHeight) * 100)}%`);
+          const x = `${Math.round((event.clientX / window.innerWidth) * 100)}%`;
+          const y = `${Math.round((event.clientY / window.innerHeight) * 100)}%`;
+          for (const node of document.querySelectorAll(HOLO)) {
+            node.style.setProperty('--holo-x', x);
+            node.style.setProperty('--holo-y', y);
+          }
         });
       },
       { passive: true },

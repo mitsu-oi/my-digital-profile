@@ -21,8 +21,7 @@ async function start() {
       });
     list.replaceChildren(...items);
   } catch (error) {
-    console.warn('Дані не завантажено:', error.message);
-    showLoadError(list, start);
+    showLoadError(list, start, error);
   }
 }
 

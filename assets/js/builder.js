@@ -1,13 +1,13 @@
-// Конструктор профілю (етап 3): бланк, палітра, особисті дані, розділи й живий перегляд.
+// Конструктор профілю: бланк, палітра, особисті дані, розділи й живий перегляд.
 // Принцип: увесь профіль зберігається в одному об’єкті state; форма змінює state, а перегляд щоразу
 // малюється з нього заново спільною функцією renderProfile (та сама, що на сторінках «Шаблони» й «Приклади»).
 // Безпека: текст користувача потрапляє на сторінку лише через textContent / value, посилання — лише http(s).
-import { el, loadData, showLoadError } from './data.js';
-import { renderProfile, safeLink, EMAIL_RE } from './render-profile.js';
+import { el, byId, radio, calm, loadFile, loadData, showLoadError } from './data.js';
+import { renderProfile, safeLink, EMAIL_RE, PHONE_RE, TITLES, maskPhone, maskPhoneInput, phoneDigits } from './render-profile.js';
 import { buildHtmlFile, download, fileName, readProfileFile } from './export.js';
 
 // SortableJS (перетягування розділів) — з CDN, фіксована версія й перевірка цілісності SRI.
-// Якщо бібліотека не завантажиться, розділи й далі переставляються кнопками ↑ ↓.
+// Якщо бібліотека не завантажиться, розділи й далі переставляються меню ручки ⠿ або клавішами ↑ ↓.
 const SORTABLE = {
   src: 'https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.6/Sortable.min.js',
   integrity: 'sha384-HZZ/fukV+9G8gwTNjN7zQDG0Sp7MsZy5DDN6VfY3Be7V9dvQpEpR2jF2HlyFUUjU',
@@ -30,19 +30,17 @@ const LIMITS = {
   photoSide: 480, // фото зменшується до цієї довшої сторони
 };
 
-// Розділи: назва, підказка й підписи полів для записів (проєкт, досвід, освіта)
+// Розділи: назва (спільна з переглядом), підказка й підписи полів для записів (проєкт, досвід, освіта)
 const BLOCKS = {
-  about: { title: 'Про мене', hint: '2–3 речення: чим займаєтеся і що вам цікаво.' },
-  skills: { title: 'Навички', hint: 'Оберіть зі списку або впишіть свою й натисніть «Додати».' },
-  projects: { title: 'Проєкти', entry: 'Проєкт', max: LIMITS.entries, fields: [['title', 'Назва'], ['text', 'Що зроблено', 'textarea'], ['link', 'Посилання', 'link']] },
-  experience: { title: 'Досвід', entry: 'Місце роботи', max: LIMITS.entries, fields: [['title', 'Посада'], ['place', 'Де'], ['period', 'Період роботи', 'years'], ['text', 'Що робили', 'textarea']] },
-  education: { title: 'Освіта', entry: 'Навчання', max: LIMITS.education, fields: [['title', 'Спеціальність'], ['place', 'Заклад'], ['period', 'Роки навчання', 'years']] },
-  achievements: { title: 'Досягнення', hint: 'Кожне з нового рядка.' },
-  contacts: { title: 'Контакти', hint: 'Достатньо одного способу зв’язку.' },
+  about: { title: TITLES.about, hint: '2–3 речення: чим займаєтеся і що вам цікаво.' },
+  skills: { title: TITLES.skills, hint: 'Оберіть зі списку або впишіть свою й натисніть «Додати».' },
+  projects: { title: TITLES.projects, entry: 'Проєкт', max: LIMITS.entries, fields: [['title', 'Назва'], ['text', 'Що зроблено', 'textarea'], ['link', 'Посилання', 'link']] },
+  experience: { title: TITLES.experience, entry: 'Місце роботи', max: LIMITS.entries, fields: [['title', 'Посада'], ['place', 'Де'], ['period', 'Період роботи', 'years'], ['text', 'Що робили', 'textarea']] },
+  education: { title: TITLES.education, entry: 'Навчання', max: LIMITS.education, fields: [['title', 'Спеціальність'], ['place', 'Заклад'], ['period', 'Роки навчання', 'years']] },
+  achievements: { title: TITLES.achievements, hint: 'Кожне з нового рядка.' },
+  contacts: { title: TITLES.contacts, hint: 'Достатньо одного способу зв’язку.' },
 };
 const ORDER = Object.keys(BLOCKS);
-
-const PHONE_RE = /^\+380 \(\d{2}\) \d{3}-\d{2}-\d{2}$/;
 
 // ---------- Роки для досвіду й освіти: лише вибір зі списку, довільний текст не вводиться ----------
 const THIS_YEAR = new Date().getFullYear();
@@ -144,16 +142,22 @@ function initialState(params = new URLSearchParams(location.search)) {
   const profile = example
     ? cleanProfile(example.profile)
     : cleanProfile({ person: { name: params.get('name') || '', role: params.get('role') || '' }, blocks: [] });
-  const known = (list, id) => (list.some((item) => item.id === id) ? id : null);
-  profile.template = known(data.templates, params.get('template')) || known(data.templates, profile.template) || data.templates[0].id;
-  profile.palette = known(data.palettes, params.get('palette')) || known(data.palettes, profile.palette) || data.palettes[0].id;
+  return adopt(profile, [params.get('template'), profile.template], [params.get('palette'), profile.palette]);
+}
+
+// Робить профіль поточним: бланк і палітра — перший відомий id зі списку кандидатів, інакше перший у data.json
+function adopt(profile, templateIds, paletteIds) {
+  const known = (list, ids) => ids.find((id) => list.some((item) => item.id === id)) || list[0].id;
+  profile.template = known(data.templates, templateIds);
+  profile.palette = known(data.palettes, paletteIds);
   state = profile;
   ensureRequired();
   return profile;
 }
 
 // ---------- Обов’язкові розділи бланку ----------
-const currentTemplate = () => data.templates.find((item) => item.id === state.template);
+const currentTemplate = () => byId(data.templates, state.template);
+const currentPalette = () => byId(data.palettes, state.palette);
 const requiredTypes = () => currentTemplate()?.required || [];
 
 // Додає порожні обов’язкові розділи, яких бракує. Позначка auto — «додано автоматично»:
@@ -191,8 +195,7 @@ function renderPreview() {
   pending = true;
   queueMicrotask(() => {
     pending = false;
-    const palette = data.palettes.find((item) => item.id === state.palette);
-    preview.replaceChildren(renderProfile({ ...state, sections: allowedTypes() }, palette, { level: 3 }));
+    preview.replaceChildren(renderProfile({ ...state, sections: allowedTypes() }, currentPalette(), { level: 3 }));
     updateMeter();
   });
 }
@@ -279,13 +282,7 @@ function scheduleSave() {
 
 // профіль із чернетки: білий список полів + перевірка бланку й палітри
 function stateFromDraft(draft) {
-  const profile = cleanProfile(draft.profile);
-  const known = (list, id) => (list.some((item) => item.id === id) ? id : null);
-  profile.template = known(data.templates, draft.profile.template) || data.templates[0].id;
-  profile.palette = known(data.palettes, draft.profile.palette) || data.palettes[0].id;
-  state = profile;
-  ensureRequired();
-  return profile;
+  return adopt(cleanProfile(draft.profile), [draft.profile.template], [draft.profile.palette]);
 }
 
 // Заповнює форму з поточного state і перемальовує все (після відновлення чернетки чи заміни профілю)
@@ -307,12 +304,6 @@ function announce(text) {
 
 // ---------- Крок 1–2: бланки й палітри (радіокнопки: працюють з клавіатури стрілками) ----------
 const OPTION = 'relative flex min-h-12 min-w-0 break-words cursor-pointer flex-col gap-1 rounded-md border border-line bg-sheet p-3 transition-colors hover:border-ink-soft has-[:checked]:border-ink has-[:checked]:ring-1 has-[:checked]:ring-ink has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ink dark:border-night-line dark:bg-night-sheet dark:hover:border-cream-soft dark:has-[:checked]:border-stamp-light dark:has-[:checked]:ring-stamp-light dark:has-[:focus-visible]:outline-cream';
-
-function radio(name, value, checked) {
-  const input = el('input', 'sr-only');
-  Object.assign(input, { type: 'radio', name, value, checked });
-  return input;
-}
 
 function drawChoices() {
   templatesBox.replaceChildren(
@@ -420,8 +411,6 @@ function yearsField(idBase, label, item, bind) {
   return group;
 }
 
-// Навички: обрані — як «бирки» з кнопкою прибрати; нижче поле для своєї навички (воно ж фільтрує підказки)
-// і готові підказки з data.json, згруповані за сферами (як на сайтах вакансій).
 // ---------- Згортання карток розділів ----------
 let reorderOpen = null; // id розділу, в якого відкрите меню «Вище / Нижче»
 let justDragged = false; // після перетягування браузер ще надсилає клік по ручці — його ігноруємо
@@ -461,6 +450,8 @@ const skillFilters = {}; // текст у полі пошуку для кожн�
 const openGroups = {}; // номери відкритих груп підказок для кожного розділу
 const CHIP = 'inline-flex min-h-11 items-center gap-1.5 rounded-md border px-3 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:focus-visible:outline-cream';
 
+// Навички: обрані — як «бирки» з кнопкою прибрати; нижче поле для своєї навички (воно ж фільтрує підказки)
+// і готові підказки з data.json, згруповані за сферами (як на сайтах вакансій).
 function skillsEditor(block, info) {
   const wrap = el('div', 'space-y-4');
   const full = block.items.length >= LIMITS.skills;
@@ -570,7 +561,7 @@ function blockEditor(block, index, count) {
   section.dataset.blockId = block.id;
   section.setAttribute('aria-labelledby', `${block.id}-title`);
 
-  // заголовок і кнопки: вгору, вниз, прибрати (альтернатива перетягуванню — вимога WCAG 2.5.7)
+  // заголовок, ручка ⠿ (перетягування або меню «Вище / Нижче» — альтернатива за WCAG 2.5.7) і «Прибрати»
   const head = el('div', 'flex items-center justify-between gap-3');
   const isCollapsed = collapsed.has(block.id);
   const required = requiredTypes().includes(block.type);
@@ -638,6 +629,7 @@ function blockEditor(block, index, count) {
 
   const body = el('div', 'mt-4 space-y-4');
   body.id = `${block.id}-body`;
+  body.dataset.blockBody = ''; // ховається на час перетягування (.is-sorting у src/input.css)
   body.hidden = isCollapsed;
   const bind = { block: block.id };
 
@@ -689,7 +681,7 @@ function blockEditor(block, index, count) {
 
 // Які розділи вміє показати поточний бланк (поле sections у data.json; без нього — усі)
 function allowedTypes() {
-  return data.templates.find((item) => item.id === state.template)?.sections || ORDER;
+  return currentTemplate().sections || ORDER;
 }
 // Розділи, що є в профілі й показуються в поточному бланку — лише їх видно у формі
 const visibleBlocks = () => state.blocks.filter((block) => allowedTypes().includes(block.type));
@@ -702,7 +694,7 @@ function drawBlocks() {
     : [el('p', 'rounded-lg border border-dashed border-line p-5 text-ink-soft dark:border-night-line dark:text-cream-soft', 'Розділів поки немає. Почніть із «Про мене»: виберіть його нижче й натисніть «Додати розділ».')];
   // сховані розділи не зникають: дані лишаються в профілі й повертаються з іншим бланком
   if (hidden.length) {
-    const template = data.templates.find((item) => item.id === state.template);
+    const template = currentTemplate();
     nodes.push(el('p', 'rounded-lg border border-dashed border-line p-4 text-sm leading-relaxed text-ink-soft dark:border-night-line dark:text-cream-soft', `Бланк «${template.name}» не показує: ${hidden.map((block) => BLOCKS[block.type].title).join(', ')}. Ці дані збережено — вони повернуться, якщо обрати інший бланк.`));
   }
   blocksBox.replaceChildren(...nodes);
@@ -716,11 +708,10 @@ function drawBlocks() {
 }
 
 // ---------- Перевірка полів ----------
+// Повний номер (рівно 9 цифр після коду) приводимо до маски, як у формі контактів; неповний лишаємо як є,
+// щоб людина побачила помилку, а не мовчки обрізаний номер
 function normalisePhone(value) {
-  const digits = value.replace(/\D/g, '');
-  const local = digits.startsWith('380') ? digits.slice(3) : digits.startsWith('0') ? digits.slice(1) : digits;
-  if (local.length !== 9) return value.trim();
-  return `+380 (${local.slice(0, 2)}) ${local.slice(2, 5)}-${local.slice(5, 7)}-${local.slice(7)}`;
+  return phoneDigits(value).length === 9 ? maskPhone(value) : value.trim();
 }
 
 // Телефон правильний, якщо його можна привести до формату +380 (XX) XXX-XX-XX (так само вважає й лічильник)
@@ -770,11 +761,8 @@ function onInput(event) {
   const block = state.blocks.find((item) => item.id === input.dataset.block);
   if (!block) return;
   delete block.auto;
-  // автозаповнення або вставка телефону (не набір по літері): одразу приводимо до формату,
-  // інакше браузерне «+380971108087» вважалося б неправильним, поки людина не клацне в полі
-  if (input.dataset.rule === 'phone' && event.inputType !== 'insertText' && event.inputType !== 'deleteContentBackward' && phoneOk(input.value)) {
-    input.value = normalisePhone(input.value);
-  }
+  // телефон форматується одразу під час набору, вставки й автозаповнення, як у формі контактів
+  if (input.dataset.rule === 'phone') maskPhoneInput(input, event);
   const { field: key, entry, list } = input.dataset;
   if (input.dataset.years !== undefined) {
     // рік початку / завершення: перераховуємо текст періоду й перевіряємо порядок років
@@ -830,6 +818,16 @@ function moveBlock(block, action) {
 
 // Клавіші ↑ ↓ на ручці ⠿ переставляють розділ (фокус лишається на ручці)
 function onGripKey(event) {
+  // Esc закриває відкрите меню «Вище / Нижче» (з ручки чи з кнопок меню) і повертає фокус на ручку
+  if (event.key === 'Escape' && reorderOpen) {
+    const id = reorderOpen;
+    if (!event.target.closest?.(`[data-block-id="${id}"]`)) return;
+    event.preventDefault();
+    reorderOpen = null;
+    drawBlocks();
+    focusLater(`[data-block-id="${id}"] [data-action="reorder"]`);
+    return;
+  }
   const grip = event.target.closest?.('[data-action="reorder"]');
   if (!grip || (event.key !== 'ArrowUp' && event.key !== 'ArrowDown')) return;
   event.preventDefault(); // інакше сторінка прокрутиться
@@ -912,7 +910,15 @@ function onClick(event) {
     const skill = button.dataset.skill;
     const at = block.items.findIndex((item) => item.toLowerCase() === skill.toLowerCase());
     if (at >= 0) block.items.splice(at, 1);
-    else addSkill(block, skill);
+    else {
+      addSkill(block, skill);
+      // пошук виконав свою роботу: поле очищаємо, а групу з обраною навичкою лишаємо відкритою
+      if (skillFilters[block.id]) {
+        skillFilters[block.id] = '';
+        const groupIndex = (data.skillSuggestions || []).findIndex(({ items }) => items.includes(skill));
+        if (groupIndex >= 0) (openGroups[block.id] ??= new Set([0])).add(groupIndex);
+      }
+    }
     drawBlocks();
     announce(at >= 0 ? `Навичку «${skill}» прибрано.` : `Навичку «${skill}» додано.`);
     focusLater(`[data-block-id="${block.id}"] [data-action="toggle-skill"][data-skill="${CSS.escape(skill)}"]`);
@@ -1079,33 +1085,58 @@ function setDevice(width) {
 // ---------- Перетягування розділів (SortableJS з CDN) ----------
 
 function loadSortable() {
-  const script = document.createElement('script');
-  Object.assign(script, { src: SORTABLE.src, integrity: SORTABLE.integrity, crossOrigin: 'anonymous', referrerPolicy: 'no-referrer' });
-  script.addEventListener('load', () => {
+  loadFile('script', { src: SORTABLE.src, integrity: SORTABLE.integrity }).then(() => {
     if (!window.Sortable) return;
+    // Розгорнуті розділи бувають вищими за екран: перетягнути такий «цеглою» незручно, а сторінка сама
+    // не прокручується. Тому, щойно почалося перетягування, усі розділи згортаються до заголовків
+    // (клас .is-sorting), сторінка зсувається так, щоб ручка лишилась під курсором, а біля краю екрана
+    // вмикається автопрокрутка. Після відпускання розділи розгортаються, і перенесений розділ лишається
+    // на тому ж місці екрана. forceFallback: власне перетягування Sortable замість HTML5 drag and drop —
+    // так автопрокрутка й згортання однаково працюють і мишею, і пальцем.
+    const keepInPlace = (node, change) => {
+      const before = node.getBoundingClientRect().top;
+      change();
+      const target = node.isConnected ? node : blocksBox.querySelector(`[data-block-id="${node.dataset.blockId}"]`);
+      if (target) window.scrollBy(0, target.getBoundingClientRect().top - before);
+    };
     window.Sortable.create(blocksBox, {
       handle: '[data-drag]',
       draggable: '[data-block-id]',
-      animation: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 150,
+      animation: calm() ? 0 : 150,
       ghostClass: 'opacity-40',
+      forceFallback: true,
+      fallbackOnBody: true,
+      fallbackTolerance: 5, // простий клік по ручці не починає перетягування, а відкриває меню «Вище / Нижче»
+      scroll: true,
+      scrollSensitivity: 120, // за скільки пікселів від краю екрана починається прокрутка
+      scrollSpeed: 18,
+      onStart(event) {
+        reorderOpen = null;
+        keepInPlace(event.item, () => blocksBox.classList.add('is-sorting'));
+      },
       onEnd(event) {
         justDragged = true;
         setTimeout(() => (justDragged = false), 0);
-        if (event.oldIndex === event.newIndex) return;
+        const id = event.item.dataset.blockId;
+        if (event.oldIndex === event.newIndex) {
+          keepInPlace(event.item, () => blocksBox.classList.remove('is-sorting'));
+          return;
+        }
         // новий порядок видимих розділів ставимо на ті самі місця в state.blocks; сховані не зсуваються
         const order = [...blocksBox.querySelectorAll('[data-block-id]')].map((node) => node.dataset.blockId);
         const visible = visibleBlocks();
         const slots = visible.map((block) => state.blocks.indexOf(block)).sort((a, b) => a - b);
-        order.forEach((id, i) => (state.blocks[slots[i]] = visible.find((block) => block.id === id)));
-        drawBlocks();
-        const moved = state.blocks.find((block) => block.id === event.item.dataset.blockId);
+        order.forEach((blockId, i) => (state.blocks[slots[i]] = visible.find((block) => block.id === blockId)));
+        keepInPlace(event.item, () => {
+          blocksBox.classList.remove('is-sorting');
+          drawBlocks();
+        });
+        const moved = state.blocks.find((block) => block.id === id);
         announce(`Розділ «${BLOCKS[moved.type].title}» тепер ${order.indexOf(moved.id) + 1}-й із ${order.length}.`);
         changed();
       },
     });
-  });
-  script.addEventListener('error', () => console.warn('SortableJS не завантажилась — порядок змінюється кнопками ↑ ↓.'));
-  document.head.append(script);
+  }, () => console.warn('SortableJS не завантажилась — порядок змінюється меню ручки ⠿ або клавішами ↑ ↓.'));
 }
 
 // ---------- Експорт: HTML-файл і PDF (через друк того самого файла) ----------
@@ -1119,7 +1150,7 @@ function profileForFile() {
 }
 
 async function makeFile() {
-  const palette = data.palettes.find((item) => item.id === state.palette);
+  const palette = currentPalette();
   // у файлі ім’я — головний заголовок сторінки (h1)
   const node = renderProfile({ ...state, sections: allowedTypes() }, palette, { level: 1 });
   return buildHtmlFile(node, profileForFile(), palette);
@@ -1135,12 +1166,11 @@ async function onExport(button) {
       const name = fileName(state.person.name, 'html');
       download(text, name);
       exportStatus.textContent = `Файл «${name}» завантажено. Згодом його можна відкрити тут кнопкою «Відкрити збережений файл».`;
-      clearStatusLater();
     } else {
       printFile(text);
       exportStatus.textContent = 'Відкрито вікно друку. Оберіть «Зберегти як PDF» у списку принтерів.';
-      clearStatusLater();
     }
+    clearStatusLater();
   } catch (problem) {
     console.warn('Експорт не вдався:', problem);
     exportStatus.textContent = 'Не вдалося підготувати файл. Перевірте з’єднання й спробуйте ще раз.';
@@ -1252,9 +1282,8 @@ async function start() {
   try {
     data = await loadData();
   } catch (problem) {
-    console.warn('Дані не завантажено:', problem.message);
     loading.hidden = true;
-    showLoadError(templatesBox, () => location.reload());
+    showLoadError(templatesBox, () => location.reload(), problem);
     return;
   }
   loading.hidden = true;
@@ -1277,8 +1306,8 @@ async function start() {
   form.addEventListener('focusout', onBlur);
   form.addEventListener('click', onClick);
   form.addEventListener('submit', (event) => event.preventDefault()); // Enter у полі не перезавантажує сторінку
-  // Enter у полі «своя навичка» додає її (як кнопка «Додати»)
   form.addEventListener('keydown', onGripKey);
+  // Enter у полі «своя навичка» додає її (як кнопка «Додати»)
   form.addEventListener('keydown', (event) => {
     const id = event.target.dataset?.skillInput;
     if (event.key !== 'Enter' || !id) return;

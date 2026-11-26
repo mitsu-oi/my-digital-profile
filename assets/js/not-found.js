@@ -1,7 +1,6 @@
-// Сторінка 404: показує адресу, яку відкрив користувач (і дату, якщо на сторінці є поле для неї).
+// Сторінка 404: показує адресу, яку відкрив користувач.
 // Лише textContent: адреса приходить із рядка браузера, тож її не можна вставляти як HTML.
 const path = document.querySelector('[data-nf-path]');
-const date = document.querySelector('[data-nf-date]');
 
 if (path) {
   let address = location.pathname;
@@ -12,4 +11,3 @@ if (path) {
   }
   path.textContent = address.length > 80 ? `${address.slice(0, 77)}…` : address;
 }
-if (date) date.textContent = new Date().toLocaleDateString('uk-UA');

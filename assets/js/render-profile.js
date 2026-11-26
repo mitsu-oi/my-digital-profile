@@ -1,9 +1,10 @@
 // Малює профіль (портфоліо) у вибраному шаблоні та палітрі.
-// Використовується на сторінках «Шаблони» і «Приклади», а далі й у конструкторі.
+// Використовується в конструкторі, на головній і на сторінках «Шаблони» та «Приклади».
 // Увесь текст користувача ставиться через textContent: вставлений HTML чи скрипт не виконається.
 import { el } from './data.js';
 
-const TITLES = {
+// Назви розділів — одне джерело для перегляду, конструктора й сторінки «Шаблони»
+export const TITLES = {
   about: 'Про мене',
   skills: 'Навички',
   projects: 'Проєкти',
@@ -15,6 +16,39 @@ const TITLES = {
 
 // Email: щось@щось.домен, без пробілів. Той самий вираз перевіряє поле в конструкторі.
 export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+// Телефон у форматі маски +380 (XX) XXX-XX-XX: форма контактів і конструктор
+export const PHONE_RE = /^\+380 \(\d{2}\) \d{3}-\d{2}-\d{2}$/;
+
+// Українські цифри номера без коду країни: «0671234567», «80671234567», «380671234567», «+38 (067) 123 45 67»
+export function phoneDigits(value) {
+  const digits = String(value).replace(/\D/g, '');
+  if (digits.startsWith('380')) return digits.slice(3);
+  if (digits.startsWith('80')) return digits.slice(2);
+  if (digits.startsWith('0')) return digits.slice(1);
+  return digits;
+}
+
+// Маска в полі під час набору (контакти й конструктор): «097» одразу стає «+380 (97)».
+// Не втручається, коли людина стирає (інакше дужку чи дефіс неможливо було б стерти)
+// і коли виправляє цифру посередині (курсор не стрибає в кінець) — тоді маска застосується при виході з поля.
+export function maskPhoneInput(input, event) {
+  if (event.inputType?.startsWith('delete')) return;
+  if (input.selectionStart !== input.value.length) return;
+  if (!/\d/.test(input.value)) return;
+  input.value = maskPhone(input.value);
+}
+
+// Маска +380 (XX) XXX-XX-XX, що будується поступово, поки людина друкує (зайві цифри відкидаються)
+export function maskPhone(value) {
+  const digits = phoneDigits(value).slice(0, 9);
+  if (!digits) return '';
+  let out = `+380 (${digits.slice(0, 2)}`;
+  if (digits.length >= 2) out += ')';
+  if (digits.length > 2) out += ` ${digits.slice(2, 5)}`;
+  if (digits.length > 5) out += `-${digits.slice(5, 7)}`;
+  if (digits.length > 7) out += `-${digits.slice(7, 9)}`;
+  return out;
+}
 
 // Пропускає лише адреси http і https. Усе інше (наприклад javascript:) відкидається.
 export function safeLink(value) {

@@ -1,7 +1,7 @@
 // Сторінка «Шаблони»: «пробник» (вибір бланка й палітри + великий перегляд) і таблиця порівняння бланків.
 // Вибір зроблено звичайними радіокнопками: стрілки, Tab і читачі екрана працюють без додаткового коду.
-import { el, loadData, showLoadError } from './data.js';
-import { renderProfile } from './render-profile.js';
+import { el, byId, radio, loadData, showLoadError } from './data.js';
+import { renderProfile, TITLES } from './render-profile.js';
 
 const picker = document.querySelector('[data-picker]');
 const templatesBox = document.querySelector('[data-templates]');
@@ -11,24 +11,12 @@ const choose = document.querySelector('[data-choose]');
 const status = document.querySelector('[data-status]');
 const compare = document.querySelector('[data-compare]');
 
-// назви розділів (ті самі, що в конструкторі)
-const SECTION_NAMES = { about: 'Про мене', skills: 'Навички', projects: 'Проєкти', experience: 'Досвід', education: 'Освіта', achievements: 'Досягнення', contacts: 'Контакти' };
-
 const params = new URLSearchParams(location.search);
 const state = { template: params.get('template') || 'card', palette: params.get('palette') || 'ink' };
 let data = null;
 
 // вибрана радіокнопка: рамка чорнилом і крапка-позначка (peer-checked на сусідньому span)
-const OPTION = 'flex min-h-12 cursor-pointer items-center gap-3 rounded-md border border-line bg-sheet px-3 py-2 transition-colors hover:border-ink has-[:checked]:border-ink has-[:checked]:ring-1 has-[:checked]:ring-ink has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ink dark:border-night-line dark:bg-night-sheet dark:hover:border-cream dark:has-[:checked]:border-cream dark:has-[:checked]:ring-cream dark:has-[:focus-visible]:outline-cream';
-
-function radio(name, value, checked) {
-  const input = el('input', 'sr-only');
-  input.type = 'radio';
-  input.name = name;
-  input.value = value;
-  input.checked = checked;
-  return input;
-}
+const OPTION = 'flex min-h-12 cursor-pointer items-center gap-3 rounded-md border border-line bg-sheet px-3 py-2 transition-colors hover:border-ink has-[:checked]:border-ink has-[:checked]:ring-1 has-[:checked]:ring-ink has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-ink dark:border-night-line dark:bg-night-sheet dark:hover:border-cream dark:has-[:checked]:border-stamp-light dark:has-[:checked]:ring-stamp-light dark:has-[:focus-visible]:outline-cream';
 
 function drawTemplates() {
   templatesBox.replaceChildren(
@@ -65,8 +53,8 @@ function drawPalettes() {
 }
 
 function drawPreview() {
-  const template = data.templates.find((item) => item.id === state.template) || data.templates[0];
-  const palette = data.palettes.find((item) => item.id === state.palette) || data.palettes[0];
+  const template = byId(data.templates, state.template);
+  const palette = byId(data.palettes, state.palette);
   state.template = template.id;
   state.palette = palette.id;
 
@@ -92,7 +80,7 @@ function drawCompare() {
       const fits = el('ul', 'flex flex-col items-start gap-1.5');
       fits.append(...data.fits.filter((fit) => template.fits.includes(fit.id)).map((fit) => el('li', 'rounded-full border border-stamp/40 px-3 py-0.5 text-sm text-stamp dark:border-stamp-light/50 dark:text-stamp-light', fit.name)));
       const sections = el('ul', 'space-y-0.5 text-sm');
-      sections.append(...(template.required || []).map((type) => el('li', '', SECTION_NAMES[type] || type)));
+      sections.append(...(template.required || []).map((type) => el('li', '', TITLES[type] || type)));
 
       const cell = (child, extra = '') => {
         const td = el('td', `py-5 pr-6 align-top ${extra}`);
@@ -114,9 +102,8 @@ async function start() {
     drawPreview();
     drawCompare();
   } catch (error) {
-    console.warn('Дані не завантажено:', error.message);
     status.textContent = '';
-    showLoadError(preview, start);
+    showLoadError(preview, start, error);
   }
 }
 

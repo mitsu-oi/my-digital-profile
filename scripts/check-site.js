@@ -9,7 +9,7 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 
 const root = path.resolve(__dirname, '..');
-const pages = ['index.html', 'builder.html', 'templates.html', 'examples.html', 'about.html', 'contact.html', '404.html'];
+const pages = require('./pages');
 const errors = [];
 const fail = (message) => errors.push(message);
 const read = (file) => fs.readFileSync(path.join(root, file), 'utf8');
@@ -40,7 +40,7 @@ try {
 
 // ---------- 3–4. сторінки ----------
 const sprite = read('assets/icons/sprite.svg');
-for (const page of pages) {
+for (const { file: page, noindex } of pages) {
   if (!fs.existsSync(path.join(root, page))) {
     fail(`${page}: файл не знайдено (запустіть npm run build)`);
     continue;
@@ -48,9 +48,14 @@ for (const page of pages) {
   const html = read(page);
 
   // локальні посилання й ресурси
-  const links = [...html.matchAll(/\s(?:href|src)="([^"]+)"/g)].map((match) => match[1]);
+  const links = [
+    ...[...html.matchAll(/\s(?:href|src)="([^"]+)"/g)].map((match) => match[1]),
+    ...[...html.matchAll(/\ssrcset="([^"]+)"/g)].flatMap((match) => match[1].split(',').map((item) => item.trim().split(/\s+/)[0])),
+  ];
   for (const link of new Set(links)) {
     if (/^(https?:|mailto:|tel:|data:|#)/.test(link)) continue;
+    // сторінку noindex (404) віддають за будь-якою адресою, тож відносна адреса в ній зламається на /a/b/c
+    if (noindex && !link.startsWith('/')) fail(`${page}: відносна адреса «${link}» (має починатися з /)`);
     if (link.startsWith('/_vercel/')) continue; // скрипт аналітики додає сам Vercel
     const [target, fragment] = link.replace(/^\//, '').split('#');
     if (!target) continue;
@@ -67,9 +72,9 @@ for (const page of pages) {
   const noAlt = (html.match(/<img\b(?![^>]*\salt=)[^>]*>/g) || []).length;
   if (noAlt) fail(`${page}: зображень без alt: ${noAlt}`);
 
-  // сторінка 404 не індексується й не має canonical / Open Graph
-  if (page === '404.html') {
-    if (!/<meta name="robots" content="noindex">/.test(html)) fail('404.html: немає noindex');
+  // сторінка noindex (404) не індексується й не має canonical / Open Graph
+  if (noindex) {
+    if (!/<meta name="robots" content="noindex">/.test(html)) fail(`${page}: немає noindex`);
     continue;
   }
   if (!/<link rel="canonical" href="https:\/\//.test(html)) fail(`${page}: немає canonical`);

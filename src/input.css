@@ -71,7 +71,6 @@
   --font-sans: "Golos Text", "Segoe UI", sans-serif; /* основний текст */
   --font-mono: "JetBrains Mono", Consolas, monospace; /* «службові» підписи документа */
 
-  /* світла тема: папір і чорнило */
   /* Токени руху за шкалою transitions.dev (скіл transitions-polish): тривалість за призначенням, а не «на око» */
   --duration-quick: 150ms; /* закриття вікна/меню, натискання */
   --duration-fast: 250ms; /* відкриття вікна/меню, наведення */
@@ -83,6 +82,7 @@
 
   --container-page: 90rem; /* ширина вмісту: 1440 px, щоб на широких екранах не було порожніх смуг */
 
+  /* світла тема: папір і чорнило */
   --color-paper: #f6f3ec; /* фон сторінки */
   --color-sheet: #fffdf8; /* картки, поля */
   --color-ink: #14213d; /* текст, головні кнопки */
@@ -99,6 +99,10 @@
   --color-cream: #ebe6dc; /* текст */
   --color-cream-soft: #a9a497; /* приглушений текст (теплий сірий, як і основний текст) */
   --color-stamp-light: #e08a70; /* печатка на темному */
+
+  /* тінь «аркуша, що лежить на столі»: бланки, стос, перегляди (клас shadow-doc / shadow-doc-lg) */
+  --shadow-doc: 0 18px 40px -24px rgba(14, 22, 40, 0.6);
+  --shadow-doc-lg: 0 30px 60px -30px rgba(14, 22, 40, 0.55);
 }
 
 @layer base {
@@ -184,11 +188,14 @@
     background-clip: text;
     color: transparent;
   }
-  /* головна кнопка: чорнильна заливка з голографічною рамкою */
-  .btn-primary {
+  /* головна кнопка: заливка з голографічною рамкою. .btn-primary — чорнильна (на папері),
+     .btn-primary-light — кремова (на темній смузі); різниться лише --btn-fill */
+  .btn-primary,
+  .btn-primary-light {
+    --btn-fill: var(--color-ink);
     border: 2px solid transparent;
     background:
-      linear-gradient(var(--color-ink), var(--color-ink)) padding-box,
+      linear-gradient(var(--btn-fill), var(--btn-fill)) padding-box,
       linear-gradient(115deg, #2dd4bf, #a78bfa, #f472b6, #fb923c, #2dd4bf) border-box;
     background-size:
       auto,
@@ -196,6 +203,9 @@
     background-position:
       0 0,
       var(--holo-x, 0%) var(--holo-y, 50%);
+  }
+  .btn-primary-light {
+    --btn-fill: var(--color-cream);
   }
   /* у темній темі кнопка — піднесена темна поверхня (night-raised) з голографічною рамкою:
      помітна, але не сліпить; текст лишається кремовим (text-cream у розмітці) */
@@ -212,18 +222,16 @@
     filter: brightness(0.8) saturate(0.85);
   }
 
-  /* та сама кнопка на темній смузі: світла заливка, голографічна рамка */
-  .btn-primary-light {
-    border: 2px solid transparent;
-    background:
-      linear-gradient(var(--color-cream), var(--color-cream)) padding-box,
-      linear-gradient(115deg, #2dd4bf, #a78bfa, #f472b6, #fb923c, #2dd4bf) border-box;
-    background-size:
-      auto,
-      300% 300%;
-    background-position:
-      0 0,
-      var(--holo-x, 0%) var(--holo-y, 50%);
+  /* Конструктор: поки розділ перетягують, усі розділи згорнуті до заголовків (builder.js, SortableJS),
+     щоб довгий розділ не займав увесь екран і місце для нього було видно */
+  .is-sorting [data-block-body],
+  .sortable-fallback [data-block-body] {
+    display: none;
+  }
+  /* «привид», що летить за курсором (Sortable кладе його в <body>), — теж лише заголовок */
+  .sortable-fallback {
+    height: auto !important;
+    box-shadow: var(--shadow-doc);
   }
 
   /* ---------- Стос прикладів на головній (Swiper, assets/js/home-stack.js) ----------

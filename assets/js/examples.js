@@ -1,5 +1,5 @@
 // Сторінка «Приклади»: готові профілі з data.json, фільтр за сферою, перегляд у повному розмірі в <dialog>.
-import { el, chip, loadData, showLoadError } from './data.js';
+import { el, chip, byId, BTN_OUTLINE, loadData, showLoadError } from './data.js';
 import { renderProfile } from './render-profile.js';
 
 const list = document.querySelector('[data-list]');
@@ -14,8 +14,8 @@ const state = { sphere: 'all' };
 let data = null;
 let opener = null; // кнопка, з якої відкрили вікно: після закриття фокус повертається на неї
 
-const paletteOf = (profile) => data.palettes.find((item) => item.id === profile.palette) || data.palettes[0];
-const templateName = (profile) => (data.templates.find((item) => item.id === profile.template) || {}).name || '';
+const paletteOf = (profile) => byId(data.palettes, profile.palette);
+const templateName = (profile) => byId(data.templates, profile.template).name;
 
 // Відкриває приклад у вікні. showModal() сам тримає фокус усередині й закриває вікно клавішею Esc.
 function openExample(example, button) {
@@ -27,24 +27,37 @@ function openExample(example, button) {
   dialog.showModal();
 }
 
+// Фільтр не перемальовує картки: вони малюються один раз, а тут лише ховаються й показуються.
+// Так фокус лишається на натиснутій кнопці, а шість профілів не будуються заново.
+function applyFilter() {
+  for (const button of filters.children) button.setAttribute('aria-pressed', String(button.dataset.sphere === state.sphere));
+  let shown = 0;
+  for (const card of list.children) {
+    card.hidden = state.sphere !== 'all' && card.dataset.sphere !== state.sphere;
+    if (!card.hidden) shown += 1;
+  }
+  status.textContent = shown ? `Показано прикладів: ${shown} з ${data.examples.length}.` : 'У цій сфері прикладів поки немає. Оберіть іншу.';
+}
+
 function drawFilters() {
   const options = [{ id: 'all', name: 'Усі' }, ...data.spheres];
   filters.replaceChildren(
-    ...options.map((option) =>
-      chip(option.name, state.sphere === option.id, () => {
+    ...options.map((option) => {
+      const button = chip(option.name, state.sphere === option.id, () => {
         state.sphere = option.id;
-        draw();
-      }),
-    ),
+        applyFilter();
+      });
+      button.dataset.sphere = option.id;
+      return button;
+    }),
   );
 }
 
 function drawList() {
-  const shown = data.examples.filter((example) => state.sphere === 'all' || example.sphere === state.sphere);
-
-  const cards = shown.map((example) => {
+  const cards = data.examples.map((example) => {
     const { profile } = example;
     const card = el('li');
+    card.dataset.sphere = example.sphere;
     const article = el('article');
 
     const frame = el('div', 'doc h-72 overflow-hidden rounded-lg border border-line dark:border-night-line');
@@ -53,7 +66,7 @@ function drawList() {
     preview.classList.add('min-h-full', '[zoom:0.6]');
     frame.append(preview);
 
-    const open = el('button', 'mt-3 inline-flex min-h-12 items-center rounded-md border-2 border-ink px-5 font-semibold text-ink transition-colors hover:bg-ink hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:border-cream dark:text-cream dark:hover:bg-night-raised dark:hover:text-cream dark:focus-visible:outline-cream', 'Переглянути');
+    const open = el('button', `mt-3 ${BTN_OUTLINE}`, 'Переглянути');
     open.type = 'button';
     open.setAttribute('aria-label', `Переглянути профіль: ${profile.person.name}`);
     open.addEventListener('click', () => openExample(example, open));
@@ -70,23 +83,18 @@ function drawList() {
 
   list.replaceChildren(...cards);
   list.setAttribute('aria-busy', 'false');
-  status.textContent = shown.length ? `Показано прикладів: ${shown.length} з ${data.examples.length}.` : 'У цій сфері прикладів поки немає. Оберіть іншу.';
-}
-
-function draw() {
-  drawFilters();
-  drawList();
 }
 
 async function start() {
   status.textContent = 'Завантаження прикладів…';
   try {
     data = await loadData();
-    draw();
+    drawFilters();
+    drawList();
+    applyFilter();
   } catch (error) {
-    console.warn('Дані не завантажено:', error.message);
     status.textContent = '';
-    showLoadError(list, start);
+    showLoadError(list, start, error);
   }
 }
 

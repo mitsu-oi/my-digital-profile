@@ -6,7 +6,7 @@
         </filter>
       </svg>
 
-      <div class="mx-auto w-full max-w-page px-5 py-16 md:px-8 md:py-24 xl:px-12">
+      <div class="mx-auto w-full max-w-page overflow-x-clip px-5 py-16 md:px-8 md:py-24 xl:px-12">
         <div class="grid items-center gap-14 lg:grid-cols-[1fr_1fr] lg:gap-16">
           <div>
             <p class="font-mono text-sm text-stamp dark:text-stamp-light">Помилка 404</p>
@@ -29,7 +29,7 @@
           <!-- гравюра «загублений документ», створена генеративним ШІ (промпт у docs/PROMPTS.md); на неї «падає» штамп.
                Ілюстрацію переведено в кольори сайту, а краї розмито маскою, щоб вона зливалася з фоном; у темній темі це окремий аркуш. -->
           <figure class="relative mx-auto w-full max-w-md lg:-mt-8 lg:self-start">
-            <img src="assets/images/not-found-480.webp" srcset="/assets/images/not-found-480.webp 480w, /assets/images/not-found-880.webp 880w" sizes="(min-width: 480px) 448px, calc(100vw - 2.5rem)" width="880" height="880" decoding="async" alt="Гравюра: розгорнутий паспорт висить у повітрі над купкою порожніх конвертів." class="doc h-auto w-full [mask-image:radial-gradient(closest-side,#000_72%,transparent)] dark:rounded-md dark:[mask-image:none]">
+            <img src="assets/images/not-found-480.webp" srcset="assets/images/not-found-480.webp 480w, assets/images/not-found-880.webp 880w" sizes="(min-width: 480px) 448px, calc(100vw - 2.5rem)" width="880" height="880" decoding="async" alt="Гравюра: розгорнутий паспорт висить у повітрі над купкою порожніх конвертів." class="doc h-auto w-full [mask-image:radial-gradient(closest-side,#000_72%,transparent)] dark:rounded-md dark:[mask-image:none]">
 
             <!-- штамп «падає» на довідку один раз -->
             <svg viewBox="0 0 220 220" class="stamp-land absolute right-0 bottom-2 w-32 text-stamp [--stamp-turn:-14deg] sm:-right-8 sm:w-44" style="transform: rotate(-14deg)" filter="url(#ink)" aria-hidden="true">
