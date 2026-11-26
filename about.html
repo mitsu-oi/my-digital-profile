@@ -118,21 +118,90 @@
           </ul>
         </section>
 
-        <section aria-labelledby="privacy-title" class="mt-16 grid gap-8 lg:grid-cols-[1fr_1.2fr]">
-          <h2 id="privacy-title" class="font-serif text-3xl font-bold">Що відбувається з вашими даними</h2>
-          <div class="space-y-4 leading-relaxed">
-            <p>Нічого. Усе, що ви вводите в конструкторі, зберігається лише у вашому браузері на вашому пристрої. Сервера, який приймав би ці дані, у нас немає.</p>
-            <p class="text-ink-soft dark:text-cream-soft">Тому реєстрація не потрібна, а ми не можемо ні прочитати, ні втратити, ні передати комусь ваше портфоліо. Зворотний бік цього: якщо очистити дані браузера, чернетка зникне. Збережений HTML-файл можна знову відкрити в конструкторі.</p>
-            <p class="text-ink-soft dark:text-cream-soft">Єдине, що ми рахуємо, — скільки разів відкривали сторінки сайту (Vercel Web Analytics). Це анонімна статистика без cookies: ні ваше ім’я, ні вміст профілю туди не потрапляють.</p>
+        <!-- Дані: коротка відповідь + реєстр «що / де зберігається / хто бачить», як графи в документі -->
+        <section aria-labelledby="privacy-title" class="mt-20">
+          <div class="grid gap-x-12 gap-y-4 lg:grid-cols-[1fr_1.2fr] lg:items-end">
+            <h2 id="privacy-title" class="font-serif text-3xl leading-tight font-bold sm:text-4xl">Що відбувається з вашими даними</h2>
+            <p class="max-w-xl text-lg leading-relaxed">
+              <span class="font-serif text-2xl font-bold text-stamp dark:text-stamp-light">Нічого.</span>
+              Усе, що ви вводите, лишається у вашому браузері. Сервера, який приймав би ці дані, у нас немає, тому й реєстрація не потрібна.
+            </p>
           </div>
+
+          <div class="mt-10 border-y-2 border-ink dark:border-cream">
+            <!-- шапка реєстру видна від md; на телефоні назви граф стоять у кожному рядку -->
+            <div class="hidden grid-cols-[1fr_1.3fr_1.3fr] gap-8 border-b border-line py-3 font-mono text-xs text-ink-soft md:grid dark:border-night-line dark:text-cream-soft" aria-hidden="true">
+              <span>Що</span><span>Де зберігається</span><span>Хто бачить</span>
+            </div>
+            <ul class="divide-y divide-line dark:divide-night-line">
+              <li>
+                <dl class="grid gap-x-8 gap-y-2 py-5 md:grid-cols-[1fr_1.3fr_1.3fr]">
+                  <dt class="sr-only">Що</dt>
+                  <dd class="font-serif text-lg font-bold">Чернетка профілю</dd>
+                  <dt class="font-mono text-xs text-ink-soft md:sr-only dark:text-cream-soft">Де зберігається</dt>
+                  <dd class="leading-relaxed">У браузері на вашому пристрої</dd>
+                  <dt class="font-mono text-xs text-ink-soft md:sr-only dark:text-cream-soft">Хто бачить</dt>
+                  <dd class="leading-relaxed">Лише ви. Ми не можемо ні прочитати її, ні втратити, ні передати комусь.</dd>
+                </dl>
+              </li>
+              <li>
+                <dl class="grid gap-x-8 gap-y-2 py-5 md:grid-cols-[1fr_1.3fr_1.3fr]">
+                  <dt class="sr-only">Що</dt>
+                  <dd class="font-serif text-lg font-bold">Готовий файл PDF чи HTML</dd>
+                  <dt class="font-mono text-xs text-ink-soft md:sr-only dark:text-cream-soft">Де зберігається</dt>
+                  <dd class="leading-relaxed">У папці «Завантаження» або там, куди ви його збережете</dd>
+                  <dt class="font-mono text-xs text-ink-soft md:sr-only dark:text-cream-soft">Хто бачить</dt>
+                  <dd class="leading-relaxed">Ті, кому ви його надішлете</dd>
+                </dl>
+              </li>
+              <li>
+                <dl class="grid gap-x-8 gap-y-2 py-5 md:grid-cols-[1fr_1.3fr_1.3fr]">
+                  <dt class="sr-only">Що</dt>
+                  <dd class="font-serif text-lg font-bold">Кількість відвідувань</dd>
+                  <dt class="font-mono text-xs text-ink-soft md:sr-only dark:text-cream-soft">Де зберігається</dt>
+                  <dd class="leading-relaxed">Vercel Web Analytics, анонімно й без cookies</dd>
+                  <dt class="font-mono text-xs text-ink-soft md:sr-only dark:text-cream-soft">Хто бачить</dt>
+                  <dd class="leading-relaxed">Ми, як загальні цифри. Ваше ім’я й вміст профілю туди не потрапляють.</dd>
+                </dl>
+              </li>
+            </ul>
+          </div>
+
+          <!-- примітка на полях: єдиний мінус локального зберігання -->
+          <aside aria-label="Зверніть увагу" class="mt-6 max-w-2xl border-l-4 border-stamp py-1 pl-5 dark:border-stamp-light">
+            <p class="font-semibold">Зверніть увагу</p>
+            <p class="mt-1 leading-relaxed text-ink-soft dark:text-cream-soft">Якщо очистити дані браузера, чернетка зникне. Збережений HTML-файл можна знову відкрити в конструкторі й продовжити з того самого місця.</p>
+          </aside>
         </section>
 
-        <section aria-labelledby="limits-title" class="mt-16 grid gap-8 lg:grid-cols-[1fr_1.2fr]">
-          <h2 id="limits-title" class="font-serif text-3xl font-bold">Чого сервіс не робить</h2>
-          <ul class="list-disc space-y-3 pl-5 leading-relaxed text-ink-soft dark:text-cream-soft">
-            <li>Не публікує портфоліо в інтернеті. Ви отримуєте файл, а не адресу сторінки.</li>
-            <li>Не шукає для вас роботу й не показує профіль іншим користувачам.</li>
-            <li>Не дає сотень шаблонів. Їх чотири, зате кожен перевірено на телефоні й у друці.</li>
+        <!-- Обмеження: рядки з перекресленою позначкою, як графи «не передбачено» -->
+        <section aria-labelledby="limits-title" class="mt-20 grid gap-x-12 gap-y-8 lg:grid-cols-[1fr_1.2fr]">
+          <div>
+            <h2 id="limits-title" class="font-serif text-3xl leading-tight font-bold sm:text-4xl">Чого сервіс не робить</h2>
+            <p class="mt-4 max-w-sm leading-relaxed text-ink-soft dark:text-cream-soft">Ми свідомо обмежили сервіс, щоб він робив одну справу добре.</p>
+          </div>
+          <ul class="divide-y divide-line border-y border-line dark:divide-night-line dark:border-night-line">
+            <li class="flex gap-4 py-5">
+              <svg viewBox="0 0 24 24" class="mt-0.5 size-6 shrink-0 text-stamp dark:text-stamp-light" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10" /><path d="M5 19 19 5" /></svg>
+              <div>
+                <p class="font-serif text-lg font-bold">Не публікує портфоліо в інтернеті</p>
+                <p class="mt-1 leading-relaxed text-ink-soft dark:text-cream-soft">Ви отримуєте файл, а не адресу сторінки, і самі вирішуєте, кому його показати.</p>
+              </div>
+            </li>
+            <li class="flex gap-4 py-5">
+              <svg viewBox="0 0 24 24" class="mt-0.5 size-6 shrink-0 text-stamp dark:text-stamp-light" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10" /><path d="M5 19 19 5" /></svg>
+              <div>
+                <p class="font-serif text-lg font-bold">Не шукає роботу замість вас</p>
+                <p class="mt-1 leading-relaxed text-ink-soft dark:text-cream-soft">І не показує ваш профіль іншим користувачам: каталогу людей на сайті немає.</p>
+              </div>
+            </li>
+            <li class="flex gap-4 py-5">
+              <svg viewBox="0 0 24 24" class="mt-0.5 size-6 shrink-0 text-stamp dark:text-stamp-light" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10" /><path d="M5 19 19 5" /></svg>
+              <div>
+                <p class="font-serif text-lg font-bold">Не дає сотень шаблонів</p>
+                <p class="mt-1 leading-relaxed text-ink-soft dark:text-cream-soft">Їх чотири, зате кожен перевірено на телефоні й у друці.</p>
+              </div>
+            </li>
           </ul>
         </section>
 
