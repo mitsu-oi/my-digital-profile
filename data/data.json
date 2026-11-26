@@ -38,10 +38,10 @@
   ],
   "palettes": [
     { "id": "ink", "name": "Чорнило", "bg": "#fffdf8", "text": "#14213d", "muted": "#55607a", "accent": "#b63a22", "line": "#cfc8b8" },
-    { "id": "emerald", "name": "Смарагд", "bg": "#f7faf7", "text": "#12302a", "muted": "#4a635c", "accent": "#0f6b54", "line": "#c5d6cf" },
-    { "id": "plum", "name": "Слива", "bg": "#fbf8fc", "text": "#2b1836", "muted": "#65546f", "accent": "#7a2d8f", "line": "#d9cde0" },
     { "id": "graphite", "name": "Графіт", "bg": "#f7f7f6", "text": "#1c1d21", "muted": "#5a5d66", "accent": "#1d4ed8", "line": "#d0d1d4" },
     { "id": "clay", "name": "Глина", "bg": "#fbf6f1", "text": "#3a2318", "muted": "#6e574b", "accent": "#a3401c", "line": "#dfd0c4" },
+    { "id": "emerald", "name": "Смарагд", "bg": "#10221c", "text": "#e8efe9", "muted": "#a3bab0", "accent": "#e2bd6b", "line": "#2b4339" },
+    { "id": "plum", "name": "Слива", "bg": "#1d1526", "text": "#f0e9f3", "muted": "#b9a9c3", "accent": "#e0a3d6", "line": "#3d2f4b" },
     { "id": "night", "name": "Північ", "bg": "#111a2e", "text": "#f1ede3", "muted": "#a9b2c7", "accent": "#7dd3c0", "line": "#2f3b5c" }
   ],
   "skillSuggestions": [
