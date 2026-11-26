@@ -67,7 +67,7 @@ if (demoForm && passport && ['given', 'surname', 'role', 'mrz'].every((name) => 
 // при «зменшити рух» у системі лишається перший фах без змін.
 const typing = document.querySelector('[data-typing]');
 const caret = document.querySelector('[data-caret]');
-const ROLES = ['UX-дизайнер', 'Фотографка', 'Репетитор', 'Маркетологиня', 'Розробник', 'Аналітик даних'];
+const ROLES = ['UX-дизайнер', 'Фотографка', 'Репетитор', 'Маркетолог', 'Розробник', 'Аналітик даних'];
 const TYPE_MS = 85; // пауза між літерами під час набору
 const ERASE_MS = 40; // стирання швидше за набір
 const HOLD_MS = 1800; // скільки готове слово стоїть у полі
